@@ -1,1 +1,4 @@
-D:/Python_Master_New/Deep_Learning_Tutorials_codebasics/Data_Augmentation_to_Address_Overfitting_codebasics/datasets/
+# Ignore the Amazon Product Review Dataset used in the tutorial of Word2Vec_codebasics
+/Deep_Learning_Tutorials_codebasics/Word2Vec_codebasics/Cell_Phones_and_Accessories_5.json
+/Deep_Learning_Tutorials_codebasics/Word2Vec_codebasics/reviews_Cell_Phones_and_Accessories_5.json.gz
+/Deep_Learning_Tutorials_codebasics/Word2Vec_codebasics/reviews_Cell_Phones_and_Accessor
