@@ -1,3 +1,10 @@
+# Instructions to use .gitignore file (so that the local git repository will ignore the specified files/folders):
+# 1) You must specifies the relative path of the file/folder you want to ignore. 
+# 2) The relative path is starting from the root directory where the .gitignore file is located (EG: This .gitignore file is located at "D:/AI_Master_New/Under_Local_Git_Covered".)
+# 3) Hence, for example, given the absolute path of a file as: "D:\AI_Master_New\Under_Local_Git_Covered\Deep_Learning_Tutorials_codebasics\Word2Vec_codebasics\Cell_Phones_and_Accessories_5.json"
+# 4) The relative path of the same file is : "/Deep_Learning_Tutorials_codebasics/Word2Vec_codebasics/Cell_Phones_and_Accessories_5.json". You must specify this relative path in the .gitignore file for the local git repository to ignore the file. 
+
+
 # Ignore the Amazon Product Review Dataset used in the tutorial of Word2Vec_codebasics
 /Deep_Learning_Tutorials_codebasics/Word2Vec_codebasics/Cell_Phones_and_Accessories_5.json
 /Deep_Learning_Tutorials_codebasics/Word2Vec_codebasics/reviews_Cell_Phones_and_Accessories_5.json.gz
