@@ -12,3 +12,6 @@
 
 # Ignore the image dataset used in the tutorial of Tensorflow_Input_Pipeline_codebasics
 /Deep_Learning_Tutorials_codebasics/Tensorflow_Input_Pipeline_codebasics/deep-learning-keras-tf-tutorial
+
+# Ignore the image dataset used in the tutorial of Vision_Transformer_Quick_Guide_DeepFindr
+/Deep_Learning_Tutorials_codebasics/Vision_Transformer_Quick_Guide_DeepFindr/oxford-iiit-pet
