@@ -1,5 +1,5 @@
 """
-# Implement Deep Q-Learning with PyTorch and Train Flappy Bird (DQN PyTorch Beginners Tutorial 1, by Johny Code)
+# Set up the environment with Flappy Bird as the agent for reinforcement learning (DQN PyTorch Beginners Tutorial 1, by Johny Code)
 
 Link to the Youtube video tutorial: https://www.youtube.com/watch?v=arR7KzlYs4w&list=PL58zEckBH8fCMIVzQCRSZVPUp3ZAVagWi&index=2 <br />
 Link to the Gymnasium official website: https://gymnasium.farama.org/ <br />
