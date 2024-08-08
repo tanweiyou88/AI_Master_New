@@ -24,7 +24,7 @@ obs, _ = env.reset() # call the reset() to initialize the environment
 while True: # This is an infinite loop for the agent(flappy bird) to interact with the environment through action, observation, and reward.
     # Next action:
     # (feed the observation to your agent here)
-    action = env.action_space.sample() # use sample() on action_space of the environment to get a random action for the agent (flappy bird). 
+    action = env.action_space.sample() # use sample() on action space(action_space) of the environment(env) to get a random action for the agent (flappy bird) at each iteration. This means the sample() might return different actions(values) at each iteration. 
     # More explanation: 
     # 1) The action_space of an environment refers to all possible actions that can be taken by the agent. In this environment, the action_space consists of only 2 values(0:the agent[flappy bird] do nothing; 1:the agent[flappy bird] flaps its wing to fly up). 
     # 2) Hence, the sample() here will only return either 0 or 1. While the returned value is stored in the action variable.
