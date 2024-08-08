@@ -1,7 +1,7 @@
 """
 # Implement Deep Q-Network Module (DQN PyTorch Beginners Tutorial 2, by Johny Code)
 
-Link to the Youtube video tutorial: https://www.youtube.com/watch?v=arR7KzlYs4w&list=PL58zEckBH8fCMIVzQCRSZVPUp3ZAVagWi&index=2
+Link to the Youtube video tutorial: https://www.youtube.com/watch?v=RVMpm86equc&list=PL58zEckBH8fCMIVzQCRSZVPUp3ZAVagWi&index=2
 Link to the Gymnasium official website: https://gymnasium.farama.org/ 
 Link to the Flappy Bird environment GitHub repository: https://github.com/markub3327/flappy-bird-gymnasium 
 
