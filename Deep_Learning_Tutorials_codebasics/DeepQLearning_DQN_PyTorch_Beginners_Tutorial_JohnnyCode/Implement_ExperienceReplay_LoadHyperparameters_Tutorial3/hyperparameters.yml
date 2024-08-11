@@ -1,0 +1,13 @@
+# This is a YAML file. We need to import yaml in the main file. We also need to pip install pyyaml to use YAML file.
+
+# we are going to test on cartpole first
+ 
+# Create a set of hyperparameters for cartpole, called cartpole 1. The variable name indented under the ":" must be the same as the ones in main file (here is agent.py), so that we can change the variable parameters in the main file by executing this YAML file (in other words, after executing this YAML file, the variable parameters in this YAML file will be updated to the variable of the same name in the main file. This is called making the environment ID dynamic).
+cartpole1:
+  env_id: CartPole-v1 # pass the environment model
+  replay_memory_size: 100000 # pass the size of the memory (deque) for ReplayMemory class function in experience_replay.py. If the memory size is too small, a lot of experiences will be pushed out (removed) and you will not have enough experiences to train the DQN.
+  mini_batch_size: 32 # Since we are going to sample the experience (features for DQN training) from the memory in experience_replay.py, we set the batch size here. The batch size is usually a small number (like 32, 64,...)
+  # The hyperparamters for Epsilon Greedy algorithm:
+  epsilon_init: 1 # we start at epsilon_init = 1, means there is a 100% chance the agent will take a random action and 0% chance the agent will take the action dictated by the trained policy or the policy that is being trained (represented by the DQN).
+  epsilon_decay: 0.9995 # then slowly decrease epsilon 
+  epsilon_min: 0.05 # all the way down to 0.05, means there is a 5% chance the agent will take a random action and 95% chance the agent will take the action dictated by the trained policy or the policy that is being trained (represented by the DQN).
