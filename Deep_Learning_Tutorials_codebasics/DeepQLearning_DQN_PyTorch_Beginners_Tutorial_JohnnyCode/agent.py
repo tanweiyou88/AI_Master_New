@@ -9,7 +9,8 @@ Link to the Flappy Bird environment GitHub repository: https://github.com/markub
 1) agent.py is the main script, dqn.py is the supplementary script
 2) In dqn.py, we define the architecture of the DQN. While in agent.py, the script is same except we import the DQN from dpn.py into agent.py to train this DQN based on the current state features so that the trained DQN has the policy that provides the best action for the agent to take to move into next state, given the features of the current state.
 """
-import torch # import pytorch library
+import torch # import PyTorch library
+from torch import nn # import nn module from PyTorch library so we can use nn.
 import flappy_bird_gymnasium # Import the flappy bird environment, which is compatible with gymnasium
 import gymnasium # Import the gymnasium, which is an API standard for reinforcement learning with a diverse collection of reference environments
 from dqn import DQN # from the dqn.py located in the same folder, import the DQN class function defined in the dqn.py
@@ -156,7 +157,7 @@ class Agent:
             # Check if enough experience has been collected
             if len(memory)>self.mini_batch_size: # if yes,
                 
-                # Sample from memory. Take a mini_batch_size numbers of instances of the memory and store them into variable mini_batch. 
+                # Sample from memory. Take a mini_batch_size numbers of experience instances of the memory and store them into variable mini_batch. 
                 mini_batch = memory.sample(self.mini_batch_size)
 
                 # Create a new function called optimize. We provide the optimize function with the sampled experience as input, then the sampled experience will received by both the DQN and target network for syncing.
@@ -177,26 +178,62 @@ class Agent:
         # 3) In other words, the target network outputs (target Q values) are used as the guidance (we now can calculate the loss function using the target Q values from the target network and predicted Q values from the DQN) to realize the backpropagation of DQN for its learning.
         # 4) When approaching to the next sync, due to the backpropagation, the DQN is trained to provide better outputs (the outputs Q values are closer to the one of the target network). This also means the target network guides the DQN in its training.
         # 5) After the 2nd sync, both the DQN and target network are trained and having the same weights and biases again. This time, the target network can provide better outputs (based on the new experience) to guide the DQN learning.
+        #
+        # for state, action, new_state, reward, terminated in mini_batch: # get the data stored in the variable mini_batch
+        # 
+        #    
+        #     # This if-else block implements the DQN Target Formula:
+        #     if terminated: # if the game is over
+        #         target = reward # the target (ground truth) reward = reward
+        # 
+        #    else:  # if the game is not over
+        #         with torch.no_grad:
+        #             target_q = reward + self.discount_factor_g * target_dqn(new_state).max() # the target (ground truth) reward
+        # 
+        #
 
-        for state, action, new_state, reward, terminated in mini_batch: # get the data stored in the variable mini_batch
+        # Transpose the list of experience and separate each element
+        states, actions, new_states, rewards, terminations = zip(*mini_batch) # Split the elements (state, action, new_state, reward, terminated) of the sampled experience instances stored in the variable mini_batch into different variables (states, actions, new_states, rewards, terminations) respectively. Since we set mini_batch_size=32, there are 32 sampled experience instances stored in the variable mini_batch. Hence, each of the (states, actions, new_states, rewards, terminations) variable will have 32 items/entries (length). Since the variable mini_batch is a tensor object, the resulting variables (states, actions, new_states, rewards, terminations) are also tensor objects, so that each entry of the resulting variables is a tensor such that {row/index 1: tensor1; row/index 2: tensor2..., where tensor1 = tensor([value1,value2,value3,value4,...]) }.
+        # tensor object refers to the type of a variable. If a variable is a tensor object, then that variable stores a sequence of tensors, while each row of that variable is a tensor.
+        # We use stack() to join (concatenate) a sequence of tensors (two or more tensors) along a new dimension. The tensors must be same dimensions and shape. It inserts a new dimension and concatenates the tensors along that dimension. Reference: https://www.geeksforgeeks.org/python-pytorch-stack-method/
         
-            # This if-else block implements the DQN Target Formula:
-            if terminated: # if the game is over
-                target = reward # the target (ground truth) reward = reward
+        # Stack tensors (in the form of sequence, one-by-one) of the tensor object called states to create batch tensors (EG: from {row/index 1: tensor2; row/index 2: tensor2..., where tensor1 = tensor([value1,value2,value3,value4,...]) } into tensor([[tensor1, tensor2, tensor3, ...]])), then store in tensor object states.
+        states = torch.stack(states)
+        actions = torch.stack(actions)
+        new_states = torch.stack(new_states)
+        rewards = torch.stack(rewards)
 
-            else:  # if the game is not over
-                with torch.no_grad:
-                    target_q = reward + self.discount_factor_g * target_dqn(new_state).max() # the target (ground truth) reward
+        # Use torch.tensor() to convert each boolean string (True or False) in the variable terminations into a float number (1.0 or 0.0). We send "torch.tensor(terminations).float()" to the selected device to do process (to do the conversion and the results will be returned as a tensor object). We do this conversion so that at later stage we can use the terminations information to do math directly.
+        terminations = torch.tensor(terminations).float().to(device)
 
-            current_q = policy_dqn(state) # get the predicted Q values based on the state information
+        # After stacking all the tensors of each element of the memory into a batch tensor, we can use PyTorch to calculate the Q values for each tensor in the batch tensor in one-shot (instead of calculating the Q value of a tensor (a sampled experience instance) one at a time, then repeat the calculation for 32 times to get the Q values of all the sampled experience instances).
 
-            # Compute loss for the whole mini batch
-            loss = self.loss_fn(current_q, target_q)
+        with torch.no_grad():
+            # Calculate target Q values (expected returns)
+            target_q = rewards + (1 - terminations) * self.discount_factor_g * target_dqn(new_states).max(dim=1)[0]
+            '''
+                target_dqn(new_states) ==> tensor([[1,2,3],[4,5,6]])
+                .max(dim=1)            ==> torch.return_types.max(values=tensor([3,6]), indices=tensor([3,0,0,1]))
+                [0]                    ==> tensor([3,6])
+            '''
 
-            # Optimize the model
-            self.optimizer.zero_grad() # Clear gradients
-            loss.backward() # Compute gradients (backpropagation)
-            self.optimizer.step() # Update network paramters (EG: weights and bias)
+
+        # Calculate Q values from current policy
+        current_q = policy_dqn(states).gather(dim=1, index=actions.unsqueeze(dim=1)).squeeze() # get the predicted Q values based on the state information
+        '''
+            policy_dqn(states)                              ==> tensor([[1,2,3],[4,5,6]])
+            .gather(dim=1, index=actions.unsqueeze(dim=1))
+            .squeeze()
+        '''
+
+
+        # Compute loss for the whole mini batch
+        loss = self.loss_fn(current_q, target_q)
+
+        # Optimize the model
+        self.optimizer.zero_grad() # Clear gradients
+        loss.backward() # Compute gradients (backpropagation)
+        self.optimizer.step() # Update DQN parameters (EG: weights and bias)
 
 # Define the main function (analogous to the body of a script). The functions defined outside this main function play the supporting role when they are called inside this main function.            
 if __name__ == '__main__' :
