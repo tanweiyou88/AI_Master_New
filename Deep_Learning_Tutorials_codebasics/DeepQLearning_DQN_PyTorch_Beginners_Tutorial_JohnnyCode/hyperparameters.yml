@@ -12,3 +12,6 @@ cartpole1: # the hyperparameter set name. The indented lines are the hyperparame
   epsilon_init: 1 # Starting here are the hyperparamters for Epsilon Greedy algorithm: we start at epsilon_init = 1, means there is a 100% chance the agent will take a random action and 0% chance the agent will take the action dictated by the trained policy or the policy that is being trained (represented by the DQN).
   epsilon_decay: 0.9995 # then slowly decrease epsilon 
   epsilon_min: 0.05 # all the way down to 0.05, means there is a 5% chance the agent will take a random action and 95% chance the agent will take the action dictated by the trained policy or the policy that is being trained (represented by the DQN).
+  network_sync_rate: 10 # sync the DQN and target network at the step size of 10
+  learning_rate_a: 0.0001 # learning rate
+  discount_factor_g: 0.99 # discount factor

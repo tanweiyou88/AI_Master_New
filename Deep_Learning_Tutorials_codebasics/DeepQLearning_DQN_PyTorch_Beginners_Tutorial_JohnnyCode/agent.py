@@ -40,7 +40,13 @@ class Agent:
         self.epsilon_init       = hyperparameters['epsilon_init']           # 1 = 100% random actions
         self.epsilon_decay      = hyperparameters['epsilon_decay']          # epsilon decay rate
         self.epsilon_min        = hyperparameters['epsilon_min']            # minimum epsilon value
-    
+        self.learning_rate_a    = hyperparameters['learning_rate_a']        # elearning rate
+        self.discount_factor_g  = hyperparameters['discount_factor_g']      # discount factor
+        
+        self.loss_fn = nn.MSELoss() # Neural network loss function. MSE = Mean Squared Error, can be swapped to other types of loss function.
+        self.optimizer = None   # Neural network optimizer. Initialize later.
+
+
     # Define a run function to perform both training and testing. "is_training = True" refers to perform training; "is_training = False" refers to perform testing. "render = False" refers to render the environment (show the environment in a figure window); "render = False" refers to don't render the environment (don't show the environment in a figure window).
     def run(self, is_training = True, render = False):
         
@@ -64,6 +70,17 @@ class Agent:
             memory = ReplayMemory(self.replay_memory_size) # we create the memory (deque) of size replay_memory_size. Use the __init__() in experience_replay.py (maybe  __init__() is used when we called the class function in a py file for the 1st time)
 
             epsilon = self.epsilon_init # initialize the epsilon with value of 1 (because epsilon_init = 1 in hyperparamter.yml), the parameter for the Epsilon Greedy algorithm
+
+            # create a target network called target_dqn, by using the DQN function defined in dqn.py. The available device will be used to create the layer's parameters of the DQN.
+            target_dqn = DQN(num_states, num_actions).to(device)
+            # load (copy) all the weights and bias of the DQN to the target network, similar to transfer learning. So now, the target network has the same weights and bias of the DQN (both DQN and the target network are synced, in terms of weights and bias).
+            target_dqn.load_state_dict(policy_dqn.state_dict())
+
+            # Track number of steps taken. Used for syncing policy => target network
+            step_count = 0
+
+            # Policy network optimizer. "Adam" optimizer can be swapped to other types of optimizer. We provide the DQN paramters to the optimizer so that the optimizer knows how to optimize the policy.
+            self.optimizer = torch.optim.Adam(policy_dqn.parameters(), lr = self.learning_rate_a)
 
         # This for loop is used to train the DQN for infinite iterations/episodes, and manually stops the training when we are satisfied with the results.
         for episode in itertools.count(): # itertools() is a python module that generates number infinitely, 1 number is generated a time (starting from 0, then incremented to 1, 2, 3,... at each time, and vice versa)
@@ -121,6 +138,10 @@ class Agent:
                 if is_training: # if we are training the DQN
                     memory.append((state, action, new_state, reward, terminated)) # Use the append() in experience_replay.py. "(state, action, new_state, reward, terminated)" here equals to the "transition" in experience_replay.py.
 
+                    # Increment step counter
+                    step_count += 1
+        
+
                 # At here, the agent already took the action to move into the next state from the current state. So, before entering the next iteration, we update the next_state (variable in this script) to the state (variable in this script) to replace the old information in state (variable in this script).
                 state = new_state
 
@@ -131,6 +152,51 @@ class Agent:
             epsilon = max(epsilon * self.epsilon_decay, self.epsilon_min)
             # keep track of the epsilon history at each episode
             epsilon_history.append(epsilon)
+
+            # Check if enough experience has been collected
+            if len(memory)>self.mini_batch_size: # if yes,
+                
+                # Sample from memory. Take a mini_batch_size numbers of instances of the memory and store them into variable mini_batch. 
+                mini_batch = memory.sample(self.mini_batch_size)
+
+                # Create a new function called optimize. We provide the optimize function with the sampled experience as input, then the sampled experience will received by both the DQN and target network for syncing.
+                self.optimize(mini_batch,policy_dqn, target_dqn)
+
+                # Copy the weights and bias of DQN to the target network after a certain number of steps (when the step_count is greater than the network_sync_rate)
+                if step_count > self.network_sync_rate: # when the certain number of steps is reached
+                    target_dqn.load_state_dict(policy_dqn.state_dict()) # load (copy) all the weights and bias of the DQN to the target network, similar to transfer learning. So now, the target network has the same weights and bias of the DQN (both DQN and the target network are synced, in terms of weights and bias).
+                    step_count = 0 # reset the step_count back to 0. This means both the DQN and the target network will only be synced (in terms of weights and bias) at every certain steps.
+
+    # Define the optimize function. This optimize function takes the sampled experience to feed the DQN (DQN takes the sampled experience as features to perform training) and feed the target network (so target network can generate target values to improve DQN outputs)
+    def optimize(self, mini_batch, policy_dqn, target_dqn):
+        
+        ## Important notes: The output of the deep Q-network (DQN) is the predicted Q values for all actions (the predicted reward of taking the corresponding actions) and taget network are the target Q values for all actions (the ground truth reward of taking the corresponding actions) in the action space of the environment.
+        # The purpose of syncing both DQN and target network at every certain count step:
+        # 1) At the 1st sync, since we use mini batch here, the DQN is used to provide the predicted Q values for all actions at all instances in the memory (deque). The output of DQN is used get the loss function by comparing it with the outputs of the target network to train the target network. The target network is trained with the loss function & both the DQN and target network have the same weights and biases. At each iteration of different episodes before the next sync, only DQN training is conducted. The DQN will provide outputs with some randomness [because we implement Random Greedy algorithm] (predicted Q-values for taking different actions) based on the features in the memory (deque) it has, and also to collect more experience. But when more and more iteration performed, the data in the memory changed and this caused the DQN to provide different outputs (the predictions are fluactuated, so the DQN training can't be conducted properly in dynamic environment).
+        # 2) Hence, we need the trained target network to provide outputs (target Q values for all actions in the action space). Since the target network is synced (its weights and biases) and trained only once for every few step counts, the weigths and biases of the target network is remained constant for a period so that the target network can provide stable target values at that period for DQN training.
+        # 3) In other words, the target network outputs (target Q values) are used as the guidance (we now can calculate the loss function using the target Q values from the target network and predicted Q values from the DQN) to realize the backpropagation of DQN for its learning.
+        # 4) When approaching to the next sync, due to the backpropagation, the DQN is trained to provide better outputs (the outputs Q values are closer to the one of the target network). This also means the target network guides the DQN in its training.
+        # 5) After the 2nd sync, both the DQN and target network are trained and having the same weights and biases again. This time, the target network can provide better outputs (based on the new experience) to guide the DQN learning.
+
+        for state, action, new_state, reward, terminated in mini_batch: # get the data stored in the variable mini_batch
+        
+            # This if-else block implements the DQN Target Formula:
+            if terminated: # if the game is over
+                target = reward # the target (ground truth) reward = reward
+
+            else:  # if the game is not over
+                with torch.no_grad:
+                    target_q = reward + self.discount_factor_g * target_dqn(new_state).max() # the target (ground truth) reward
+
+            current_q = policy_dqn(state) # get the predicted Q values based on the state information
+
+            # Compute loss for the whole mini batch
+            loss = self.loss_fn(current_q, target_q)
+
+            # Optimize the model
+            self.optimizer.zero_grad() # Clear gradients
+            loss.backward() # Compute gradients (backpropagation)
+            self.optimizer.step() # Update network paramters (EG: weights and bias)
 
 # Define the main function (analogous to the body of a script). The functions defined outside this main function play the supporting role when they are called inside this main function.            
 if __name__ == '__main__' :
