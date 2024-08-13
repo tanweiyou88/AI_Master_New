@@ -12,19 +12,38 @@ Link to the Flappy Bird environment GitHub repository: https://github.com/markub
 import torch # import PyTorch library
 from torch import nn # import nn module from PyTorch library so we can use nn.
 import flappy_bird_gymnasium # Import the flappy bird environment, which is compatible with gymnasium
-import gymnasium # Import the gymnasium, which is an API standard for reinforcement learning with a diverse collection of reference environments
-from dqn import DQN # from the dqn.py located in the same folder, import the DQN class function defined in the dqn.py
-from experience_replay import ReplayMemory # from the experience_replay.py located in the same folder, import the ReplayMemory class function defined in the experience_replay.py
-import itertools
+import gymnasium as gym # Import the gymnasium, which is an API standard for reinforcement learning with a diverse collection of reference environments
+import numpy as np
 import yaml # so that we can use YAML file to update the hyperparameters in this main file
 import random # so that we can use random() to generate a random floating number between 0 and 1.0
+import matplotlib
+import matplotlib.pyplot as plt
+import os 
+from datetime import datetime, timedelta
+import argparse
+import itertools
+
+from dqn import DQN # from the dqn.py located in the same folder, import the DQN class function defined in the dqn.py
+from experience_replay import ReplayMemory # from the experience_replay.py located in the same folder, import the ReplayMemory class function defined in the experience_replay.py
+
 
 ##--------------------IMPORTANT NOTES--------------------
 # When we are using PyTorch to develop DQN, we need to make sure the things that are going into the DQN are tensor object. In this tutorial, the things that are going into the DQN are the components of experience (state, action, new_state, reward, terminated).
 ##-------------------------------------------------------
 
+# For printing date and time
+DATE_FORMAT = "%m-%d %H:%M:%S"
+
+# Directory for saving run info (create a folder called runs that stores the information of log, graphs, trained model,...)
+RUNS_DIR = "D:/AI_Master_New/Under_Local_Git_Covered/Deep_Learning_Tutorials_codebasics/DeepQLearning_DQN_PyTorch_Beginners_Tutorial_JohnnyCode/runs"
+os.makedirs(RUNS_DIR, exist_ok=True)
+
+# 'Agg' : used to generate plots as images and save them to a file, instead of rendering to screen
+matplotlib.use('Agg')
+
 # Set the device as 'cuda' to use GPU for processing when a GPU is recognized. Else, set the device as 'cpu' to use CPU for processing.
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
+# device = 'cpu' # force to use CPU
 
 # Define a class for agent, called Agent
 class Agent:
@@ -35,53 +54,99 @@ class Agent:
             hyperparameters = all_hyperparameters_sets[hyperparameter_set] # Then, we only store (choose) the hyperparameter set with the name of hyperparameter_set (means store a bunch of hyperparameters which are indented under the hyperparameter set name) to the variable called hyperparameter_set.
             # Here, the only hyperparameter set name we have in the file called 'hyperparameters.yml' is called cartpole1. Under the hyperparameter set cartpole1, we have multiple hyperparameter values (such as env_id, replay_memory_size, ...).
         
+        self.hyperparameter_set = hyperparameter_set
+
         # Hyperparameters (adjustable). The codes below update the hyperparameter variables in this main file using the corresponding hyperparameter values stored in the variable hyperparameters (the hyperparameter values loaded from the YAML file) respectively. 
+        self.env_id             = hyperparameters['env_id']                 # the environment model
+        self.learning_rate_a    = hyperparameters['learning_rate_a']        # learning rate (alpha)
+        self.discount_factor_g  = hyperparameters['discount_factor_g']      # discount factor (gamma)
+        self.network_sync_rate  = hyperparameters['network_sync_rate']      # number of steps the agent takes before syncing the policy and target network
         self.replay_memory_size = hyperparameters['replay_memory_size']     # size of replay memory
         self.mini_batch_size    = hyperparameters['mini_batch_size']        # size of the training data set sampled from the replay memory
         self.epsilon_init       = hyperparameters['epsilon_init']           # 1 = 100% random actions
         self.epsilon_decay      = hyperparameters['epsilon_decay']          # epsilon decay rate
         self.epsilon_min        = hyperparameters['epsilon_min']            # minimum epsilon value
-        self.learning_rate_a    = hyperparameters['learning_rate_a']        # elearning rate
-        self.discount_factor_g  = hyperparameters['discount_factor_g']      # discount factor
-        
+        self.stop_on_reward     = hyperparameters['stop_on_reward']         # stop training after reaching this number of rewards
+        self.fc1_nodes          = hyperparameters['fc1_nodes']              # the number of neurons (nodes) in the hidden layer called fc1 of the neural network
+        self.env_make_params    = hyperparameters.get('env_make_params',{}) # Get optional environment-specific parameters, default to empty dict
+
+        # Hyperparameters for the neural network
         self.loss_fn = nn.MSELoss() # Neural network loss function. MSE = Mean Squared Error, can be swapped to other types of loss function.
         self.optimizer = None   # Neural network optimizer. Initialize later.
 
+        # Path to run info
+        self.LOG_FILE = os.path.join(RUNS_DIR, f'{self.hyperparameter_set}.log') # store the log file at the location of RUN_DIR, with the filename called hyperparameter_set
+        self.MODEL_FILE = os.path.join(RUNS_DIR, f'{self.hyperparameter_set}.pt') # store the trained model at the location of RUN_DIR, with the filename called hyperparameter_set
+        self.GRAPH_FILE = os.path.join(RUNS_DIR, f'{self.hyperparameter_set}.png') # store the graph at the location of RUN_DIR, with the filename called hyperparameter_set
 
     # Define a run function to perform both training and testing. "is_training = True" refers to perform training; "is_training = False" refers to perform testing. "render = False" refers to render the environment (show the environment in a figure window); "render = False" refers to don't render the environment (don't show the environment in a figure window).
     def run(self, is_training = True, render = False):
         
+        if is_training:
+            start_time = datetime.now()
+            last_graph_update_time = start_time
+
+            log_message = f"{start_time.strftime(DATE_FORMAT)}: Training starting..."
+            print(log_message)
+            with open(self.LOG_FILE, 'w') as file:
+                file.write(log_message + '\n')
+
+        '''
         # Create an instance of the flappy bird environment called env, using the "FlappyBird-v0" environment model and with the help of gymnasium. The parameter "render_mode="human"" is used to render the game on the screen. The parameter "use_lidar=False" is the custom parameter that allow the user to turn on (use the information of) the LIDAR sensor or off (don't use the information of LIDAR).
         # env = gymnasium.make("FlappyBird-v0", render_mode="human" if render else None, use_lidar=False) # This means env is the environment that we create here.
-        env = gymnasium.make("CartPole-v1", render_mode="human" if render else None)
+        env = gym.make("CartPole-v1", render_mode="human" if render else None)
+        '''
         
-        num_states = env.observation_space.shape[0] # get the number of state information at a state from the observation space of the environment
-        num_actions = env.action_space.n # get the number of actions from the action space of the environment
+        # Create instance of the environment.
+        # Use "**self.env_make_params" to pass in environment-specific parameters from hyperparameters.yml
+        env = gym.make(self.env_id, render_mode='human' if render else None, **self.env_make_params)
 
+        # Get observation space size
+        num_states = env.observation_space.shape[0] # get the number of state information at a state from the observation space of the environment 
+        
+        # Number of possible actions
+        num_actions = env.action_space.n # get the number of actions from the action space of the environment 
+
+        # List to keep track of rewards collected per episode.
         rewards_per_episode = [] # create a variable to keep check of the amount of reward the agent received per episode (1 episode means the DQN training is executed such that the agent takes actions in the environent to get state information until the training is terminated [terminated = True])
         # In each episode, it can have multiple iterations. Each episode starts with 1st iteration and ends with terminated = True.
         # In each iteration, the agent takes an action to move into the next state from the current state. Also, the state information of the current state and the next state will be obtained in each iteration.
-
-        epsilon_history = []
-
-        # create a deep Q-network (also known as policy network) called policy_dqn, by using the DQN function defined in dqn.py. The available device will be used to create the layer's parameters of the DQN.
-        policy_dqn = DQN(num_states, num_actions).to(device)
+        
+        # Create a deep Q-network (also known as policy network) called policy_dqn, by using the DQN function defined in dqn.py. The available device will be used to create the layer's parameters of the DQN.
+        policy_dqn = DQN(num_states, num_actions, self.fc1_nodes).to(device)
 
         if is_training: # if we are training the DQN
-            memory = ReplayMemory(self.replay_memory_size) # we create the memory (deque) of size replay_memory_size. Use the __init__() in experience_replay.py (maybe  __init__() is used when we called the class function in a py file for the 1st time)
-
+            
+            # Initialize epsilon
             epsilon = self.epsilon_init # initialize the epsilon with value of 1 (because epsilon_init = 1 in hyperparamter.yml), the parameter for the Epsilon Greedy algorithm
 
-            # create a target network called target_dqn, by using the DQN function defined in dqn.py. The available device will be used to create the layer's parameters of the DQN.
-            target_dqn = DQN(num_states, num_actions).to(device)
-            # load (copy) all the weights and bias of the DQN to the target network, similar to transfer learning. So now, the target network has the same weights and bias of the DQN (both DQN and the target network are synced, in terms of weights and bias).
+            # Initialize replay memory
+            memory = ReplayMemory(self.replay_memory_size) # we create the memory (deque) of size replay_memory_size. Use the __init__() in experience_replay.py (maybe  __init__() is used when we called the class function in a py file for the 1st time)
+            
+            # Create a target network called target_dqn and make it identical to the policy network (DQN), by using the DQN function defined in dqn.py. The available device will be used to create the layer's parameters of the DQN.
+            target_dqn = DQN(num_states, num_actions, self.fc1_nodes).to(device)
+            # Load (copy) all the weights and bias of the DQN to the target network, similar to transfer learning. So now, the target network has the same weights and bias of the DQN (both DQN and the target network are synced, in terms of weights and bias).
             target_dqn.load_state_dict(policy_dqn.state_dict())
+
+            # Policy network optimizer. "Adam" optimizer can be swapped to other types of optimizer. We provide the DQN paramters to the optimizer so that the optimizer knows how to optimize the policy.
+            self.optimizer = torch.optim.Adam(policy_dqn.parameters(), lr = self.learning_rate_a)
+
+            # List to keep track of epsilon decay
+            epsilon_history = []
 
             # Track number of steps taken. Used for syncing policy => target network
             step_count = 0
 
-            # Policy network optimizer. "Adam" optimizer can be swapped to other types of optimizer. We provide the DQN paramters to the optimizer so that the optimizer knows how to optimize the policy.
-            self.optimizer = torch.optim.Adam(policy_dqn.parameters(), lr = self.learning_rate_a)
+            # Use the variable best_reward to track the best reward. So initialize the variable best_reward with a very small number first (EG:-9999999)
+            best_reward = -9999999
+
+        else:  # if we are NOT training the DQN
+            
+            # Load the learned policy (the trained DQN model) by loading the parameters (weights and biases) of the trained model from the MODEL_FILE
+            policy_dqn.load_state_dict(torch.load(self.MODEL_FILE))
+
+            # Switch the model to the evaluation mode
+            policy_dqn.eval()
 
         # This for loop is used to train the DQN for infinite iterations/episodes, and manually stops the training when we are satisfied with the results.
         for episode in itertools.count(): # itertools() is a python module that generates number infinitely, 1 number is generated a time (starting from 0, then incremented to 1, 2, 3,... at each time, and vice versa)
@@ -94,7 +159,9 @@ class Agent:
             terminated = False # Initialized the terminated variable as False (so the coming while loop will be executed to perform the DQN training)
             episode_reward = 0.0 # Create a variable to store the accumulate reward the agent received throughout the DQN training. So we can count the amount of reward the agent received in current epsisode (from the 1st iteration of current episode [the agent takes actions to move in the environment] until the last iteration of the current episode [the agent is dead in the environment, such that terminated = True])
 
-            while not terminated: # This is an infinite loop for the agent(flappy bird) to interact with the environment through action, observation, and reward.
+            # Perform actions until episode terminates or reaches the amount of reward you specified
+            # (on some envs, it is possible for the agent to train to a point where it NEVER terminates, so stop_on_reward is necessary)
+            while (not terminated and episode_reward < self.stop_on_reward): # This is an infinite loop for the agent(flappy bird) to interact with the environment through action, observation, and reward.
                 # Next action:
                 # (feed the observation to your agent here)
                 if is_training and random.random() < epsilon: # If we are training the DQN and the random number generated by "random.random()" is less than epsilon, we will do a random action (means the agent will take a random action). When we just start the DQN training and epsilon=1, most likely we will enter this section (because the number generated by random() is between 0 to 1)
@@ -146,14 +213,26 @@ class Agent:
                 # At here, the agent already took the action to move into the next state from the current state. So, before entering the next iteration, we update the next_state (variable in this script) to the state (variable in this script) to replace the old information in state (variable in this script).
                 state = new_state
 
+            # Keep track of the rewards collected per episode
             rewards_per_episode.append(episode_reward)
-            
-            # Obviously, at the beginning when the DQN is untrained, DQN is going to spit out garbage. But as we train the DQN, the policy gets better (means the DQN provide better outputs), and we'll get better actions from the policy (DQN).
-            # So, we want to slowly decrease the epsilon after 1 episode, by performing epsilon multiplying with epsilon_decay (actually there are different methods to decrease the epsilon). We take the maximum value between the decreased epsilon and the minimum epsilon to make sure the epsilon does not go under the minimum.
-            epsilon = max(epsilon * self.epsilon_decay, self.epsilon_min)
-            # keep track of the epsilon history at each episode
-            epsilon_history.append(epsilon)
 
+            # Save model when new best reward is obtained
+            if is_training: # if we are training the DQN
+                if episode_reward > best_reward: # if the epsiode reward is greater than the best reward
+                    log_message = f"{datetime.now().strftime(DATE_FORMAT)}: New best reward {episode_reward:0.1f} ({(episode_reward-best_reward)/best_reward*100:+.1f}%) at episode {episode}, saving model.."
+                    print(log_message)
+                    with open(self.LOG_FILE, 'a') as file:
+                        file.write(log_message + '\n')
+
+                    torch.save(policy_dqn.state_dict(), self.MODEL_FILE) # save the model (means save the parameters [EG: weights and biases of the neural network] as file at the location of MODEL_FILE)
+                    best_reward = episode_reward # Replace the previous best reward with this current best reward
+            
+                # Update graph every x seconds
+                current_time = datetime.now()
+                if current_time - last_graph_update_time > timedelta(seconds=10):
+                    self.save_graph(rewards_per_episode, epsilon_history)
+                    last_graph_update_time = current_time
+            
             # Check if enough experience has been collected
             if len(memory)>self.mini_batch_size: # if yes,
                 
@@ -163,12 +242,46 @@ class Agent:
                 # Create a new function called optimize. We provide the optimize function with the sampled experience as input, then the sampled experience will received by both the DQN and target network for syncing.
                 self.optimize(mini_batch,policy_dqn, target_dqn)
 
+                ## Decay epsilon
+                # Obviously, at the beginning when the DQN is untrained, DQN is going to spit out garbage. But as we train the DQN, the policy gets better (means the DQN provide better outputs), and we'll get better actions from the policy (DQN).
+                # So, we want to slowly decrease the epsilon after 1 episode, by performing epsilon multiplying with epsilon_decay (actually there are different methods to decrease the epsilon). We take the maximum value between the decreased epsilon and the minimum epsilon to make sure the epsilon does not go under the minimum.
+                epsilon = max(epsilon * self.epsilon_decay, self.epsilon_min)
+                # keep track of the epsilon history at each episode
+                epsilon_history.append(epsilon)
+
                 # Copy the weights and biases of DQN to the target network after a certain number of steps (when the step_count is greater than the network_sync_rate)
                 if step_count > self.network_sync_rate: # when the certain number of steps is reached
                     target_dqn.load_state_dict(policy_dqn.state_dict()) # load (copy) all the weights and biases of the DQN to the target network, similar to transfer learning. So now, the target network has the same weights and biases of the DQN (both DQN and the target network are synced, in terms of weights and biases).
                     step_count = 0 # reset the step_count back to 0. This means both the DQN and the target network will only be synced (in terms of weights and biases) at every certain steps.
 
-    # Define the optimize function. This optimize function takes the sampled experience to feed the DQN (DQN takes the sampled experience as features to perform training) and feed the target network (so target network can generate target values to improve DQN outputs)
+    # Define the save_graph() that generates the graphs of rewards_per_episode and epsilon_history respectively, before saving them to the location of GRAPH_FILE.
+    def save_graph(self, rewards_per_episode, epsilon_history):
+        # Save plots
+        fig = plt.figure(1)
+
+        # Plot average rewards (Y-axis) vs episodes (X-axis)
+        mean_rewards = np.zeros(len(rewards_per_episode))
+        for x in range(len(mean_rewards)):
+            mean_rewards[x] = np.mean(rewards_per_episode[max(0, x-99):(x+1)])
+        plt.subplot(121) # plot on a 1 row x 2 col grid, at cell 1
+        plt.xlabel('Episodes')
+        plt.ylabel('Mean Rewards')
+        plt.plot(mean_rewards)
+
+        # Plot epsilon decay (Y-axis) vs episodes (X-axis)
+        plt.subplot(122) # plot on a 1 row x 2 col grid, at cell 2
+        plt.xlabel('Episodes')
+        plt.ylabel('Epsilon Decay')
+        plt.plot(epsilon_history)
+
+        plt.subplots_adjust(wspace=1.0, hspace=1.0)
+
+        # Save plots
+        fig.savefig(self.GRAPH_FILE)
+        plt.close(fig)
+
+
+    # Define the optimize function that optimizes the policy network (DQN). This optimize function takes the sampled experience to feed the DQN (DQN takes the sampled experience as features to perform training) and feed the target network (so target network can generate target values to improve DQN outputs)
     def optimize(self, mini_batch, policy_dqn, target_dqn):
         
         ## Important notes: The output of the deep Q-network (DQN) is the predicted Q values for all actions (the predicted reward of taking the corresponding actions) and taget network are the target Q values for all actions (the ground truth reward of taking the corresponding actions) in the action space of the environment. A target network is a separate neural network used in deep reinforcement learning algorithms to stabilize the learning process. It is a copy of the main Q-network, but its parameters are updated less frequently, providing more stable target values for the Q-learning update rule.
@@ -237,11 +350,45 @@ class Agent:
 
 # Define the main function (analogous to the body of a script). The functions defined outside this main function play the supporting role when they are called inside this main function.            
 if __name__ == '__main__' :
-    agent = Agent("cartpole1") # use the hyperparameters under the hyperparameter set name of "cartpole1" in hyperparameters.yml.
-    agent.run(is_training = True, render = True) # perform DQN training, show the environment on a figure window.
+    
+    # Parse command line inputs
+    parser = argparse.ArgumentParser(description = 'Train or test model.')
+    parser.add_argument('hyperparameters', help='') # if want to run in the DQN training mode, pass in the hyperparamter set name available in hyperparameters.yml.
+    parser.add_argument('--train', help='Training mode', action = 'store_true') # if want to run in the DQN training mode, pass in '--train'. Else, we will run the DQN testing mode.
+    args = parser.parse_args() # Need to self learn how to use ArgumentParser() & parse_args() so that we can directly run the file by providing the arguments we set at Command Prompt terminal
 
+    dql = Agent(hyperparameter_set=args.hyperparameters) # pass the specified hyperparamter set name to the __init__() of Agent class function
+
+    if args.train:
+        dql.run(is_training = True)  # Execute the run() of Agent class function, by performing DQN training, DON't show the environment on a figure window.
+
+    else:
+        dql.run(is_training = False, render = True)  # Execute the run() of Agent class function, by performing DQN testing, show the environment on a figure window.
+
+
+#**Important Instructions to run the DQN training or testing with a specified environment:**
+#1) To perform DQN training:
+#    1) Method 1 (Using Command Prompt terminal) [Note: you can create multiple Command Prompt terminal to perform DQN training or testing with different hyperparameters simultaneously]:
+#        1) Open a new Command Prompt terminal
+#        2) Enter the command "python D:/AI_Master_New/Under_Local_Git_Covered/Deep_Learning_Tutorials_codebasics/DeepQLearning_DQN_PyTorch_Beginners_Tutorial_JohnnyCode/agent.py cartpole1 --train" # the syntax is "python MainFile_AbsolutePath HyperparamterSetName_AvailableInHyperparamtersYAMLFile --train"
+#    2) Method 2 (using JSON file):
+#        1) Open a new JSON file at "Run and Debug" section (skip this step you have created the JSON file to run the DQN training)
+#        2) Customize the JSON file according to your needs (EG: the name of this configuration JSON file, the absolute path of the file you want to run, pass in the arguments as requested by "parser.add_argument" in the program (the file you want to run))
+#        3) Select the name of the JSON file you want and run it at "Run and Debug" section 
+
+#2) To perform DQN testing:
+#    1) Method 1 (Using Command Prompt terminal) [Note: you can create multiple Command Prompt terminal to perform DQN training or testing with different hyperparameters simultaneously]:
+#        1) Open a new Command Prompt terminal
+#        2) Enter the command "python D:/AI_Master_New/Under_Local_Git_Covered/Deep_Learning_Tutorials_codebasics/DeepQLearning_DQN_PyTorch_Beginners_Tutorial_JohnnyCode/agent.py cartpole1" # the syntax is "python MainFile_AbsolutePath HyperparamterSetName_AvailableInHyperparamtersYAMLFile"
+#    2) Method 2 (using JSON file):
+#        1) Open a new JSON file at "Run and Debug" section (skip this step you have created the JSON file to run the DQN training)
+#        2) Customize the JSON file according to your needs (EG: the name of this configuration JSON file, the absolute path of the file you want to run, pass in the arguments as requested by "parser.add_argument" in the program (the file you want to run))
+#        3) Select the name of the JSON file you want and run it at "Run and Debug" section 
+#    
 # **The information obtained at the first iteration of the loop, through debug console (refers to D:\AI_Master_New\Under_Local_Git_Covered\Deep_Learning_Tutorials_codebasics\DeepQLearning(DQN)_PyTorch_Beginners_Tutorial_JohnnyCode\Implement_Deep_Q_Learning_with_PyTorch_and_Train_Flappy_Bird_DQN_PyTorch_Beginners_Tutorial1\Explain (don't run)\hidden\photo1.png):**
 # 1) The action selected is 0, means the flappy bird do nothing.
 # 2) After the action is executed, the observation of 12 different state information is stored in obs vector as image above. The elements' value of the obs vector are normalized (transformed into) to the range between -1 and 1.
 # 3) The env.observation_space shows that each element value is normalized to the range between -1 and 1, while the size of the observation space is 12 (that's why the obs vector consists of 12 elements). Observation space refers to all the state information gathered in an iteration (when the agent arrives at next state after executing the action in existing iteration/state)
 # 4) The reward the agent gained when it arrives at the next state after executing the action in existing iteration/state is 0.1. According to the Flappy Bird environment GitHub repository, the reward of 0.1 means the agent (flappy bird) stays alive when it arrives at the next state.
+
+# Watched until 5:32

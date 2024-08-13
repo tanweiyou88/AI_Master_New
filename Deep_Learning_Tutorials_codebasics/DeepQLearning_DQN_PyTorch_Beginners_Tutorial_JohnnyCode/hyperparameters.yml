@@ -6,12 +6,30 @@
 # Create a set of hyperparameters for cartpole, called cartpole 1. The variable name indented under the ":" must be the same as the ones in main file (here is agent.py), so that we can change the variable parameters in the main file by executing this YAML file (in other words, after executing this YAML file, the variable parameters in this YAML file will be updated to the variable of the same name in the main file. This is called making the environment ID dynamic).
 
 cartpole1: # the hyperparameter set name. The indented lines are the hyperparameters under this hyperparameter set name.
-  env_id: CartPole-v1 # pass the environment model
-  replay_memory_size: 100000 # pass the size of the memory (deque) for ReplayMemory class function in experience_replay.py. If the memory size is too small, a lot of experiences will be pushed out (removed) and you will not have enough experiences to train the DQN.
-  mini_batch_size: 32 # Since we are going to sample the experience (features for DQN training) from the memory in experience_replay.py, we set the batch size here. The batch size is usually a small number (like 32, 64,...)
-  epsilon_init: 1 # Starting here are the hyperparamters for Epsilon Greedy algorithm: we start at epsilon_init = 1, means there is a 100% chance the agent will take a random action and 0% chance the agent will take the action dictated by the trained policy or the policy that is being trained (represented by the DQN).
-  epsilon_decay: 0.9995 # then slowly decrease epsilon 
-  epsilon_min: 0.05 # all the way down to 0.05, means there is a 5% chance the agent will take a random action and 95% chance the agent will take the action dictated by the trained policy or the policy that is being trained (represented by the DQN).
-  network_sync_rate: 10 # sync the DQN and target network at the step size of 10
-  learning_rate_a: 0.0001 # learning rate
-  discount_factor_g: 0.99 # discount factor
+  env_id: CartPole-v1         # pass the environment model
+  replay_memory_size: 100000  # pass the size of the memory (deque) for ReplayMemory class function in experience_replay.py. If the memory size is too small, a lot of experiences will be pushed out (removed) and you will not have enough experiences to train the DQN.
+  mini_batch_size: 32         # Since we are going to sample the experience (features for DQN training) from the memory in experience_replay.py, we set the batch size here. The batch size is usually a small number (like 32, 64,...)
+  epsilon_init: 1             # Starting here are the hyperparamters for Epsilon Greedy algorithm: we start at epsilon_init = 1, means there is a 100% chance the agent will take a random action and 0% chance the agent will take the action dictated by the trained policy or the policy that is being trained (represented by the DQN).
+  epsilon_decay: 0.9995       # then slowly decrease epsilon 
+  epsilon_min: 0.05           # all the way down to 0.05, means there is a 5% chance the agent will take a random action and 95% chance the agent will take the action dictated by the trained policy or the policy that is being trained (represented by the DQN).
+  network_sync_rate: 10       # sync the DQN and target network at the step size of 10
+  learning_rate_a: 0.001      # learning rate
+  discount_factor_g: 0.99     # discount factor
+  stop_on_reward: 100000      # stop training after reaching this number of rewards
+  fc1_nodes: 10               # the number of neurons (nodes) in the hidden layer called fc1 of the neural network
+
+
+flappybird1:
+  env_id: FlappyBird-v0
+  replay_memory_size: 100000
+  mini_batch_size: 32
+  epsilon_init: 1
+  epsilon_decay: 0.99_99_5
+  epsilon_min: 0.05
+  network_sync_rate: 10
+  learning_rate_a: 0.0001
+  discount_factor_g: 0.99
+  stop_on_reward: 100000
+  fc1_nodes: 512
+  env_make_params:
+    use_lidar: False
