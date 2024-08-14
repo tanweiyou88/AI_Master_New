@@ -1,0 +1,29 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "name": "Train cartpole1", // the name of the configuration JSON file to deal with cartpole environment
+            "type": "debugpy",
+            "request": "launch",
+            "program": "D:/AI_Master_New/Under_Local_Git_Covered/Deep_Learning_Tutorials_codebasics/DeepQLearning_DQN_PyTorch_Beginners_Tutorial_JohnnyCode/agent.py", // the absolute path of the file you want to run
+            "console": "integratedTerminal",
+            "args": ["cartpole1", "--train"] // pass in the arguments as requested by "parser.add_argument" in the program (the file you want to run). In the agent.py, the 1st argument required is the hyperparameter set name available in the hyperparameters.yml. The 2nd argument is either "--train" to run in DQN training mode OR provide nothing to run in DQN testing mode.
+            
+        },
+
+        {
+            "name": "Train flappybird1", // the name of this configuration JSON file to deal with Flappy Bird environment
+            "type": "debugpy",
+            "request": "launch",
+            "program": "D:/AI_Master_New/Under_Local_Git_Covered/Deep_Learning_Tutorials_codebasics/DeepQLearning_DQN_PyTorch_Beginners_Tutorial_JohnnyCode/agent.py", // the absolute path of the file you want to run
+            "console": "integratedTerminal",
+            "args": ["flappybird1", "--train"] // pass in the arguments as requested by "parser.add_argument" in the program (the file you want to run). In the agent.py, the 1st argument required is the hyperparameter set name available in the hyperparameters.yml. The 2nd argument is either "--train" to run in DQN training mode OR provide nothing to run in DQN testing mode.
+            
+        }
+    ]
+}
