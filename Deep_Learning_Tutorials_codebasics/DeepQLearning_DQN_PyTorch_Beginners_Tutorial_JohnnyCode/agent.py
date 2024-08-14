@@ -367,24 +367,44 @@ if __name__ == '__main__' :
 
 
 #**Important Instructions to run the DQN training or testing with a specified environment:**
-#1) To perform DQN training:
-#    1) Method 1 (Using Command Prompt terminal) [Note: you can create multiple Command Prompt terminal to perform DQN training or testing with different hyperparameters simultaneously]:
-#        1) Open a new Command Prompt terminal
-#        2) Enter the command "python D:/AI_Master_New/Under_Local_Git_Covered/Deep_Learning_Tutorials_codebasics/DeepQLearning_DQN_PyTorch_Beginners_Tutorial_JohnnyCode/agent.py cartpole1 --train" # the syntax is "python MainFile_AbsolutePath HyperparamterSetName_AvailableInHyperparamtersYAMLFile --train"
-#    2) Method 2 (using JSON file):
-#        1) Open a new JSON file at "Run and Debug" section (skip this step you have created the JSON file to run the DQN training)
-#        2) Customize the JSON file according to your needs (EG: the name of this configuration JSON file, the absolute path of the file you want to run, pass in the arguments as requested by "parser.add_argument" in the program (the file you want to run))
-#        3) Select the name of the JSON file you want and run it at "Run and Debug" section 
-
-#2) To perform DQN testing:
-#    1) Method 1 (Using Command Prompt terminal) [Note: you can create multiple Command Prompt terminal to perform DQN training or testing with different hyperparameters simultaneously]:
-#        1) Open a new Command Prompt terminal
-#        2) Enter the command "python D:/AI_Master_New/Under_Local_Git_Covered/Deep_Learning_Tutorials_codebasics/DeepQLearning_DQN_PyTorch_Beginners_Tutorial_JohnnyCode/agent.py cartpole1" # the syntax is "python MainFile_AbsolutePath HyperparamterSetName_AvailableInHyperparamtersYAMLFile"
-#    2) Method 2 (using JSON file):
-#        1) Open a new JSON file at "Run and Debug" section (skip this step you have created the JSON file to run the DQN training)
-#        2) Customize the JSON file according to your needs (EG: the name of this configuration JSON file, the absolute path of the file you want to run, pass in the arguments as requested by "parser.add_argument" in the program (the file you want to run))
-#        3) Select the name of the JSON file you want and run it at "Run and Debug" section 
+# 1) For cartpole environment:
+#     1) To perform DQN training:
+#        1) Method 1 (Using Command Prompt terminal, not run in debug mode) [Note: you can create multiple Command Prompt terminal to perform DQN training or testing with different hyperparameters simultaneously]:
+#            1) Open a new Command Prompt terminal
+#            2) Enter the command "python D:/AI_Master_New/Under_Local_Git_Covered/Deep_Learning_Tutorials_codebasics/DeepQLearning_DQN_PyTorch_Beginners_Tutorial_JohnnyCode/agent.py cartpole1 --train" # the syntax is "python MainFile_AbsolutePath HyperparamterSetName_AvailableInHyperparamtersYAMLFile --train"
+#        2) Method 2 (using JSON file, run in debug mode):
+#            1) Open a new JSON file at "Run and Debug" section (skip this step you have created the JSON file to run the DQN training)
+#            2) Customize the JSON file according to your needs (EG: the name of this configuration JSON file, the absolute path of the file you want to run, pass in the arguments as requested by "parser.add_argument" in the program (the file you want to run))
+#            3) Select the name of the JSON file you want and run it at "Run and Debug" section 
 #    
+#    2) To perform DQN testing:
+#        1) Method 1 (Using Command Prompt terminal, not run in debug mode) [Note: you can create multiple Command Prompt terminal to perform DQN training or testing with different hyperparameters simultaneously]:
+#            1) Open a new Command Prompt terminal
+#            2) Enter the command "python D:/AI_Master_New/Under_Local_Git_Covered/Deep_Learning_Tutorials_codebasics/DeepQLearning_DQN_PyTorch_Beginners_Tutorial_JohnnyCode/agent.py cartpole1" # the syntax is "python MainFile_AbsolutePath HyperparamterSetName_AvailableInHyperparamtersYAMLFile"
+#        2) Method 2 (using JSON file, run in debug mode):
+#            1) Open a new JSON file at "Run and Debug" section (skip this step you have created the JSON file to run the DQN training)
+#            2) Customize the JSON file according to your needs (EG: the name of this configuration JSON file, the absolute path of the file you want to run, pass in the arguments as requested by "parser.add_argument" in the program (the file you want to run))
+#            3) Select the name of the JSON file you want and run it at "Run and Debug" section 
+#
+#  2) For Flappy Bird environment:
+#     1) To perform DQN training:
+#        1) Method 1 (Using Command Prompt terminal, not run in debug mode) [Note: you can create multiple Command Prompt terminal to perform DQN training or testing with different hyperparameters simultaneously]:
+#            1) Open a new Command Prompt terminal
+#            2) Enter the command "python D:/AI_Master_New/Under_Local_Git_Covered/Deep_Learning_Tutorials_codebasics/DeepQLearning_DQN_PyTorch_Beginners_Tutorial_JohnnyCode/agent.py flappybird1 --train" # the syntax is "python MainFile_AbsolutePath HyperparamterSetName_AvailableInHyperparamtersYAMLFile --train"
+#        2) Method 2 (using JSON file, run in debug mode):
+#            1) Open a new JSON file at "Run and Debug" section (skip this step you have created the JSON file to run the DQN training)
+#            2) Customize the JSON file according to your needs (EG: the name of this configuration JSON file, the absolute path of the file you want to run, pass in the arguments as requested by "parser.add_argument" in the program (the file you want to run))
+#            3) Select the name of the JSON file you want and run it at "Run and Debug" section 
+#    
+#    2) To perform DQN testing:
+#        1) Method 1 (Using Command Prompt terminal, not run in debug mode) [Note: you can create multiple Command Prompt terminal to perform DQN training or testing with different hyperparameters simultaneously]:
+#            1) Open a new Command Prompt terminal
+#            2) Enter the command "python D:/AI_Master_New/Under_Local_Git_Covered/Deep_Learning_Tutorials_codebasics/DeepQLearning_DQN_PyTorch_Beginners_Tutorial_JohnnyCode/agent.py flappybird1" # the syntax is "python MainFile_AbsolutePath HyperparamterSetName_AvailableInHyperparamtersYAMLFile"
+#        2) Method 2 (using JSON file, run in debug mode):
+#            1) Open a new JSON file at "Run and Debug" section (skip this step you have created the JSON file to run the DQN training)
+#            2) Customize the JSON file according to your needs (EG: the name of this configuration JSON file, the absolute path of the file you want to run, pass in the arguments as requested by "parser.add_argument" in the program (the file you want to run))
+#            3) Select the name of the JSON file you want and run it at "Run and Debug" section 
+#                
 # **The information obtained at the first iteration of the loop, through debug console (refers to D:\AI_Master_New\Under_Local_Git_Covered\Deep_Learning_Tutorials_codebasics\DeepQLearning(DQN)_PyTorch_Beginners_Tutorial_JohnnyCode\Implement_Deep_Q_Learning_with_PyTorch_and_Train_Flappy_Bird_DQN_PyTorch_Beginners_Tutorial1\Explain (don't run)\hidden\photo1.png):**
 # 1) The action selected is 0, means the flappy bird do nothing.
 # 2) After the action is executed, the observation of 12 different state information is stored in obs vector as image above. The elements' value of the obs vector are normalized (transformed into) to the range between -1 and 1.

@@ -30,6 +30,6 @@ flappybird1:
   learning_rate_a: 0.0001
   discount_factor_g: 0.99
   stop_on_reward: 100000
-  fc1_nodes: 512
+  fc1_nodes: 512            # the number of neurons (nodes) in the hidden layer called fc1 of the neural network. The fc1_nodes value here is higher because the Flappy Bird environment is a more complex environment.
   env_make_params:
-    use_lidar: False
+    use_lidar: False        # The parameter "use_lidar" is the custom parameter that allow the user to turn on/True (use the information of) the LIDAR sensor or off/False (don't use the information of LIDAR).
