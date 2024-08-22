@@ -15,3 +15,17 @@
 
 # Ignore the image dataset used in the tutorial of Vision_Transformer_Quick_Guide_DeepFindr
 /Deep_Learning_Tutorials_codebasics/Vision_Transformer_Quick_Guide_DeepFindr/oxford-iiit-pet
+
+# Ignore the outputs of the tutorial of DeepQLearning_DQN_PyTorch_Beginners_Tutorial_JohnnyCode
+/Deep_Learning_Tutorials_codebasics/DeepQLearning_DQN_PyTorch_Beginners_Tutorial_JohnnyCode/runs
+
+# Ignore the outputs of the tutorial of GAN_DigitalSreeni
+/Deep_Learning_Tutorials_codebasics/Generative_Adversarial_Network_GAN/GAN_DigitalSreeni/images
+
+# Ignore the dataset used & the saved trained generator model in the tutorial of Pix2PixGAN_Satellite_Images_Tutorial7
+/Deep_Learning_Tutorials_codebasics/Generative_Adversarial_Network_GAN/Pix2PixGAN_Satellite_Images_Tutorial7/data
+/Deep_Learning_Tutorials_codebasics/Generative_Adversarial_Network_GAN/Pix2PixGAN_Satellite_Images_Tutorial7/model_010960.h5
+
+# Ignore the dataset used & the saved trained generator model in the tutorial of Pix2PixGAN_Generate_Realistic_Images_Tutorial8
+/Deep_Learning_Tutorials_codebasics/Generative_Adversarial_Network_GAN/Pix2PixGAN_Generate_Realistic_Images_Tutorial8/data
+/Deep_Learning_Tutorials_codebasics/Generative_Adversarial_Network_GAN/Pix2PixGAN_Generate_Realistic_Images_Tutorial8/model_010960.h5
