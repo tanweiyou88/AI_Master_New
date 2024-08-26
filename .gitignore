@@ -29,3 +29,15 @@
 # Ignore the dataset used & the saved trained generator model in the tutorial of Pix2PixGAN_Generate_Realistic_Images_Tutorial8
 /Deep_Learning_Tutorials_codebasics/Generative_Adversarial_Network_GAN/Pix2PixGAN_Generate_Realistic_Images_Tutorial8/data
 /Deep_Learning_Tutorials_codebasics/Generative_Adversarial_Network_GAN/Pix2PixGAN_Generate_Realistic_Images_Tutorial8/model_010960.h5
+
+# Ignore the dataset used & the saved trained generator models in the tutorial of cycleGAN_Unpaired_ImageTranslation_Keras_Tutorial9
+/Deep_Learning_Tutorials_codebasics/Generative_Adversarial_Network_GAN/cycleGAN_Unpaired_ImageTranslation_Keras_Tutorial9/data
+
+# Ignore the dataset used & the saved trained generator models in the tutorial of SRGAN_Tutorial12
+/Deep_Learning_Tutorials_codebasics/Generative_Adversarial_Network_GAN/SRGAN_Tutorial12/data
+/Deep_Learning_Tutorials_codebasics/Generative_Adversarial_Network_GAN/SRGAN_Tutorial12/hr_images
+/Deep_Learning_Tutorials_codebasics/Generative_Adversarial_Network_GAN/SRGAN_Tutorial12/lr_images
+/Deep_Learning_Tutorials_codebasics/Generative_Adversarial_Network_GAN/SRGAN_Tutorial12/mirflickr25k_OriginalDataset
+
+
+
