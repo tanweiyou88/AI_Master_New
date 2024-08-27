@@ -38,6 +38,8 @@
 /Deep_Learning_Tutorials_codebasics/Generative_Adversarial_Network_GAN/SRGAN_Tutorial12/hr_images
 /Deep_Learning_Tutorials_codebasics/Generative_Adversarial_Network_GAN/SRGAN_Tutorial12/lr_images
 /Deep_Learning_Tutorials_codebasics/Generative_Adversarial_Network_GAN/SRGAN_Tutorial12/mirflickr25k_OriginalDataset
+/Deep_Learning_Tutorials_codebasics/Generative_Adversarial_Network_GAN/SRGAN_Tutorial12/gen_e_10.h5
 
-
+# Ignore the dataset used & the saved trained generator models in the tutorial of Explore_GAN_LatentSpace_Tutorial13
+/Deep_Learning_Tutorials_codebasics/Generative_Adversarial_Network_GAN/Explore_GAN_LatentSpace_Tutorial13/data
 
