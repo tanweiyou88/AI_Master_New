@@ -42,4 +42,5 @@
 
 # Ignore the dataset used & the saved trained generator models in the tutorial of Explore_GAN_LatentSpace_Tutorial13
 /Deep_Learning_Tutorials_codebasics/Generative_Adversarial_Network_GAN/Explore_GAN_LatentSpace_Tutorial13/data
+/Deep_Learning_Tutorials_codebasics/Generative_Adversarial_Network_GAN/Explore_GAN_LatentSpace_Tutorial13/saved_data_during_training
 
