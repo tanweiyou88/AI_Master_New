@@ -47,4 +47,5 @@
 # Ignore the dataset used & the saved trained generator models in the tutorial of Semisupervised_GAN_Tutorial15
 /Deep_Learning_Tutorials_codebasics/Generative_Adversarial_Network_GAN/Semisupervised_GAN_Tutorial15/saved_trainingdata
 
-
+# Ignore the dataset folder
+/Dataset
