@@ -1,4 +1,12 @@
+"""
+References:
+1. https://towardsai.net/p/l/how-to-set-up-and-run-cuda-operations-in-pytorch
+2. https://stackoverflow.com/questions/48152674/how-do-i-check-if-pytorch-is-using-the-gpu
+"""
+
 import torch
+
+print()
 
 # To print Cuda version
 print('The CUDA version for this PyTorch:', torch.version.cuda)
