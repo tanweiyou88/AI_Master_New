@@ -46,7 +46,7 @@ class enhance_net_nopool(nn.Module): # Define a class for the Zero-DCE model
 		# p3 = self.maxpool(x3)
 		x4 = self.relu(self.e_conv4(x3))
 
-		x5 = self.relu(self.e_conv5(torch.cat([x3,x4],1))) # Concatenate the feature maps stored in x3 and x4 along their 2nd dimension (channels dimension) [performs concatenation-based skip connection] sample-wise (The feature maps stored in x3 and x4 that corresponds to sample 1 is concatenated, and vice versa), so that they are now stacked together vertically as a single 4D tensor. The 4D tensor that stores the concatenated feature maps is passed to the fifth convolutional layer. The output of the fifth convolutional layer will get passed to the ReLU layer. The output of the ReLU will then get stored in x5.
+		x5 = self.relu(self.e_conv5(torch.cat([x3,x4],1))) # Concatenate the feature maps stored in x3 and x4 along their 2nd dimension (channels dimension) sample-wise (The feature maps stored in x3 and x4 that corresponds to sample 1 is concatenated, and vice versa), so that they are now stacked together vertically as a single 4D tensor [performs concatenation-based skip connection]. The 4D tensor that stores the concatenated feature maps is passed to the fifth convolutional layer. The output of the fifth convolutional layer will get passed to the ReLU layer. The output of the ReLU will then get stored in x5.
 		# x5 = self.upsample(x5)
 		x6 = self.relu(self.e_conv6(torch.cat([x2,x5],1)))
 
