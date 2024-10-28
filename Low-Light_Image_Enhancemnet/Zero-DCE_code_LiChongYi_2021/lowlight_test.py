@@ -67,5 +67,5 @@ if __name__ == '__main__':
 
 # Notes: 
 # 1) Each BMP file has large file size because it contains uncompressed data, making it ideal for high-quality digital image.
-# 2) NVIDIA GeForce MX150 failed to process(enhance) the BMP files because each of the bmp files has large file size, such that the VRAM cannot handle the data of each BMP file (especially the one with large file size)
+# 2) NVIDIA GeForce MX150 failed to process(enhance) the BMP files because each of the BMP files has large file size, such that the VRAM cannot handle the data of each BMP file (especially the one with large file size)
 
