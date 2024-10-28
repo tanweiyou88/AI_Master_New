@@ -54,7 +54,8 @@ class lowlight_loader(data.Dataset):
 		
 		data_lowlight = Image.open(data_lowlight_path) # Open the image located at the given image's absolute path, using PIL. That image has the shape of [height,width,channels].
 		
-		data_lowlight = data_lowlight.resize((self.size,self.size), Image.ANTIALIAS) # Resize the opened image to (self.size,self.size) with Image.ANTIALIAS filter for anti-aliasing, using PIL. Then, replace the opened image with its resized image at the given image's absolute path.
+		#data_lowlight = data_lowlight.resize((self.size,self.size), Image.ANTIALIAS) # Resize the opened image to (self.size,self.size) with Image.ANTIALIAS filter for anti-aliasing, using PIL. Then, replace the opened image with its resized image at the given image's absolute path.
+		data_lowlight = data_lowlight.resize((self.size,self.size), Image.LANCZOS) # Resize the opened image to (self.size,self.size) with Image.ANTIALIAS filter for anti-aliasing, using PIL. Then, replace the opened image with its resized image at the given image's absolute path. **ANTIALIAS was removed in Pillow 10.0.0 (after being deprecated through many previous versions). Now you need to use PIL.Image.LANCZOS or PIL.Image.Resampling.LANCZOS.(This is the exact same algorithm that ANTIALIAS referred to, you just can no longer access it through the name ANTIALIAS.)**
 
 		data_lowlight = (np.asarray(data_lowlight)/255.0) # Convert the resized image from Image object into Numpy array, then replace the resize image of Image object version with the Numpy array version one. Then, only normalize the pixel values (features) of the resized image to the range [0,1].
 		data_lowlight = torch.from_numpy(data_lowlight).float() # Convert the pixel values (features) of the resized image from Numpy array into tensor, with the data type of float32.

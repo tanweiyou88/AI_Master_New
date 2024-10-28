@@ -64,5 +64,8 @@ if __name__ == '__main__':
 				print(image) # Show the absolute path of that image
 				lowlight(image) # Perform image processing and image enhancement using Zero-DCE on that image 
 
-		
+
+# Notes: 
+# 1) Each BMP file has large file size because it contains uncompressed data, making it ideal for high-quality digital image.
+# 2) NVIDIA GeForce MX150 failed to process(enhance) the BMP files because each of the bmp files has large file size, such that the VRAM cannot handle the data of each BMP file (especially the one with large file size)
 
