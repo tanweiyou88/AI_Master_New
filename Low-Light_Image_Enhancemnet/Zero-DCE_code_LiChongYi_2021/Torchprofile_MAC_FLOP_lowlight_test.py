@@ -48,7 +48,7 @@ def lowlight(image_path):
 
 	 # for Torchproflie to calculate MACs and FLOPs
 	macs = profile_macs(DCE_net, data_lowlight)
-	print(f'For batch size of 1: FLOPs = {2*macs/1e9} GFLOPS; MACs = {macs/1e9} GMACs')
+	print(f'For batch size of 1: FLOPs = {2*macs/1e9} GFLOPs; MACs = {macs/1e9} GMACs')
 
 
 if __name__ == '__main__':
