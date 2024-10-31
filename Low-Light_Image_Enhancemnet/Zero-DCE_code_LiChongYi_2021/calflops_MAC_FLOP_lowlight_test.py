@@ -1,3 +1,6 @@
+# Repository of calflops: https://github.com/MrYxJ/calculate-flops.pytorch/blob/main/README.md
+# calflops is designed to compute the theoretical amount of FLOPs(floating-point operations)、MACs(multiply-add operations) and Parameters in all various neural networks, such as Linear、 CNN、 RNN、 GCN、Transformer(Bert、LlaMA etc Large Language Model)，even including any custom models via torch.nn.function.* as long as based on the Pytorch implementation.
+
 import torch
 import torch.nn as nn
 import torchvision

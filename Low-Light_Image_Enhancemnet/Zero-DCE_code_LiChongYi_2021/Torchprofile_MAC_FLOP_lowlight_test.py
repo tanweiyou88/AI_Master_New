@@ -1,3 +1,6 @@
+# Repository of Torchprofile: https://github.com/zhijian-liu/torchprofile/blob/master/README.md
+# Torchprofile is designed to count the theoretical amount of MACs / FLOPs of PyTorch models. 
+
 import torch
 import torch.nn as nn
 import torchvision
