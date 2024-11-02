@@ -39,8 +39,8 @@ def calculate_psnr(dir1, dir2):
 # 2. calculate_psnr() calculate the psnr of each groundtruth-enhanced image pair, then append/accumulate/sum the psnr of all image pairs in psnr_values, then calculate the mean psnr using the appended psnr and total number of image pairs [(Mean psnr) = (Total psnr)/(Total number of image pairs)]
 
 # 示例使用
-ground_truth_folder_path = "D:/AI_Master_New/Low-Light_Image_Enhancemnet/Zero-DCE_code_LiChongYi_2021/data/test_data/DICM"
-output_folder_path = "D:/AI_Master_New/Low-Light_Image_Enhancemnet/Zero-DCE_code_LiChongYi_2021/data/result/DICM"
+ground_truth_folder_path = "D:/AI_Master_New/Low-Light_Image_Enhancement/Zero-DCE_code_LiChongYi_2021/data/test_data/DICM"
+output_folder_path = "D:/AI_Master_New/Low-Light_Image_Enhancement/Zero-DCE_code_LiChongYi_2021/data/result/DICM"
 average_psnr_value = calculate_psnr(ground_truth_folder_path, output_folder_path)
 print(f'Average PSNR: {average_psnr_value}')
 

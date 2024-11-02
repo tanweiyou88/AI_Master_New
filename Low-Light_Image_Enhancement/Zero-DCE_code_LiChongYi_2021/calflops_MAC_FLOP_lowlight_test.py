@@ -34,7 +34,7 @@ def lowlight(image_path):
 	data_lowlight = data_lowlight.cuda().unsqueeze(0) # Add a new dimension of value 1 to the image at the 0th position of its tensor shape. So its tensor shape is changed from [channels,height,width] to [NumberOfSamplesInABatch(N),channels(C),height(H),width(W)], where NumberOfSamples(N),channels(C)=1 [representing it is a single image]. This unsqueeze must be performed to have the correct tensor shape that fits the input shape format of convolutional layer
 
 	DCE_net = model.enhance_net_nopool().cuda()
-	DCE_net.load_state_dict(torch.load('D:/AI_Master_New/Low-Light_Image_Enhancemnet/Zero-DCE_code_LiChongYi_2021/snapshots/self_train_snapshots/Epoch199.pth'))
+	DCE_net.load_state_dict(torch.load('D:/AI_Master_New/Low-Light_Image_Enhancement/Zero-DCE_code_LiChongYi_2021/snapshots/self_train_snapshots/Epoch199.pth'))
 	start = time.time()
 	_,enhanced_image,_ = DCE_net(data_lowlight)
 
@@ -61,7 +61,7 @@ def lowlight(image_path):
 if __name__ == '__main__':
 # test_images
 	with torch.no_grad():
-		filePath = 'D:/AI_Master_New/Low-Light_Image_Enhancemnet/Zero-DCE_code_LiChongYi_2021/data/test_data/' # The absolute path that stores the test data
+		filePath = 'D:/AI_Master_New/Low-Light_Image_Enhancement/Zero-DCE_code_LiChongYi_2021/data/test_data/' # The absolute path that stores the test data
 
 		resultPath = filePath.replace('test_data','result')
 		# Create the folder called "DICM" in the folder "result" which is located at os.path.join(resultPath,"DICM/") [to store the enhanced DICM images] if the folder has not been created. If the folder has been created, ignore this line.

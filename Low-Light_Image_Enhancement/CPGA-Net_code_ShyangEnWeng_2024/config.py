@@ -2,11 +2,11 @@ from utils import str2bool
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--ori_data_path', type=str, default='D:/AI_Master_New/Low-Light_Image_Enhancemnet/CPGA-Net_code_ShyangEnWeng_2024/data/our485/high',  help='Origin image path') # normal light images for training
-parser.add_argument('--haze_data_path', type=str, default='D:/AI_Master_New/Low-Light_Image_Enhancemnet/CPGA-Net_code_ShyangEnWeng_2024/data/our485/low',  help='Haze image path') # low light images for training
+parser.add_argument('--ori_data_path', type=str, default='D:/AI_Master_New/Low-Light_Image_Enhancement/CPGA-Net_code_ShyangEnWeng_2024/data/our485/high',  help='Origin image path') # normal light images for training
+parser.add_argument('--haze_data_path', type=str, default='D:/AI_Master_New/Low-Light_Image_Enhancement/CPGA-Net_code_ShyangEnWeng_2024/data/our485/low',  help='Haze image path') # low light images for training
 
-parser.add_argument('--val_ori_data_path', type=str, help='Validation origin image path', default='D:/AI_Master_New/Low-Light_Image_Enhancemnet/CPGA-Net_code_ShyangEnWeng_2024/data/eval15/high') # normal light images for testing
-parser.add_argument('--val_haze_data_path', type=str,help='Validation haze image path', default='D:/AI_Master_New/Low-Light_Image_Enhancemnet/CPGA-Net_code_ShyangEnWeng_2024/data/eval15/low')  # low light images for testing
+parser.add_argument('--val_ori_data_path', type=str, help='Validation origin image path', default='D:/AI_Master_New/Low-Light_Image_Enhancement/CPGA-Net_code_ShyangEnWeng_2024/data/eval15/high') # normal light images for testing
+parser.add_argument('--val_haze_data_path', type=str,help='Validation haze image path', default='D:/AI_Master_New/Low-Light_Image_Enhancement/CPGA-Net_code_ShyangEnWeng_2024/data/eval15/low')  # low light images for testing
 
 parser.add_argument('--dataset_type', type=str,  help='...', default='LOL-v1')
 parser.add_argument('--ad_dataset_type', type=str,  help='...')
@@ -29,10 +29,10 @@ parser.add_argument('--epochs', type=int, default=10, help='number of epochs for
 
 
 parser.add_argument('--output_name', type=str,  help='...')
-parser.add_argument('--sample_output_folder', type=str, default='D:/AI_Master_New/Low-Light_Image_Enhancemnet/CPGA-Net_code_ShyangEnWeng_2024/data/samples',  help='Validation haze image path')
-parser.add_argument('--model_dir', type=str, default='D:/AI_Master_New/Low-Light_Image_Enhancemnet/CPGA-Net_code_ShyangEnWeng_2024/model')
-parser.add_argument('--log_dir', type=str, default='D:/AI_Master_New/Low-Light_Image_Enhancemnet/CPGA-Net_code_ShyangEnWeng_2024/log')
-parser.add_argument('--ckpt', type=str, default='D:/AI_Master_New/Low-Light_Image_Enhancemnet/CPGA-Net_code_ShyangEnWeng_2024/weights/enhance_color-llie-ResCBAM_g.pkl')
+parser.add_argument('--sample_output_folder', type=str, default='D:/AI_Master_New/Low-Light_Image_Enhancement/CPGA-Net_code_ShyangEnWeng_2024/data/samples',  help='Validation haze image path')
+parser.add_argument('--model_dir', type=str, default='D:/AI_Master_New/Low-Light_Image_Enhancement/CPGA-Net_code_ShyangEnWeng_2024/model')
+parser.add_argument('--log_dir', type=str, default='D:/AI_Master_New/Low-Light_Image_Enhancement/CPGA-Net_code_ShyangEnWeng_2024/log')
+parser.add_argument('--ckpt', type=str, default='D:/AI_Master_New/Low-Light_Image_Enhancement/CPGA-Net_code_ShyangEnWeng_2024/weights/enhance_color-llie-ResCBAM_g.pkl')
 parser.add_argument('--video_dir', type=str,  help='...')
 
 parser.add_argument('--efficient', type=str2bool, default=False, help='Use efficient (DGF) version')

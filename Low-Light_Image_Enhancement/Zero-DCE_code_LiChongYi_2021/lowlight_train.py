@@ -93,7 +93,7 @@ if __name__ == "__main__":
 	parser = argparse.ArgumentParser() # The parser is the ArgumentParser object that holds all the information necessary to read the command-line arguments.
 
 	# Input Parameters
-	parser.add_argument('--lowlight_images_path', type=str, default="D:/AI_Master_New/Low-Light_Image_Enhancemnet/Zero-DCE_code_LiChongYi_2021/data/train_data/") # Add an argument type (optional argument) named lowlight_images_path. The value given to this argument type must be string data type. If no value is given to this argument type, then the default value will become the value of this argument type.
+	parser.add_argument('--lowlight_images_path', type=str, default="D:/AI_Master_New/Low-Light_Image_Enhancement/Zero-DCE_code_LiChongYi_2021/data/train_data/") # Add an argument type (optional argument) named lowlight_images_path. The value given to this argument type must be string data type. If no value is given to this argument type, then the default value will become the value of this argument type.
 	parser.add_argument('--lr', type=float, default=0.0001) # Add an argument type (optional argument) named lr. The value given to this argument type must be float data type. If no value is given to this argument type, then the default value will become the value of this argument type.
 	parser.add_argument('--weight_decay', type=float, default=0.0001)
 	parser.add_argument('--grad_clip_norm', type=float, default=0.1)
@@ -103,7 +103,7 @@ if __name__ == "__main__":
 	parser.add_argument('--num_workers', type=int, default=4)
 	parser.add_argument('--display_iter', type=int, default=10)
 	parser.add_argument('--snapshot_iter', type=int, default=10)
-	parser.add_argument('--snapshots_folder', type=str, default="D:/AI_Master_New/Low-Light_Image_Enhancemnet/Zero-DCE_code_LiChongYi_2021/snapshots/self_train_snapshots/")
+	parser.add_argument('--snapshots_folder', type=str, default="D:/AI_Master_New/Low-Light_Image_Enhancement/Zero-DCE_code_LiChongYi_2021/snapshots/self_train_snapshots/")
 	parser.add_argument('--load_pretrain', type=bool, default= False)
 	parser.add_argument('--pretrain_dir', type=str, default= "snapshots/Epoch99.pth")
 

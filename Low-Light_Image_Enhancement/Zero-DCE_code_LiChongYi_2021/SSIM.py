@@ -41,7 +41,7 @@ def calculate_ssim(dir1, dir2):
     return average_ssim
 
 # Example usage
-ground_truth_folder_path = "D:/AI_Master_New/Low-Light_Image_Enhancemnet/Zero-DCE_code_LiChongYi_2021/data/test_data/DICM"
-output_folder_path = "D:/AI_Master_New/Low-Light_Image_Enhancemnet/Zero-DCE_code_LiChongYi_2021/data/result/DICM"
+ground_truth_folder_path = "D:/AI_Master_New/Low-Light_Image_Enhancement/Zero-DCE_code_LiChongYi_2021/data/test_data/DICM"
+output_folder_path = "D:/AI_Master_New/Low-Light_Image_Enhancement/Zero-DCE_code_LiChongYi_2021/data/result/DICM"
 average_ssim = calculate_ssim(ground_truth_folder_path, output_folder_path)
 print(f'Average SSIM: {average_ssim}')

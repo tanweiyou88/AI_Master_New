@@ -73,7 +73,7 @@ def main(cfg):
         raise ValueError('No checkpoint found')
     
     # -------------------------------------------------------------------
-    out_dir = os.path.join('D:/AI_Master_New/Low-Light_Image_Enhancemnet/CPGA-Net_code_ShyangEnWeng_2024/data/results', cfg.net_name) # The path that stores the enhanced images, net_name defines the subfolder that stores the enhanced images
+    out_dir = os.path.join('D:/AI_Master_New/Low-Light_Image_Enhancement/CPGA-Net_code_ShyangEnWeng_2024/data/results', cfg.net_name) # The path that stores the enhanced images, net_name defines the subfolder that stores the enhanced images
     os.makedirs(out_dir, exist_ok=True) 
 
     # start train
