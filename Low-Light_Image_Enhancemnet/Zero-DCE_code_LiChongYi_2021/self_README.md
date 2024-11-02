@@ -1,1 +1,0 @@
-Link to the Zero-DCE official Github repository: [https://github.com/Li-Chongyi/Zero-DCE](https://github.com/Li-Chongyi/Zero-DCE)
