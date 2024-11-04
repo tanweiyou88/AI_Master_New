@@ -27,7 +27,7 @@ def calculate_psnr(dir1, dir2):
             img1 = np.resize(img1, (min(img1.shape[0], img2.shape[0]), min(img1.shape[1], img2.shape[1])))
             img2 = np.resize(img2, (min(img1.shape[0], img2.shape[0]), min(img1.shape[1], img2.shape[1])))
 
-            value = psnr(img1, img2) # Calculate the PSNR (a function of scikit-image) on this groundtruth-enhanced images pair
+            value = psnr(img1, img2) # Calculate the PSNR (a function of scikit-image) on this groundtruth-enhanced images pair. skimage.metrics.peak_signal_noise_ratio only calculates the PSNR of an image pair, in contrast to torchmetrics.PeakSignalNoiseRatio.
             psnr_values.append(value) # Add this calculated PSNR to the psnr_values list, as a new element/entry
 
     # Usage of Ternary operator: If pnsr_values is NOT an empty list (at least 1 element/entry is available in the list), then execute np.mean(psnr_values)=([Sum all elements/entries in the list called psnr_values]/[Total number of groundtruth-enhanced images pair, represented as the number of elements/entries in in the list called psnr_values]), then store the result in the variable average_psnr. Else (if pnsr_values is an empty list [no element/entry is available in the list]), store the value 0 in the average_psnr.

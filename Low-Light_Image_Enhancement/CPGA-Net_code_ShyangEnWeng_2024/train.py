@@ -174,12 +174,12 @@ def main(cfg):
                 LLIE_image = network(LL_image)
             
             LLIE_valing_results['batch_sizes'] += cfg.batch_size
-            batch_psnr = psnr(LLIE_image, ori_image).item()
+            batch_psnr = psnr(LLIE_image, ori_image).item() # torchmetrics.PeakSignalNoiseRatio first calculates the PSNR of each image pair in a batch of images, then return the average PSNR of all image pairs in that batch. The mathematical concept behinds is: (average PSNR)=([Summation of PSNR of all image pairs in a batch of images]/[Total number of image pairs in that batch of images, which is same as the batch size]) of that batch of images.
             batch_ssim = ssim(LLIE_image, ori_image).item()
-            LLIE_valing_results['psnrs'] += batch_psnr * cfg.batch_size
+            LLIE_valing_results['psnrs'] += batch_psnr * cfg.batch_size # Get the total PSNR of all image pairs the model has gone through. The mathematical concept behinds is: (batch_psnr * cfg.batch_size)=(Summation of PSNR of all image pairs in a batch of images).
             LLIE_valing_results['ssims'] += batch_ssim * cfg.batch_size
             
-            LLIE_valing_results['psnr'] = LLIE_valing_results['psnrs'] / LLIE_valing_results['batch_sizes']
+            LLIE_valing_results['psnr'] = LLIE_valing_results['psnrs'] / LLIE_valing_results['batch_sizes'] # Get the average PSNR of all image pairs the model has gone through. The mathematical concept behinds is: (Summation of PSNR of all image pairs the model has gone through)/[Total batches of images the model has gone through, which is same as the total number of image pairs the model has gone through]).
             LLIE_valing_results['ssim'] = LLIE_valing_results['ssims'] / LLIE_valing_results['batch_sizes']
             
             batch_lpips = lpips(LLIE_image, ori_image).item()
