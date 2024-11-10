@@ -39,18 +39,33 @@ def image_enhancement():
 def save_image():
 	
 	resultPath = testPath.replace('test_data','result') # Change the path
-	resultPath_subfolder = "self_CompileMetrics" # Define the folder that stores the grids of input-output image pairs of this script
+	resultPath_subfolder_individual = "self_CompileMetrics" # Define the folder that stores the enhanced images
+	resultPath_IndividualResults = os.path.join(resultPath, resultPath_subfolder_individual) # Define the absolute path to the folder that stores the enhanced images
 
-	# Create the path that stores the grids of input-output image pairs of this script
-	os.makedirs(os.path.join(resultPath, resultPath_subfolder), exist_ok=True)
+	resultPath_subfolder_imagepairs = "self_CompileMetrics_ImagePairs" # Define the folder that stores the grids of input-output image pairs involved in metric calculations
+	resultPath_ImagePairsResults = os.path.join(resultPath_IndividualResults, resultPath_subfolder_imagepairs) # Define the absolute path to the folder that stores the grids of input-output image pairs involved in metric calculations
+
+	# Ensure the path that stores the enhanced images is created
+	os.makedirs(resultPath_IndividualResults, exist_ok=True)
+	# Ensure the path that stores the grids of input-output image pairs involved in metric calculations is created
+	os.makedirs(resultPath_ImagePairsResults, exist_ok=True)
 	
+	# Save the enhanced images involved in the current iteration 
+	for count, image in enumerate(enhanced_image):
+		sample_size = enhanced_image.shape[0] # Get the total number of enhanced_image samples in current iteration, can be equivalent to batch size
+		# Save each individual enhanced image, according to the sequence being processed by the model
+		torchvision.utils.save_image(
+			image,
+			os.path.join(resultPath_IndividualResults, 'enhanced_image_{}.jpg'.format( LLIE_metrics_data['accumulate_number_of_samples_processed'] - sample_size + count + 1) )
+		)
+
 	# Create a grid of input-output image pairs involved in the current iteration 
 	grid_image = torchvision.utils.make_grid(torch.cat((img_lowlight, enhanced_image), 0), nrow=img_lowlight.shape[0])
 	
 	# Save the created grid of input-output image pairs involved in the current iteration 
 	torchvision.utils.save_image(
 		grid_image,
-		os.path.join(resultPath, resultPath_subfolder, '{}.jpg'.format(iteration + 1))
+		os.path.join(resultPath_ImagePairsResults, 'InputEnhanced_ImagePair_{}.jpg'.format(iteration + 1))
 	)
 	
 def metrics_calculation(LLIE_metrics_data): # We define LLIE_metrics_data as the input argument, so that the results of LLIE_metrics_data calculated in this self defined function can be directly updated to the LLIE_metrics_data located in the main() of this script
@@ -73,7 +88,7 @@ def metrics_calculation(LLIE_metrics_data): # We define LLIE_metrics_data as the
 	
 	
 
-
+# **Part 1: ArgumentParser, usable only if you run this script**
 if __name__ == '__main__':
 
 	parser = argparse.ArgumentParser() # The parser is the ArgumentParser object that holds all the information necessary to read the command-line arguments.
@@ -95,50 +110,73 @@ if __name__ == '__main__':
 	# So you can access the data of a positional/optional argument by using the syntax args.argument_name (EG: config.lowlight_images_path).
 	config = parser.parse_args() 
 
+# **Part 2: Select the device for computations**
 	device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-	
+# **Part 3: Initialize the functions to calculate performance metrics**
 	ssim = SSIM(data_range=1.).to(device) # Performance metric: SSIM
 	psnr = PSNR(data_range=1.).to(device) # Performance metric: PSNR
 	lpips = LPIPS(net_type='alex').to(device) # Performance metric: LPIPS (perceptual loss provided by a pretrained learning-based model), using alexnet as the backbone (LPIPS with alexnet performs the best according to its official Github)
-	LLIE_metrics_data = {'mse': 0, 'accumulate_ssim': 0, 'accumulate_psnr': 0, 'average_psnr': 0, 'average_ssim': 0, 'accumulate_number_of_samples_processed': 0, 'accumulate_lpips': 0, 'average_lpips': 0,} # Initialize the metrics, so they can update from time to time later
 
-# test_images	
+# **Part 4: Initialize the metric data, so they will be updated from time to time later**
+	LLIE_metrics_data = {'mse': 0, 'accumulate_ssim': 0, 'accumulate_psnr': 0, 'average_psnr': 0, 'average_ssim': 0, 'accumulate_number_of_samples_processed': 0, 'accumulate_lpips': 0, 'average_lpips': 0,} 
+	
 	with torch.no_grad():
 		
+		# **Part 5: Initialize the model**
 		DCE_net = model.enhance_net_nopool().to(device) # Move the model to cuda so that the samples in each batch can be processed simultaneously
 		DCE_net.eval() # Set the model to evaluation mode
 
 		if config.load_pretrain == True: # When NOT set to train mode 
 			DCE_net.load_state_dict(torch.load(config.pretrain_dir)) # load the parameters (weights & biases) of the model obtained/learned at the snapshot (EG: at a particular epoch)
 
+		# **Part 6: Prepare dataset (From loading images, preprocessing image data, to converting image data into tensor with dimension sequence reordered if required)**
 		testPath =  config.lowlight_images_test_path # The absolute path that stores the test data
 		test_list = os.listdir(testPath) # Returns a list containing the names of the entries in a directory specified by path. Here, the returned list is ['DICM', 'LIME'], the names of subfolder inside the folder "test_data". 
 		
 		for testfile_name in test_list: # For each subfolder inside the test_data folder (DCIM subfolder first, then only LIME subfolder)
 			if testfile_name == "DICM": # Only takes the DICM test data available in testPath
-				test_path = testPath + testfile_name +"/"
-				print("test_path:", test_path)
-				test_dataset = dataloader.lowlight_loader(test_path) # Create custom test dataset: Take the images available in test_path, then preprocess them, and convert them into a tensor
+				test_path_withFolderName = testPath + testfile_name +"/"
+				print("test_path_withFolderName:", test_path_withFolderName)
+				test_dataset = dataloader.lowlight_loader(test_path_withFolderName) # Create custom test dataset: Take the images available in test_path, then preprocess them, and convert them into a tensor
 		
+		# **Part 7: Split the dataset into batches of samples**
 		test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=config.test_batch_size, shuffle=True, num_workers=config.num_workers, pin_memory=True) # Split the samples in the test dataset into batches/groups/collections of test_batch_size samples. By default, test_batch_size=8, that's means each batch has 8 samples.
+		
 		test_bar = tqdm(test_loader) # tqdm automatically detects the length of the iterable object (train_loader) [The length of the iterable object = The total number of batches of samples] and generates a progress bar that updates dynamically as each item=(batch of samples) is processed.
 		
+		# Validation starts here
 		for iteration, img_lowlight in enumerate(test_bar):
+
+			# **Part 8: Get a batch of samples at each iteration**
 			img_lowlight = img_lowlight.to(device) # Since this batch of train_batch_size samples are moved to cuda for processinng, they will be processed simultaneously.
 			
-			enhanced_image = image_enhancement() # Perform image enhancement on the current batch of samples using the model
+			# **Part 9: Perform image enhancement on the current batch of samples using the model**
+			enhanced_image = image_enhancement() 
 			
-			metrics_calculation(LLIE_metrics_data) # Perform metric calculations
-			save_image() # Save the grid of input-output image pairs involved in the current iteration
+			# **Part 10: Perform metric calculations**
+			metrics_calculation(LLIE_metrics_data) 
 
-		print('\n----------------------------------Final results of LLIE----------------------------------')
+			# **Part 11: Save the grid of input-output image pairs involved in the current iteration**
+			save_image()  
+
+		# **Part 12: Show the final results of the model after completing the training/inference**
+		print('\n----------------------------------Final results of the LLIE model performance----------------------------------')
 		print('Total processed sample numbers:%d, Average PSNR: %.4f dB, Average SSIM: %.4f, Average LPIPS: %.4f' % (
                         LLIE_metrics_data['accumulate_number_of_samples_processed'], LLIE_metrics_data['average_psnr'], LLIE_metrics_data['average_ssim'], LLIE_metrics_data['average_lpips']))
 	
 				
 
 # Notes: 
-# Study when is really need the input arguments for a self defined function
-# Add functions to calculate params, FLOPs, and average runtime (Duration of image enhancement process)
+# 1) Idea: We calculate the metrics by using the enhanced image before being saved because after saving the enhanced image, the pixel values will change slightly. We do this also equivalently build the pipiline of computer vision task with LLIE algorithm, such that the enhanced image is directly passed to the following modules for the relevant application (EG: object detection) without the enhanced image being saved on that device first.
+# 2) Done:
+# A) Create a randomly shuffled dataset from the given dataset path
+# B) Calculate the metrics using the input-output image pairs, where the output images involved in metric calculations are the ones right after provided by the model and before being saved as image files on the device.
+# C) The enhanced images provided by the model will be saved as image files on the device, with the filename according to the sequence being processed by the model.
+# D) The input-output image pairs involved in metric calculations at each batch will be organized as a grid for comparison and saved as an image file, with the filename according to the batch number.
+# E) The final results of the LLIE model performance will be printed at last.
+# 3) Tasks:
+# A) Study why when the script is run multiple times, only the Average PSNR fluctuates (compare by using saved enhanced image vs the enhanced image before being saved)
+# B) Add functions to calculate params, FLOPs, and average runtime (Duration of image enhancement process)
+# C) Try to implement the features of recording the metrics data of each epoch & batch on a log (Maybe using summary writer?)
 
