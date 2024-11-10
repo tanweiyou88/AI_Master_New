@@ -48,14 +48,15 @@ def lowlight(image_path):
 
 	torchvision.utils.save_image(enhanced_image, result_path)
 	
-	 # for calflops to calculate MACs and FLOPs
+	# for calflops to calculate MACs and FLOPs
+	model_name = "Zero-DCE" # The random name you give to your created model, so that it appears as the model name at the end of the printed results. This is not involved in the calflop operations, so this information is optional.
 	batch_size = 1
-	input_shape = (batch_size, data_lowlight.shape[1], data_lowlight.shape[2], data_lowlight.shape[3])
-	flops, macs, params = calculate_flops(model=DCE_net, 
+	input_shape = (batch_size, data_lowlight.shape[1], data_lowlight.shape[2], data_lowlight.shape[3]) # (batch size, channel numbers of each input sample), height dimension of each input sample), width dimension of each input sample)
+	flops, macs, params = calculate_flops(model=DCE_net,  # The model created
 										input_shape=input_shape,
 										output_as_string=True,
 										output_precision=4)
-	print("Model FLOPs:%s   MACs:%s   Params:%s \n" %(flops, macs, params))
+	print("Model:%s,	FLOPs:%s,   MACs:%s,   Params:%s \n" %(model_name, flops, macs, params))
 	
 
 if __name__ == '__main__':
