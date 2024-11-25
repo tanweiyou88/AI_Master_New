@@ -55,6 +55,7 @@
 
 # Ignore low-light image enhancement related projects
 /Low-Light_Image_Enhancement/LIME_and_DUAL_Separately
+/Low-Light_Image_Enhancement/Dark_Bright_Channel_Priors_basan_2020
 
 # Ignore face detection related projects
 /Face_Detection
