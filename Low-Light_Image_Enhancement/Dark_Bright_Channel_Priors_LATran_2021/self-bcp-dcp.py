@@ -73,9 +73,9 @@ def get_atmosphere(I, brightch, p):
     # we then select the RGB channel values of the pixels on the input image that having the same indexes as the first N% largest pixel values on the bright channel prior image.
     # The selected R, G, and B channel values are added respectively and divided by the number of the selected input image pixels respectively.
     # So A = atmospheric light = [(Averaged R channel value from the number of selected pixels) (Averaged G channel value from the number of selected pixels) (Averaged B channel value from the number of selected pixels)]
-    # In other words, the overall/base color of the enhanced image largely depends on the A, according to the image formation model. Because the image enhancement is performed by using A as the base value (starting value of each pixel), A and input image pixel to get the correction value, and t as the correction weight.
+    # In other words, the overall/base color of the enhanced image largely depends on the A, according to the image formation model. Because the image enhancement is performed by using A as the base value (starting value of each pixel before correction), A and input image pixel to get the correction value, and t as the correction weight.
     # If A is a white color, then the base color of the enhanced image most probably will not experience color cast.
-    # But is A is not a white color (EG:yellow color), then the base color of the enhanced image most probably will experience color cast (EG: The overall color of the enhanced image tends to be yellow color. Although the objects on the image still can be identified with their own colors respectively, their own colors will experience color cast [change of their original color] respectively)
+    # But if A is not a white color (EG:yellow color), then the base color of the enhanced image most probably will experience color cast (EG: The overall color of the enhanced image tends to be yellow color. Although the objects on the image still can be identified with their own colors respectively, their own colors will experience color cast [change of their original color] respectively)
 
 
 def get_initial_transmission(A, brightch):
