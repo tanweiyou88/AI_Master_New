@@ -30,3 +30,9 @@ print("flatc:",flatc)
 print("flatc.take(searchidx, axis=0)", flatc.take(searchidx, axis=0))
 A = np.mean(flatc.take(searchidx, axis=0),dtype=np.float64, axis=0)
 print("A:", A)
+K = np.max(A)
+print("K:", K)
+
+
+print("r - b:", r - b)
+print("r - K:", r - K)

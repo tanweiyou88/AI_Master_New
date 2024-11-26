@@ -73,14 +73,14 @@ def get_atmosphere(I, brightch, p):
     # we then select the RGB channel values of the pixels on the input image that having the same indexes as the first N% largest pixel values on the bright channel prior image.
     # The selected R, G, and B channel values are added respectively and divided by the number of the selected input image pixels respectively.
     # So A = atmospheric light = [(Averaged R channel value from the number of selected pixels) (Averaged G channel value from the number of selected pixels) (Averaged B channel value from the number of selected pixels)]
-    # In other words, the overall/base color of the enhanced image largely depends on the A, according to the image formation model. Because the image enhancement is performed by using A as the base value (starting value of each pixel before correction), A and input image pixel to get the correction value, and t as the correction weight.
+    # In other words, the overall/base color of the enhanced image largely depends on the A, according to the image formation model. Because the image enhancement is performed by using A as the base value (starting value of each pixel before correction), A and input image pixel to get the correction value, and t as the correction weight. So choosing the correct atmospheric light is very important here. But it seems the concept of choosing atmospheric/ambient light (proposed by the dark channel prior dehazing method) is not applicable for the images captured at night, because the atmospheric/ambient light is expected to have the similar color as the sky but the atmospheric/ambient light at night is not bright. So for the images captured at night, the selected atmospheric/ambient light usually will be the light source not having white color (EG: light lamp, moon,...).
     # If A is a white color, then the base color of the enhanced image most probably will not experience color cast.
     # But if A is not a white color (EG:yellow color), then the base color of the enhanced image most probably will experience color cast (EG: The overall color of the enhanced image tends to be yellow color. Although the objects on the image still can be identified with their own colors respectively, their own colors will experience color cast [change of their original color] respectively)
 
 
 def get_initial_transmission(A, brightch):
     A_c = np.max(A)
-    
+
     init_t = (brightch-A_c)/(1.-A_c) # original
     
     return (init_t - np.min(init_t))/(np.max(init_t) - np.min(init_t)) # min-max normalization.
@@ -200,7 +200,7 @@ if __name__ == "__main__":
 
 	# Get atmosphere
     At = get_atmosphere(I, Ibright_ch, p)
-
+    print("Atmospheric light, At:", At)
 
 	# Get initial transmission and enhanced image
     init_tr = get_initial_transmission(At, Ibright_ch)
@@ -228,5 +228,6 @@ if __name__ == "__main__":
     # plt.figure('Refined image',figsize=(12,10))
     # plt.imshow(refined)
     # plt.show()
+
 
 # Insight: The resultant enhanced image contains color cast, might be due to wrong atmospheric light selection which caused by the light source (EG: lamp or moon) appears on the image [https://learnopencv.com/improving-illumination-in-night-time-images/]
