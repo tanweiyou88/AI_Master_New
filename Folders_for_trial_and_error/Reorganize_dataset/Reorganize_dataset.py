@@ -83,7 +83,7 @@ def reorganize(config, metadata): # Used to reorganize the original dataset
     folder_list = os.listdir(config.src_dir) # Return a list of folder names available in the root directory specified by src_dir.
     print("Folder list:", folder_list)
     sorted_folder_list = sorted(folder_list, key=len) # sort the folder names in the list called folder_list based on the length of name
-    print("Sorted folder list:", sorted_folder_list)
+    print("\nSorted folder list:", sorted_folder_list)
     print("\n")
     
     # Create a csv file to record the metadata of the rearranged dataset
