@@ -320,7 +320,7 @@ if __name__ == '__main__':
     # Input Parameters
     parser.add_argument('--src_dir', type=str, default= "D:/AI_Master_New/Folders_for_trial_and_error/Reorganize_dataset/sampling_SICE_Part1_TrainingSet") # The absolute path of the source dataset
     parser.add_argument('--dst_dir', type=str, default="D:/AI_Master_New/Folders_for_trial_and_error/Reorganize_dataset/Reorganized_sampling_SICE_Part1_TrainingSet") # The absolute path of the destination root folder that saves the rearranged dataset
-    parser.add_argument('--source_dataset_name', type=str, default="SICE_Part1_TrainingSet") # The name of the source dataset
+    parser.add_argument('--source_dataset_name', type=str, default="SICE_Dataset_Part1") # The name of the source dataset
     parser.add_argument('--partition_name', type=str, default="All") # The name of the partition (All/Train/Validation)
     parser.add_argument('--Input_folder_basename', type=str, default= "/Input") # Base name for the Input folder for the train and validation datasets
     parser.add_argument('--GroundTruth_folder_basename', type=str, default= "/GroundTruth") # Base name for the GroundTruth folder for the train and validation datasets

@@ -179,7 +179,7 @@ if __name__ == '__main__':
     # Input Parameters
     parser.add_argument('--src_dir', type=str, default= "D:/AI_Master_New/Folders_for_trial_and_error/Reorganize_dataset/sampling_SICE_Part1_TrainingSet") # The absolute path of the source dataset
     parser.add_argument('--dst_dir', type=str, default="D:/AI_Master_New/Folders_for_trial_and_error/Reorganize_dataset/Reorganized_sampling_SICE_Part1_TrainingSet") # The absolute path of the destination root folder that saves the rearranged dataset
-    parser.add_argument('--source_dataset_name', type=str, default="SICE_Part1_TrainingSet") # The name of the source dataset
+    parser.add_argument('--source_dataset_name', type=str, default="SICE_Dataset_Part1") # The name of the source dataset
     parser.add_argument('--partition_name', type=str, default="All") # The name of the partition (All/Train/Validation)
     # parser.add_argument('--lr', type=float, default=0.0001) # Add an argument type (optional argument) named lr. The value given to this argument type must be float data type. If no value is given to this argument type, then the default value will become the value of this argument type.
     # parser.add_argument('--weight_decay', type=float, default=0.0001)

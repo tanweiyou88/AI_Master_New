@@ -165,7 +165,7 @@ if __name__ == '__main__':
     parser.add_argument('--root_dir', type=str, default= "D:/AI_Master_New/Folders_for_trial_and_error/Reorganize_dataset/Reorganized_sampling_SICE_Part1_TrainingSet") # The absolute path of the source dataset
     parser.add_argument('--Input_folder_basename', type=str, default= "/Input") # Base name for the Input folder for the train and validation datasets
     parser.add_argument('--GroundTruth_folder_basename', type=str, default= "/GroundTruth") # Base name for the GroundTruth folder for the train and validation datasets
-    parser.add_argument('--source_dataset_name', type=str, default="SICE_Part1_TrainingSet") # The name of the source dataset
+    parser.add_argument('--source_dataset_name', type=str, default="SICE_Dataset_Part1") # The name of the source dataset
     # parser.add_argument('--lr', type=float, default=0.0001) # Add an argument type (optional argument) named lr. The value given to this argument type must be float data type. If no value is given to this argument type, then the default value will become the value of this argument type.
     # parser.add_argument('--weight_decay', type=float, default=0.0001)
     parser.add_argument('--random_seed', type=int, default=42) # The seed value used to initialize the numpy random number generator for reproducible random number generations
