@@ -84,6 +84,7 @@ def reorganize(config, metadata): # Used to reorganize the original dataset
     print("Folder list:", folder_list)
     sorted_folder_list = sorted(folder_list, key=len) # sort the folder names in the list called folder_list based on the length of name
     print("Sorted folder list:", sorted_folder_list)
+    print("\n")
     
     # Create a csv file to record the metadata of the rearranged dataset
     current_date_time_string = time.strftime("%Y_%m_%d-%H_%M_%S") # Get the current date and time as a string, according to the specified format (YYYY_MM_DD-HH_MM_SS)
@@ -102,13 +103,13 @@ def reorganize(config, metadata): # Used to reorganize the original dataset
 
     
 
-    for folder_name in tqdm(sorted_folder_list, desc="Reorganizing original dataset"): # For each folder in the sorted folder list. tqdm is used to create the progress bar.
+    for folder_name in tqdm(sorted_folder_list, initial=1, total=len(sorted_folder_list)-1, desc="Reorganizing original dataset"): # For each folder in the sorted folder list. tqdm is used to create the progress bar.
         if folder_name != "Label": 
         # if folder_name == "92": 
             file_list = glob.glob(config.src_dir+"/"+folder_name+"/*") # Returns a list of files' absolute path (of any extension) that are inside the specified path (src_dir+"/"+folder_name+"/*")
             metadata['folder_name'] = folder_name # Current folder name
             metadata['files_num_for_the_folder'] = len(file_list)
-            print("\n\nFolder name:" + metadata['folder_name'] + "; Number of files in this folder:" + str(metadata['files_num_for_the_folder']) ) # Show the current folder name and the number of files available in it
+            print("\nFolder name:" + metadata['folder_name'] + "; Number of files in this folder:" + str(metadata['files_num_for_the_folder']) + "\n" ) # Show the current folder name and the number of files available in it
             for file in file_list: # For each image in the file list (available inside the current folder)
                 metadata['image_counter'] += 1 # Increase the image counter by 1
                 
