@@ -6,6 +6,7 @@ import os
 import time
 import csv
 import argparse
+from tqdm import tqdm
 
 def check_lists(list1, list2): # Used to check if 2 lists have the same elements
     list1_sorted = sorted(list1)
@@ -66,6 +67,7 @@ def reorganize(config, metadata): # Used to reorganize the original dataset
 
 # ** Save all the files according to 2 subfolders only, "Input" OR "Label" **: Version 3, Use This
     # Create the required directories
+    print("-------------------------Reorganizing dataset operations begins-------------------------")
     os.makedirs(config.src_dir, exist_ok=True)
     destination_Input_folder_path = config.dst_dir+"/Input_All" # Create the absolute path of the folder/destination that will save the input files/images, in the destination root folder
     os.makedirs(destination_Input_folder_path, exist_ok=True) # Create the folder/destination that will save the input files/images, in the destination root folder
@@ -100,13 +102,13 @@ def reorganize(config, metadata): # Used to reorganize the original dataset
 
     
 
-    for folder_name in sorted_folder_list: # For each folder in the sorted folder list
+    for folder_name in tqdm(sorted_folder_list, desc="Reorganizing original dataset"): # For each folder in the sorted folder list. tqdm is used to create the progress bar.
         if folder_name != "Label": 
         # if folder_name == "92": 
             file_list = glob.glob(config.src_dir+"/"+folder_name+"/*") # Returns a list of files' absolute path (of any extension) that are inside the specified path (src_dir+"/"+folder_name+"/*")
             metadata['folder_name'] = folder_name # Current folder name
             metadata['files_num_for_the_folder'] = len(file_list)
-            print("Folder name:" + metadata['folder_name'] + "; Number of files in this folder:" + str(metadata['files_num_for_the_folder']) ) # Show the current folder name and the number of files available in it
+            print("\n\nFolder name:" + metadata['folder_name'] + "; Number of files in this folder:" + str(metadata['files_num_for_the_folder']) ) # Show the current folder name and the number of files available in it
             for file in file_list: # For each image in the file list (available inside the current folder)
                 metadata['image_counter'] += 1 # Increase the image counter by 1
                 

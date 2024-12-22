@@ -6,6 +6,7 @@ import shutil
 import time 
 import csv
 import argparse
+from tqdm import tqdm
 
 
 def check_lists(list1, list2): # Used to check if 2 lists have the same elements
@@ -19,6 +20,7 @@ def check_lists(list1, list2): # Used to check if 2 lists have the same elements
  
 
 def partitioning(config): # Used to partition the original dataset into train dataset and validation dataset, with the predefined ratios
+    print("-------------------------Partitioning dataset operations begins-------------------------\n")
     # random_seed = 42 # The seed value used to initialize the numpy random number generator for reproducible random number generations
     # val_ratio = 0.1 # The ratio of validation data from the original dataset
     val_ratio = config.val_ratio # The ratio of validation data from the original dataset
@@ -55,11 +57,11 @@ def partitioning(config): # Used to partition the original dataset into train da
     val_Input_FilePaths = [src_Input_folder_path+'/' + name for name in val_Input_FileNames.tolist()] # For each validation dataset Input image filename in the list, update it with its absolute path in the original dataset
 
     # Copy-pasting images
-    for train_Input_FilePath in train_Input_FilePaths:
+    for train_Input_FilePath in tqdm(train_Input_FilePaths, desc="Copying and pasting train dataset Input images"): # tqdm is used to create the progress bar.
         # print("Filenames of Input images of train dataset:",train_Input_FilePath)
         shutil.copy2(train_Input_FilePath, train_Input_folder_path) # Copy each train dataset Input image from the original dataset Input folder to the train dataset Input folder
 
-    for val_Input_FilePath in val_Input_FilePaths:
+    for val_Input_FilePath in tqdm(val_Input_FilePaths, desc="Copying and pasting validation dataset Input images"):
         shutil.copy2(val_Input_FilePath, val_Input_folder_path) # Copy each validation dataset Input image from the original dataset Input folder to the validation dataset Input folder
 
 
@@ -74,15 +76,15 @@ def partitioning(config): # Used to partition the original dataset into train da
     val_GroundTruth_FilePaths = [src_GroundTruth_folder_path+'/' + name for name in val_GroundTruth_FileNames.tolist()] # For each validation dataset Input image filename in the list, update it with its absolute path in the original dataset
 
     # Copy-pasting images
-    for train_GroundTruth_FilePath in train_GroundTruth_FilePaths:
+    for train_GroundTruth_FilePath in tqdm(train_GroundTruth_FilePaths, desc="Copying and pasting train dataset GroundTruth images"):
         # print("Filenames of Input images of train dataset:",train_Input_FilePath)
         shutil.copy2(train_GroundTruth_FilePath, train_GroundTruth_folder_path) # Copy each train dataset Input image from the original dataset Input folder to the train dataset Input folder
 
-    for val_GroundTruth_FilePath in val_GroundTruth_FilePaths:
+    for val_GroundTruth_FilePath in tqdm(val_GroundTruth_FilePaths, desc="Copying and pasting validation dataset GroundTruth images"):
         shutil.copy2(val_GroundTruth_FilePath, val_GroundTruth_folder_path) # Copy each validation dataset Input image from the original dataset Input folder to the validation dataset Input folder
 
     #Part3: Generate summary
-    print("-------------------------Partitioning dataset operations status-------------------------")
+    print("\n-------------------------Partitioning dataset operations status-------------------------")
     print("Operations completed, Summary:")
     print(f'Ratio:\n(Train dataset:Validation dataset) = ({train_ratio}:{val_ratio})\n\nTotal number of:')
     print('Original dataset Input images:', len(src_Input_FileNames)) # Get the total number of the original dataset Input images
