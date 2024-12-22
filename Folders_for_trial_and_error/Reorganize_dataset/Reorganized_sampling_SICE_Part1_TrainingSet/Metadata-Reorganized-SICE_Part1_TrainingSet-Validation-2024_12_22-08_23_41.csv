@@ -1,0 +1,13 @@
+Source dataset name:,SICE_Part1_TrainingSet,Partition name,Validation,Date and Time:,2024_12_22-08_23_41
+
+List of validation dataset Input and GroundTruth image filenames:
+0 0 0 6 . J P G
+0 0 1 4 . J P G
+0 0 1 9 . J P G
+
+-------------------------Partitioning dataset operations status-------------------------
+"Operations completed, Summary:"
+Original dataset Input images:,27,Original dataset GroundTruth images:,27
+Validation dataset Input images:,3,Validation dataset GroundTruth images:,3
+Train dataset:Validation dataset,0.9:0.1
+The validation dataset Input folder and GroundTruth folder have the same elements

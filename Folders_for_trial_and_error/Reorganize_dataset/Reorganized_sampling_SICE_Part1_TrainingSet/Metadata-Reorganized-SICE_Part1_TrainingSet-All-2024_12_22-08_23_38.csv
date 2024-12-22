@@ -1,0 +1,38 @@
+Source dataset name:,SICE_Part1_TrainingSet,Partition name,All,Date and Time:,2024_12_22-08_23_38
+
+The sorted folder list:
+55,92,135,168,Label
+
+folder_name,files_num_for_the_folder,image_counter
+55,9,0
+55,9,1
+55,9,2
+55,9,3
+55,9,4
+55,9,5
+55,9,6
+55,9,7
+55,9,8
+92,7,9
+92,7,10
+92,7,11
+92,7,12
+92,7,13
+92,7,14
+92,7,15
+135,4,16
+135,4,17
+135,4,18
+135,4,19
+168,7,20
+168,7,21
+168,7,22
+168,7,23
+168,7,24
+168,7,25
+168,7,26
+
+-------------------------Reorganizing dataset operations status-------------------------
+"Operations completed, Summary:"
+Total number of images in Input folder [Reorganized dataset]:,27,Total number of images in Ground Truth folder [Reorganized dataset]:,27
+The original dataset Input folder and GroundTruth folder have the same elements
