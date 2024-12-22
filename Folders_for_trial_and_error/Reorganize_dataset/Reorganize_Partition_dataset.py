@@ -7,7 +7,7 @@ import time
 import csv
 import argparse
 import numpy as np
-from tqdm.auto import tqdm
+from tqdm import tqdm
 
 def check_lists(list1, list2): # Used to check if 2 lists have the same elements
     list1_sorted = sorted(list1)
