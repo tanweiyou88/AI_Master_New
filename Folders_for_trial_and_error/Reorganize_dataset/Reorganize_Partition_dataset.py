@@ -109,7 +109,7 @@ def reorganize(config, metadata): # Used to reorganize the original dataset
             file_list = glob.glob(config.src_dir+"/"+folder_name+"/*") # Returns a list of files' absolute path (of any extension) that are inside the specified path (src_dir+"/"+folder_name+"/*")
             metadata['folder_name'] = folder_name # Current folder name
             metadata['files_num_for_the_folder'] = len(file_list)
-            print("Folder name:" + metadata['folder_name'] + "; Number of files in this folder:" + str(metadata['files_num_for_the_folder']) ) # Show the current folder name and the number of files available in it
+            print("\n\nFolder name:" + metadata['folder_name'] + "; Number of files in this folder:" + str(metadata['files_num_for_the_folder']) ) # Show the current folder name and the number of files available in it
             for file in file_list: # For each image in the file list (available inside the current folder)
                 metadata['image_counter'] += 1 # Increase the image counter by 1
                 
