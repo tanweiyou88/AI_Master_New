@@ -20,6 +20,8 @@ from tqdm import tqdm
 
 
 def main():
+
+    print("----------------Adjust Brightness Operations Begins----------------")
     # image_dataset = image_loader(config.images_path, config.img_size, config.low_light_brightness_factor, config.high_light_brightness_factor)	# set the absolute path of the training dataset	
     low_light_result_path = config.images_src_path.replace('normal-light','low-light') 
     os.makedirs(low_light_result_path, exist_ok=True) # Create the folder to store the low-light images
@@ -31,7 +33,7 @@ def main():
     image_dataset = image_loader(config.images_src_path, config.img_size) # Specify the source image dataset folder path to create the custom datset, to be used by the dataloader later	
     image_batch = torch.utils.data.DataLoader(image_dataset, batch_size=config.image_batch_size, shuffle=False, num_workers=config.num_workers, pin_memory=True) # Split the custom dataset into batches of images
 
-    image_batch_bar = tqdm(image_batch, desc="Creating a low-light image and high-light image for each input image in a batch") # To enable the tqdm progress bar feature
+    image_batch_bar = tqdm(image_batch, desc="Creating a low-light image and high-light image for each input image in each batch") # To enable the tqdm progress bar feature
     # for batch_idx, batch in enumerate(image_batch_bar):
     #     # print(batch)
     #     print(batch["image_path"])
@@ -49,7 +51,7 @@ def main():
             torchvision.utils.save_image(low_light_images[i], low_light_result_path + "/" + os.path.basename(image_paths[i])) # Save each low-light image into the low-light folder. save_image will automatically move tensors from GPU to CPU before saving them on disks, because file I/O operations are typically CPU-bound.
             torchvision.utils.save_image(high_light_images[i], high_light_result_path + "/" + os.path.basename(image_paths[i])) # Save each high-light image into the high-light folder
                 
-  
+    print("----------------Adjust Brightness Operations Completed----------------")
 
 
 if __name__ == "__main__": 
@@ -59,8 +61,8 @@ if __name__ == "__main__":
     # Input Parameters
     parser.add_argument('--images_src_path', type=str, default="D:/AI_Master_New/Folders_for_trial_and_error/ImageProcessing_AdjustBrightness/sampling_SICE_Part1_TrainingSet/normal-light") # The source image dataset folder path 
     parser.add_argument('--img_size', type=int, default=416) # The dimensions of the generated images
-    parser.add_argument('--low_light_brightness_factor', type=float, default=0.3) # The brightness factor to adjust the image brightness to generate its corresponding low-light image. Range = [0,1]
-    parser.add_argument('--high_light_brightness_factor', type=float, default=1.6) # The brightness factor to adjust the image brightness to generate its corresponding high-light image. Range = [1,inf]
+    parser.add_argument('--low_light_brightness_factor', type=float, default=0.15) # The brightness factor to adjust the image brightness to generate its corresponding low-light image. Range = [0,1]
+    parser.add_argument('--high_light_brightness_factor', type=float, default=2.3) # The brightness factor to adjust the image brightness to generate its corresponding high-light image. Range = [1,inf]
     parser.add_argument('--image_batch_size', type=int, default=8) # The number of images to be processed in each batch
     parser.add_argument('--num_workers', type=int, default=4)
 
