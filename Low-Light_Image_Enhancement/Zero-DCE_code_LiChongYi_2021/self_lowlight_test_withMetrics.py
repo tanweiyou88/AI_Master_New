@@ -21,6 +21,7 @@ import numpy as np
 from torchmetrics.image.lpip import LearnedPerceptualImagePatchSimilarity as LPIPS
 from torchmetrics import StructuralSimilarityIndexMeasure as SSIM
 from torchmetrics import PeakSignalNoiseRatio as PSNR
+from torchmetrics.regression import MeanAbsoluteError as MAE
 from tqdm import tqdm
 import torch.utils.data
 
@@ -72,6 +73,11 @@ def IQA_metrics_calculation(IQA_metrics_data): # We define IQA_metrics_data as t
 	batch_average_ssim = ssim(enhanced_image, img_lowlight).item()
 	IQA_metrics_data['accumulate_ssim'] += batch_average_ssim * sample_size
 	IQA_metrics_data['average_ssim'] = IQA_metrics_data['accumulate_ssim'] / IQA_metrics_data['accumulate_number_of_input_samples_processed']
+
+	# MAE part
+	batch_average_mae = mae(enhanced_image, img_lowlight).item()
+	IQA_metrics_data['accumulate_mae'] += batch_average_mae * sample_size
+	IQA_metrics_data['average_mae'] = IQA_metrics_data['accumulate_mae'] / IQA_metrics_data['accumulate_number_of_input_samples_processed']
 	
 	# LPIPS part
 	batch_average_lpips = lpips(enhanced_image, img_lowlight).item()
@@ -79,8 +85,8 @@ def IQA_metrics_calculation(IQA_metrics_data): # We define IQA_metrics_data as t
 	IQA_metrics_data['average_lpips'] = IQA_metrics_data['accumulate_lpips'] / IQA_metrics_data['accumulate_number_of_input_samples_processed']
 
 	# Summary of the important IQA metric results
-	print('Accumulated processed sample numbers:%d, Average PSNR: %.4f dB, Average SSIM: %.4f, Average LPIPS: %.4f' % (
-                        IQA_metrics_data['accumulate_number_of_input_samples_processed'], IQA_metrics_data['average_psnr'], IQA_metrics_data['average_ssim'], IQA_metrics_data['average_lpips']))
+	print('Accumulated processed sample numbers:%d, Average PSNR: %.4f dB, Average SSIM: %.4f, Average MAE: %.4f, Average LPIPS: %.4f' % (
+                        IQA_metrics_data['accumulate_number_of_input_samples_processed'], IQA_metrics_data['average_psnr'], IQA_metrics_data['average_ssim'], IQA_metrics_data['average_mae'], IQA_metrics_data['average_lpips']))
 	
 def ComputationComplexity_metrics_calculation(ComputationalComplexity_metrics_data): # We define ComputationalComplexity_metrics_data as the input argument, so that the results related to ComputationalComplexity_metrics_data calculated in this self-defined function can be directly updated to the metric dictionary located in the main() of this script.
 	
@@ -132,10 +138,11 @@ if __name__ == '__main__':
 # **Part 3: Initialize the functions to calculate performance metrics**
 	ssim = SSIM(data_range=1.).to(device) # Performance metric: SSIM
 	psnr = PSNR(data_range=1.).to(device) # Performance metric: PSNR
-	lpips = LPIPS(net_type='alex').to(device) # Performance metric: LPIPS (perceptual loss provided by a pretrained learning-based model), using alexnet as the backbone (LPIPS with alexnet performs the best according to its official Github)
+	mae = MAE(num_outputs=1).to(device) # Performance metric: MAE
+	lpips = LPIPS(net_type='alex', normalize=True).to(device) # Performance metric: LPIPS (perceptual loss provided by a pretrained learning-based model), using alexnet as the backbone (LPIPS with alexnet performs the best according to its official Github)
 
 # **Part 4: Initialize a dictionary to store the Image Quality Assessment (IQA) metric data , so they will be updated from time to time later**
-	IQA_metrics_data = {'iteration':0, 'average_psnr': 0, 'average_ssim': 0, 'average_lpips': 0, 'accumulate_number_of_input_samples_processed': 0, 'batch_duration':0, 'mse': 0, 'accumulate_psnr': 0, 'accumulate_ssim': 0, 'accumulate_lpips': 0}
+	IQA_metrics_data = {'iteration':0, 'average_psnr': 0, 'average_ssim': 0, 'average_mae': 0, 'average_lpips': 0, 'accumulate_number_of_input_samples_processed': 0, 'batch_duration':0, 'accumulate_psnr': 0, 'accumulate_ssim': 0, 'accumulate_mae': 0,'accumulate_lpips': 0}
 
 # **Part 5: Initialize a dictionary to store the computational complexity metric data , so they will be updated from time to time later**
 	ComputationalComplexity_metrics_data ={'average_runtime':0, 'trainable_parameters':0, 'MACs':0, 'FLOPs': 0, 'accumulate_batch_duration':0}
@@ -225,8 +232,8 @@ if __name__ == '__main__':
 
 		# **Part 17: Show the final results of the model after completing the training/inference**
 		print('\n----------------------------------Final results of the LLIE model [%s] performance----------------------------------' %(config.model_name))
-		print('\nA)----IQA metrics summary----\n1) Average PSNR: %.4f dB\n2) Average SSIM: %.4f\n3) Average LPIPS: %.4f\n**[Note: Each result above is calculated for per output sample (enhanced image), which averaged on %d output samples of (channel=%d, height=%d, width=%d)]**\n\nB)----Computational complexity metrics summary----\n1) Average runtime: %f second(s)\n2) Trainable parameters: %s\n3) MACs: %s\n4) FLOPs: %s\n**[Note:\n# Average runtime is calculated for per input sample, which averaged on %d input samples of (channel=%d, height=%d, width=%d)\n# MACs and FLOPs are respectively calculated using the reference input shape: (batch_size=%d, channel=%d, height=%d, width=%d]**\n\n' % (
-                        IQA_metrics_data['average_psnr'], IQA_metrics_data['average_ssim'], IQA_metrics_data['average_lpips'], 
+		print('\nA)----IQA metrics summary----\n1) Average PSNR: %.4f dB\n2) Average SSIM: %.4f\n3) Average MAE: %.4f\n4) Average LPIPS: %.4f\n**[Note: Each result above is calculated for per output sample (enhanced image), which averaged on %d output samples of (channel=%d, height=%d, width=%d)]**\n\nB)----Computational complexity metrics summary----\n1) Average runtime: %f second(s)\n2) Trainable parameters: %s\n3) MACs: %s\n4) FLOPs: %s\n**[Note:\n# Average runtime is calculated for per input sample, which averaged on %d input samples of (channel=%d, height=%d, width=%d)\n# MACs and FLOPs are respectively calculated using the reference input shape: (batch_size=%d, channel=%d, height=%d, width=%d]**\n\n' % (
+                        IQA_metrics_data['average_psnr'], IQA_metrics_data['average_ssim'], IQA_metrics_data['average_mae'], IQA_metrics_data['average_lpips'], 
 						IQA_metrics_data['accumulate_number_of_input_samples_processed'], reference_input_shape[1], reference_input_shape[2], reference_input_shape[3],
 						ComputationalComplexity_metrics_data['average_runtime'], ComputationalComplexity_metrics_data['trainable_parameters'], ComputationalComplexity_metrics_data['MACs'], ComputationalComplexity_metrics_data['FLOPs'],
 						IQA_metrics_data['accumulate_number_of_input_samples_processed'], reference_input_shape[1], reference_input_shape[2], reference_input_shape[3], 
