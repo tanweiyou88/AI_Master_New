@@ -254,9 +254,7 @@ if __name__ == '__main__':
 # E) The input-output image pairs involved in metric calculations at each batch will be organized as a grid for comparison and saved as an image file, with the filename according to the batch number.
 # F) Record the IQA metric data at each epoch & batch and computational complexity of the model on a single csv file.
 # G) The final results of the LLIE model performance will be printed at last.
-#
-# 3) Tasks:
-# A) Study why when the script is run multiple times, only the Average PSNR fluctuates (compare by using saved enhanced image vs the enhanced image before being saved)
-# B) Study why initially keep mentioning "Total training examples", but this is not important.
+# H) Study why when the script is run multiple times, only the Average PSNR fluctuates (compare by using saved enhanced image vs the enhanced image before being saved) "Answer: Because the state of PyTorch RNG is not fixed so that the series of shuffled indices is not reproducible and deterministic"
+# I) Study why initially keep mentioning "Total training examples", but this is not important. "Answer: Because [print("Total training examples:", len(self.train_list))] is defined in the __init__ of the dataset object called lowlight_loader in dataloader.py, which will be called when the dataset object is initialized. "
 
 
