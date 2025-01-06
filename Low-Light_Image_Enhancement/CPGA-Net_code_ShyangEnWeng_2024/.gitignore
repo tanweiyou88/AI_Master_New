@@ -6,6 +6,7 @@ models/
 logs/
 *.pyc
 
+__pycache__
 /data
 /log
 /Img

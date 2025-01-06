@@ -8,3 +8,6 @@
 
 /ImageProcessing_AdjustBrightness/sampling_SICE_Part1_TrainingSet
 
+/ImageProcessing_AdjustBrightness/PlantDoc.v1-resize-416x416.yolov8-normal-light
+/ImageProcessing_AdjustBrightness/PlantDoc.v1-resize-416x416.yolov8-low-light
+/ImageProcessing_AdjustBrightness/PlantDoc.v1-resize-416x416.yolov8-high-light

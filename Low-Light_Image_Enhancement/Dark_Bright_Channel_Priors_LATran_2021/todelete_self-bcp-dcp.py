@@ -161,9 +161,10 @@ def full_brightness_enhance(im, w):
 if __name__ == "__main__":
     
     # Load image
-    img_name = "10"
+    # img_name = "00756_low_light"
+    img_name = "healthy_test_1_low-light"
     # src = f"Low-Light_Image_Enhancement/Dark_Bright_Channel_Priors_LATran_2021/images/{img_name}.jpg"
-    src = f"Low-Light_Image_Enhancement/Dark_Bright_Channel_Priors_LATran_2021/images/{img_name}.bmp"
+    src = f"D:/AI_Master_New\healthy_test/{img_name}.JPG"
     im = cv2.imread(src) # Loads an input image from a specified file and returns the image data (pixel values) as a NumPy array of int datatype
     im = cv2.cvtColor(im, cv2.COLOR_BGR2RGB)
     print("Does cv2.imread() return NumPy array?:",isinstance(im,np.ndarray))
@@ -195,8 +196,10 @@ if __name__ == "__main__":
 
     plt.figure('Dark channel prior image',figsize=(12,10))
     plt.imshow(Idark_ch, cmap='gray') # show the dark channel prior image derived from the input image. The high pixel value on the dark channel prior image means the pixel has low contrast due to over-exposed (covered by bright region) [this property is used in this method to identify the pixel requires enhancement]. The low pixel value on the dark channel prior image means the pixel either has good contrast or has low contrast due to under-exposed (covered by dark region) or the pixel itself represents dark colored object.
+    cv2.imwrite(f"Low-Light_Image_Enhancement/Dark_Bright_Channel_Priors_LATran_2021/images/{img_name}_dark_channel_image.jpg",Idark_ch*255)
     plt.figure('Bright channel prior image',figsize=(12,10))
     plt.imshow(Ibright_ch, cmap='gray') # show the bright channel prior image derived from the input image. The high pixel value on the bright channel prior image means the pixel either has good exposure (well-exposed) or too bright (over-exposed). The low pixel value on the bright channel prior image means the pixel either too dark (under-exposed) [this property is used in this method to identify the pixel requires enhancement] or the pixel itself represents dark colored object .
+    cv2.imwrite(f"Low-Light_Image_Enhancement/Dark_Bright_Channel_Priors_LATran_2021/images/{img_name}_bright_channel_image.jpg",Ibright_ch*255)
 
 	# Get atmosphere
     At = get_atmosphere(I, Ibright_ch, p)
