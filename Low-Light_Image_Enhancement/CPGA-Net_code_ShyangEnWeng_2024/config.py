@@ -17,13 +17,14 @@ parser.add_argument('--use_gpu', type=str2bool, default=False, help='Use GPU')
 parser.add_argument('--gpu', type=int, default=-1, help='GPU id')
 
 parser.add_argument('--lr', type=float, default=1e-4, help='Learning Rate. Default=1e-4')
-parser.add_argument('--num_workers', type=int, default=0, help='Number of threads for data loader, for window set to 0')
+# parser.add_argument('--num_workers', type=int, default=0, help='Number of threads for data loader, for window set to 0') # 0 is the original num_workers proposed by the authors
+parser.add_argument('--num_workers', type=int, default=4, help='Number of threads for data loader, for window set to 0')
 parser.add_argument('--weight_decay', type=float, default=0.0001)
 parser.add_argument('--grad_clip_norm', type=float, default=0.1)
 parser.add_argument('--print_gap', type=int, default=50, help='number of batches to print average loss ')
 
-#parser.add_argument('--batch_size', type=int, default=16, help='Training batch size') # 16 is the original batch size proposed by the authors
-parser.add_argument('--batch_size', type=int, default=1, help='Training batch size')
+# parser.add_argument('--batch_size', type=int, default=16, help='Training batch size') # 16 is the original batch size proposed by the authors
+parser.add_argument('--batch_size', type=int, default=24, help='Training batch size')
 parser.add_argument('--val_batch_size', type=int, default=1, help='Validation batch size')
 parser.add_argument('--epochs', type=int, default=10, help='number of epochs for training')
 
