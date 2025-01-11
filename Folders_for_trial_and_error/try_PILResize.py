@@ -1,3 +1,4 @@
+## Option 1: Resize an image and then save it in a folder
 # import os
 # import sys
 # import torch
@@ -25,7 +26,7 @@
 # ori_image.save(os.path.join(folder_path_original_images, os.path.basename(img_path))) # save resized images
 # resized_image.save(os.path.join(folder_path_resized_images, os.path.basename(img_path))) # save resized images
 
-## Resize the images in the original folder and then save them in a new folder
+## Option 2: Resize the images in the original folder and then save them in a new folder
 import os
 import sys
 import torch
