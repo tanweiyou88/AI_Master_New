@@ -12,9 +12,8 @@ def check_dataframes_similarity(df1, df2):
 # # Making dataframe 2
 # df2 = pd.read_csv("D:/AI_Master_New/Low-Light_Image_Enhancement/Zero-DCE_code_LiChongYi_2021/data/result/self_CompileMetrics/self_CompileMetrics_csvFile/Zero-DCE-Outputs-2025_01_05-16_07_29.csv")
 
-df1 = pd.read_csv("D:/AI_Master_New/Low-Light_Image_Enhancement/Zero-DCE_code_LiChongYi_2021/data/result/self_CompileMetrics/self_CompileMetrics_csvFile/Zero-DCE-IndicesHistory-2025_01_06-02_36_42.csv")
-df2 = pd.read_csv("D:/AI_Master_New/Low-Light_Image_Enhancement/Zero-DCE_code_LiChongYi_2021/data/result/self_CompileMetrics/self_CompileMetrics_csvFile/Zero-DCE-IndicesHistory-2025_01_06-02_39_57.csv")
-
+df1 = pd.read_csv("D:/AI_Master_New/Low-Light_Image_Enhancement/Zero-DCE_code_LiChongYi_2021/data/result/self_CompileMetrics/self_CompileMetrics_csvFile/Zero-DCE-IndicesHistory-2025_01_20-19_22_00.csv")
+df2 = pd.read_csv("D:/AI_Master_New/Low-Light_Image_Enhancement/Zero-DCE_code_LiChongYi_2021/data/result/self_CompileMetrics/self_CompileMetrics_csvFile/Zero-DCE-IndicesHistory-2025_01_20-19_23_53.csv")
 
 
 check_dataframes_similarity(df1, df2)
