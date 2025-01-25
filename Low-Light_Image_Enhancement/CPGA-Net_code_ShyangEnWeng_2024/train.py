@@ -88,9 +88,9 @@ def main(cfg):
     # -------------------------------------------------------------------
     # basic config
     print(cfg)
-    if cfg.gpu > -1:
-        os.environ['CUDA_VISIBLE_DEVICES'] = str(cfg.gpu)
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    if cfg.gpu > -1: # When at least 1 GPU/CUDA device is detected
+        os.environ['CUDA_VISIBLE_DEVICES'] = str(cfg.gpu) # Set a specific GPU/CUDA device so that it will be used to run the computations
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu') # Set the CUDA as the device so that GPU will be used to run the computations, instead of CPU
     # -------------------------------------------------------------------
     # load summaries
     summary = load_summaries(cfg)
