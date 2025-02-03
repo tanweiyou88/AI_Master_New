@@ -24,6 +24,8 @@ print()
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print('Using device:', device)
 
+# 
+
 #Additional Info when using cuda
 if device.type == 'cuda':
     print('Name of the device:', torch.cuda.get_device_name(0))
