@@ -17,8 +17,7 @@ print('Whether CUDA is supported by our system:', torch.cuda.is_available())
 # To print the number of GPUs available
 print('The number of GPUs available:', torch.cuda.device_count())
 
-print()
-
+print('\n')
 
 # setting device on GPU if available, else CPU
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
