@@ -15,6 +15,7 @@ from PIL import Image
 import time
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
 
 from torchmetrics.image.lpip import LearnedPerceptualImagePatchSimilarity as LPIPS
 from torchmetrics import StructuralSimilarityIndexMeasure as SSIM
@@ -118,125 +119,259 @@ def save_model(epoch, path, net, optimizer, net_name): # this function saves mod
                f=os.path.join(path, net_name, '{}-{}-{}-{}-{}-checkpoint.pt'.format(current_date_time_string, config.model_name, config.dataset_name, 'Epoch', epoch)))
 
 def generate_save_TrainingResults_History():
+	
+
+	fig = plt.figure(figsize=(10, 10), dpi=100, constrained_layout=True)
+	fig.suptitle('{}-{}-{}'.format(current_date_time_string, config.model_name, config.dataset_name) + '\nTraining Results: Losses') # set the figure super title
+	gs = fig.add_gridspec(3, 2)
+
 	# (Training results) Generate and save the figure of [Average loss vs Epoch]
-	plt.figure() # creates a new figure
-	print('epoch_training_average_loss_list:', epoch_training_average_loss_list)
-	x_epoch_training_average_loss_list = [x for x in range(len(epoch_training_average_loss_list))] # create the x-axis elements
-	plt.plot(x_epoch_training_average_loss_list, epoch_training_average_loss_list) # plot the graph
-	plt.xlabel('Epoch') # set the x-label
-	plt.ylabel('Average loss') # set the y-label
-	plt.title('{}-{}-{}'.format(current_date_time_string, config.model_name, config.dataset_name) + '\nTraining Results [Average loss vs Epoch]') # set the figure title
-	plt.xticks(np.arange(min(x_epoch_training_average_loss_list), max(x_epoch_training_average_loss_list)+1, 1)) # set the interval of x-axis 
-	epoch_training_average_loss_history_filename = '{}-{}-{}-epoch_training_average_loss_history.jpg'.format(current_date_time_string, config.model_name, config.dataset_name) # define the filename
-	epoch_training_average_loss_history_filepath = os.path.join(resultPath_csv, epoch_training_average_loss_history_filename) # define the filepath, used to save the figure as an image
-	plt.savefig(epoch_training_average_loss_history_filepath, bbox_inches='tight') # save the figure as an image
+	epoch_training_average_loss_list_ymin = min(epoch_training_average_loss_list)
+	epoch_training_average_loss_list_xpos = epoch_training_average_loss_list.index(epoch_training_average_loss_list_ymin)
+	epoch_training_average_loss_list_xmin = epoch_list[epoch_training_average_loss_list_xpos]
+	ax1 = fig.add_subplot(gs[0, :])
+	ax1.plot(epoch_list, epoch_training_average_loss_list, 'r') #row=0, col=0, 1
+	ax1.plot(epoch_training_average_loss_list_xmin, epoch_training_average_loss_list_ymin, 'r', marker='o', fillstyle='none') # plot the minimum point
+	ax1.set_ylabel('Average loss') # set the y-label
+	ax1.set_xlabel('Epoch') # set the x-label
+	ax1.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, config.snapshot_iter)) # set the interval of x-axis 
+	ax1.set_title(f'Y-min. coord.:[{epoch_training_average_loss_list_xmin},{epoch_training_average_loss_list_ymin:.4f}]')
 
 	# (Training results) Generate and save the figure of [Average loss_TV vs Epoch]
-	plt.figure() # creates a new figure
-	print('epoch_training_average_loss_TV_list:', epoch_training_average_loss_TV_list)
-	x_epoch_training_average_loss_TV_list = [x for x in range(len(epoch_training_average_loss_TV_list))] # create the x-axis elements
-	plt.plot(x_epoch_training_average_loss_TV_list, epoch_training_average_loss_TV_list) # plot the graph
-	plt.xlabel('Epoch') # set the x-label
-	plt.ylabel('Average loss_TV') # set the y-label
-	plt.title('{}-{}-{}'.format(current_date_time_string, config.model_name, config.dataset_name) + '\nTraining Results [Average loss_TV vs Epoch]') # set the figure title
-	plt.xticks(np.arange(min(x_epoch_training_average_loss_TV_list), max(x_epoch_training_average_loss_TV_list)+1, 1)) # set the interval of x-axis 
-	epoch_training_average_loss_TV_history_filename = '{}-{}-{}-epoch_training_average_loss_TV_history.jpg'.format(current_date_time_string, config.model_name, config.dataset_name) # define the filename
-	epoch_training_average_loss_TV_history_filepath = os.path.join(resultPath_csv, epoch_training_average_loss_TV_history_filename) # define the filepath, used to save the figure as an image
-	plt.savefig(epoch_training_average_loss_TV_history_filepath, bbox_inches='tight') # save the figure as an image
+	epoch_training_average_loss_TV_list_ymin = min(epoch_training_average_loss_TV_list)
+	epoch_training_average_loss_TV_list_xpos = epoch_training_average_loss_TV_list.index(epoch_training_average_loss_TV_list_ymin)
+	epoch_training_average_loss_TV_list_xmin = epoch_list[epoch_training_average_loss_TV_list_xpos]
+	ax2 = fig.add_subplot(gs[1, 0])
+	ax2.plot(epoch_list, epoch_training_average_loss_TV_list, 'b') # plot the graph
+	ax2.plot(epoch_training_average_loss_TV_list_xmin, epoch_training_average_loss_TV_list_ymin, 'b', marker='o', fillstyle='none') # plot the minimum point
+	ax2.set_ylabel('Average loss_TV') # set the y-label
+	ax2.set_xlabel('Epoch') # set the x-label
+	ax2.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, config.snapshot_iter)) # set the interval of x-axis 
+	ax2.set_title(f'Y-min. coord.:[{epoch_training_average_loss_TV_list_xmin},{epoch_training_average_loss_TV_list_ymin:.4f}]')
 
 	# (Training results) Generate and save the figure of [Average loss_spa vs Epoch]
-	plt.figure() # creates a new figure
-	print('epoch_training_average_loss_spa_list:', epoch_training_average_loss_spa_list)
-	x_epoch_training_average_loss_spa_list = [x for x in range(len(epoch_training_average_loss_spa_list))] # create the x-axis elements
-	plt.plot(x_epoch_training_average_loss_spa_list, epoch_training_average_loss_spa_list) # plot the graph
-	plt.xlabel('Epoch') # set the x-label
-	plt.ylabel('Average loss_spa') # set the y-label
-	plt.title('{}-{}-{}'.format(current_date_time_string, config.model_name, config.dataset_name) + '\nTraining Results [Average loss_spa vs Epoch]') # set the figure title
-	plt.xticks(np.arange(min(x_epoch_training_average_loss_spa_list), max(x_epoch_training_average_loss_spa_list)+1, 1)) # set the interval of x-axis 
-	epoch_training_average_loss_spa_history_filename = '{}-{}-{}-epoch_training_average_loss_spa_history.jpg'.format(current_date_time_string, config.model_name, config.dataset_name) # define the filename
-	epoch_training_average_loss_spa_history_filepath = os.path.join(resultPath_csv, epoch_training_average_loss_spa_history_filename) # define the filepath, used to save the figure as an image
-	plt.savefig(epoch_training_average_loss_spa_history_filepath, bbox_inches='tight') # save the figure as an image
-	
+	epoch_training_average_loss_spa_list_ymin = min(epoch_training_average_loss_spa_list)
+	epoch_training_average_loss_spa_list_xpos = epoch_training_average_loss_spa_list.index(epoch_training_average_loss_spa_list_ymin)
+	epoch_training_average_loss_spa_list_xmin = epoch_list[epoch_training_average_loss_spa_list_xpos]
+	ax3 = fig.add_subplot(gs[1, 1])
+	ax3.plot(epoch_list, epoch_training_average_loss_spa_list) # plot the graph
+	ax3.plot(epoch_training_average_loss_spa_list_xmin, epoch_training_average_loss_spa_list_ymin, 'b', marker='o', fillstyle='none') # plot the minimum point
+	ax3.set_ylabel('Average loss_spa') # set the y-label
+	ax3.set_xlabel('Epoch') # set the x-label
+	ax3.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, config.snapshot_iter)) # set the interval of x-axis 
+	ax3.set_title(f'Y-min. coord.:[{epoch_training_average_loss_spa_list_xmin},{epoch_training_average_loss_spa_list_ymin:.4f}]')
+
 	# (Training results) Generate and save the figure of [Average loss_col vs Epoch]
-	plt.figure() # creates a new figure
-	print('epoch_training_average_loss_col_list:', epoch_training_average_loss_col_list)
-	x_epoch_training_average_loss_col_list = [x for x in range(len(epoch_training_average_loss_col_list))] # create the x-axis elements
-	plt.plot(x_epoch_training_average_loss_col_list, epoch_training_average_loss_col_list) # plot the graph
-	plt.xlabel('Epoch') # set the x-label
-	plt.ylabel('Average loss_col') # set the y-label
-	plt.title('{}-{}-{}'.format(current_date_time_string, config.model_name, config.dataset_name) + '\nTraining Results [Average loss_col vs Epoch]') # set the figure title
-	plt.xticks(np.arange(min(x_epoch_training_average_loss_col_list), max(x_epoch_training_average_loss_col_list)+1, 1)) # set the interval of x-axis 
-	epoch_training_average_loss_col_history_filename = '{}-{}-{}-epoch_training_average_loss_col_history.jpg'.format(current_date_time_string, config.model_name, config.dataset_name) # define the filename
-	epoch_training_average_loss_col_history_filepath = os.path.join(resultPath_csv, epoch_training_average_loss_col_history_filename) # define the filepath, used to save the figure as an image
-	plt.savefig(epoch_training_average_loss_col_history_filepath, bbox_inches='tight') # save the figure as an image
+	epoch_training_average_loss_col_list_ymin = min(epoch_training_average_loss_col_list)
+	epoch_training_average_loss_col_list_xpos = epoch_training_average_loss_col_list.index(epoch_training_average_loss_col_list_ymin)
+	epoch_training_average_loss_col_list_xmin = epoch_list[epoch_training_average_loss_col_list_xpos]
+	ax4 = fig.add_subplot(gs[2, 0])
+	ax4.plot(epoch_list, epoch_training_average_loss_col_list) # plot the graph
+	ax4.plot(epoch_training_average_loss_col_list_xmin, epoch_training_average_loss_col_list_ymin, 'b', marker='o', fillstyle='none') # plot the minimum point
+	ax4.set_ylabel('Average loss_col') # set the y-label
+	ax4.set_xlabel('Epoch') # set the x-label
+	ax4.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, config.snapshot_iter)) # set the interval of x-axis 
+	ax4.set_title(f'Y-min. coord.:[{epoch_training_average_loss_col_list_xmin},{epoch_training_average_loss_col_list_ymin:.4f}]')
 
 	# (Training results) Generate and save the figure of [Average loss_exp vs Epoch]
-	plt.figure() # creates a new figure
+	epoch_training_average_loss_exp_list_ymin = min(epoch_training_average_loss_exp_list)
+	epoch_training_average_loss_exp_list_xpos = epoch_training_average_loss_exp_list.index(epoch_training_average_loss_exp_list_ymin)
+	epoch_training_average_loss_exp_list_xmin = epoch_list[epoch_training_average_loss_exp_list_xpos]
+	ax5 = fig.add_subplot(gs[2, 1])
+	ax5.plot(epoch_list, epoch_training_average_loss_exp_list) # plot the graph
+	ax5.plot(epoch_training_average_loss_exp_list_xmin, epoch_training_average_loss_exp_list_ymin, 'b', marker='o', fillstyle='none') # plot the minimum point
+	ax5.set_ylabel('Average loss_exp') # set the y-label
+	ax5.set_xlabel('Epoch') # set the x-label
+	ax5.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, config.snapshot_iter)) # set the interval of x-axis 
+	ax5.set_title(f'Y-min. coord.:[{epoch_training_average_loss_exp_list_xmin},{epoch_training_average_loss_exp_list_ymin:.4f}]')
+
+	epoch_training_results_history_filename = '{}-{}-{}-epoch_training_results_history.jpg'.format(current_date_time_string, config.model_name, config.dataset_name) # define the filename
+	epoch_training_results_history_filepath = os.path.join(resultPath_csv, epoch_training_results_history_filename) # define the filepath, used to save the figure as an image
+	
+	plt.margins() 
+	plt.savefig(epoch_training_results_history_filepath, bbox_inches='tight') # save the figure as an image
+	plt.show()
+
+	# # (Training results) Generate and save the figure of [Average loss vs Epoch] **DONE
+	# plt.figure() # creates a new figure
+	print('epoch_training_average_loss_list:', epoch_training_average_loss_list)
+	# x_epoch_training_average_loss_list = [x for x in range(len(epoch_training_average_loss_list))] # create the x-axis elements
+	# plt.plot(x_epoch_training_average_loss_list, epoch_training_average_loss_list) # plot the graph
+	# plt.xlabel('Epoch') # set the x-label
+	# plt.ylabel('Average loss') # set the y-label
+	# plt.title('{}-{}-{}'.format(current_date_time_string, config.model_name, config.dataset_name) + '\nTraining Results [Average loss vs Epoch]') # set the figure title
+	# plt.xticks(np.arange(min(x_epoch_training_average_loss_list), max(x_epoch_training_average_loss_list)+1, 1)) # set the interval of x-axis 
+	# epoch_training_average_loss_history_filename = '{}-{}-{}-epoch_training_average_loss_history.jpg'.format(current_date_time_string, config.model_name, config.dataset_name) # define the filename
+	# epoch_training_average_loss_history_filepath = os.path.join(resultPath_csv, epoch_training_average_loss_history_filename) # define the filepath, used to save the figure as an image
+	# plt.savefig(epoch_training_average_loss_history_filepath, bbox_inches='tight') # save the figure as an image
+
+	# # (Training results) Generate and save the figure of [Average loss_TV vs Epoch]  **DONE
+	# plt.figure() # creates a new figure
+	print('epoch_training_average_loss_TV_list:', epoch_training_average_loss_TV_list)
+	# x_epoch_training_average_loss_TV_list = [x for x in range(len(epoch_training_average_loss_TV_list))] # create the x-axis elements
+	# plt.plot(x_epoch_training_average_loss_TV_list, epoch_training_average_loss_TV_list) # plot the graph
+	# plt.xlabel('Epoch') # set the x-label
+	# plt.ylabel('Average loss_TV') # set the y-label
+	# plt.title('{}-{}-{}'.format(current_date_time_string, config.model_name, config.dataset_name) + '\nTraining Results [Average loss_TV vs Epoch]') # set the figure title
+	# plt.xticks(np.arange(min(x_epoch_training_average_loss_TV_list), max(x_epoch_training_average_loss_TV_list)+1, 1)) # set the interval of x-axis 
+	# epoch_training_average_loss_TV_history_filename = '{}-{}-{}-epoch_training_average_loss_TV_history.jpg'.format(current_date_time_string, config.model_name, config.dataset_name) # define the filename
+	# epoch_training_average_loss_TV_history_filepath = os.path.join(resultPath_csv, epoch_training_average_loss_TV_history_filename) # define the filepath, used to save the figure as an image
+	# plt.savefig(epoch_training_average_loss_TV_history_filepath, bbox_inches='tight') # save the figure as an image
+
+	# # (Training results) Generate and save the figure of [Average loss_spa vs Epoch] **DONE
+	# plt.figure() # creates a new figure
+	print('epoch_training_average_loss_spa_list:', epoch_training_average_loss_spa_list)
+	# x_epoch_training_average_loss_spa_list = [x for x in range(len(epoch_training_average_loss_spa_list))] # create the x-axis elements
+	# plt.plot(x_epoch_training_average_loss_spa_list, epoch_training_average_loss_spa_list) # plot the graph
+	# plt.xlabel('Epoch') # set the x-label
+	# plt.ylabel('Average loss_spa') # set the y-label
+	# plt.title('{}-{}-{}'.format(current_date_time_string, config.model_name, config.dataset_name) + '\nTraining Results [Average loss_spa vs Epoch]') # set the figure title
+	# plt.xticks(np.arange(min(x_epoch_training_average_loss_spa_list), max(x_epoch_training_average_loss_spa_list)+1, 1)) # set the interval of x-axis 
+	# epoch_training_average_loss_spa_history_filename = '{}-{}-{}-epoch_training_average_loss_spa_history.jpg'.format(current_date_time_string, config.model_name, config.dataset_name) # define the filename
+	# epoch_training_average_loss_spa_history_filepath = os.path.join(resultPath_csv, epoch_training_average_loss_spa_history_filename) # define the filepath, used to save the figure as an image
+	# plt.savefig(epoch_training_average_loss_spa_history_filepath, bbox_inches='tight') # save the figure as an image
+	
+	# # (Training results) Generate and save the figure of [Average loss_col vs Epoch] **DONE
+	# plt.figure() # creates a new figure
+	print('epoch_training_average_loss_col_list:', epoch_training_average_loss_col_list)
+	# x_epoch_training_average_loss_col_list = [x for x in range(len(epoch_training_average_loss_col_list))] # create the x-axis elements
+	# plt.plot(x_epoch_training_average_loss_col_list, epoch_training_average_loss_col_list) # plot the graph
+	# plt.xlabel('Epoch') # set the x-label
+	# plt.ylabel('Average loss_col') # set the y-label
+	# plt.title('{}-{}-{}'.format(current_date_time_string, config.model_name, config.dataset_name) + '\nTraining Results [Average loss_col vs Epoch]') # set the figure title
+	# plt.xticks(np.arange(min(x_epoch_training_average_loss_col_list), max(x_epoch_training_average_loss_col_list)+1, 1)) # set the interval of x-axis 
+	# epoch_training_average_loss_col_history_filename = '{}-{}-{}-epoch_training_average_loss_col_history.jpg'.format(current_date_time_string, config.model_name, config.dataset_name) # define the filename
+	# epoch_training_average_loss_col_history_filepath = os.path.join(resultPath_csv, epoch_training_average_loss_col_history_filename) # define the filepath, used to save the figure as an image
+	# plt.savefig(epoch_training_average_loss_col_history_filepath, bbox_inches='tight') # save the figure as an image
+
+	# # (Training results) Generate and save the figure of [Average loss_exp vs Epoch]
+	# plt.figure() # creates a new figure
 	print('epoch_training_average_loss_exp_list:', epoch_training_average_loss_exp_list)
-	x_epoch_training_average_loss_exp_list = [x for x in range(len(epoch_training_average_loss_exp_list))] # create the x-axis elements
-	plt.plot(x_epoch_training_average_loss_exp_list, epoch_training_average_loss_exp_list) # plot the graph
-	plt.xlabel('Epoch') # set the x-label
-	plt.ylabel('Average loss_exp') # set the y-label
-	plt.title('{}-{}-{}'.format(current_date_time_string, config.model_name, config.dataset_name) + '\nTraining Results [Average loss_exp vs Epoch]') # set the figure title
-	plt.xticks(np.arange(min(x_epoch_training_average_loss_exp_list), max(x_epoch_training_average_loss_exp_list)+1, 1)) # set the interval of x-axis 
-	epoch_training_average_loss_exp_history_filename = '{}-{}-{}-epoch_training_average_loss_exp_history.jpg'.format(current_date_time_string, config.model_name, config.dataset_name) # define the filename
-	epoch_training_average_loss_exp_history_filepath = os.path.join(resultPath_csv, epoch_training_average_loss_exp_history_filename) # define the filepath, used to save the figure as an image
-	plt.savefig(epoch_training_average_loss_exp_history_filepath, bbox_inches='tight') # save the figure as an image
+	# x_epoch_training_average_loss_exp_list = [x for x in range(len(epoch_training_average_loss_exp_list))] # create the x-axis elements
+	# plt.plot(x_epoch_training_average_loss_exp_list, epoch_training_average_loss_exp_list) # plot the graph
+	# plt.xlabel('Epoch') # set the x-label
+	# plt.ylabel('Average loss_exp') # set the y-label
+	# plt.title('{}-{}-{}'.format(current_date_time_string, config.model_name, config.dataset_name) + '\nTraining Results [Average loss_exp vs Epoch]') # set the figure title
+	# plt.xticks(np.arange(min(x_epoch_training_average_loss_exp_list), max(x_epoch_training_average_loss_exp_list)+1, 1)) # set the interval of x-axis 
+	# epoch_training_average_loss_exp_history_filename = '{}-{}-{}-epoch_training_average_loss_exp_history.jpg'.format(current_date_time_string, config.model_name, config.dataset_name) # define the filename
+	# epoch_training_average_loss_exp_history_filepath = os.path.join(resultPath_csv, epoch_training_average_loss_exp_history_filename) # define the filepath, used to save the figure as an image
+	# plt.savefig(epoch_training_average_loss_exp_history_filepath, bbox_inches='tight') # save the figure as an image
 	
 
 def generate_save_ValidationResults_History():
 
+	fig = plt.figure(figsize=(10, 10), dpi=100, constrained_layout=True)
+	fig.suptitle('{}-{}-{}'.format(current_date_time_string, config.model_name, config.dataset_name) + '\nValidation Results: IQA Metrics') # set the figure super title
+	gs = fig.add_gridspec(2, 2) # create 2x2 grid
+
 	# (Validation results) Generate and save the figure of [Average PSNR vs Epoch]
-	plt.figure() # creates a new figure
-	print('epoch_validation_average_psnr_list:', epoch_validation_average_psnr_list)
-	x_epoch_validation_average_psnr_list = [x for x in range(len(epoch_validation_average_psnr_list))] # create the x-axis elements
-	plt.plot(x_epoch_validation_average_psnr_list, epoch_validation_average_psnr_list) # plot the graph
-	plt.xlabel('Epoch') # set the x-label
-	plt.ylabel('Average PSNR [dB]') # set the y-label
-	plt.title('{}-{}-{}'.format(current_date_time_string, config.model_name, config.dataset_name) + '\nTraining Results [Average PSNR vs Epoch]') # set the figure title
-	plt.xticks(np.arange(min(x_epoch_validation_average_psnr_list), max(x_epoch_validation_average_psnr_list)+1, 1)) # set the interval of x-axis 
-	epoch_validation_average_psnr_history_filename = '{}-{}-{}-epoch_validation_average_psnr_history.jpg'.format(current_date_time_string, config.model_name, config.dataset_name) # define the filename
-	epoch_validation_average_psnr_history_filepath = os.path.join(resultPath_csv, epoch_validation_average_psnr_history_filename) # define the filepath, used to save the figure as an image
-	plt.savefig(epoch_validation_average_psnr_history_filepath, bbox_inches='tight') # save the figure as an image
+	epoch_validation_average_psnr_list_ymax = max(epoch_validation_average_psnr_list)
+	epoch_validation_average_psnr_list_xpos = epoch_validation_average_psnr_list.index(epoch_validation_average_psnr_list_ymax)
+	epoch_validation_average_psnr_list_xmax = epoch_list[epoch_validation_average_psnr_list_xpos]
+	ax6 = fig.add_subplot(gs[0, 0])
+	ax6.plot(epoch_list, epoch_validation_average_psnr_list, 'b') #row=0, col=0, 1
+	ax6.plot(epoch_validation_average_psnr_list_xmax, epoch_validation_average_psnr_list_ymax, 'b', marker='o', fillstyle='none') # plot the maximum point
+	ax6.set_ylabel('Average PSNR [dB]') # set the y-label
+	ax6.set_xlabel('Epoch') # set the x-label
+	ax6.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, config.snapshot_iter)) # set the interval of x-axis 
+	ax6.set_title(f'Y-max. coord.:[{epoch_validation_average_psnr_list_xmax},{epoch_validation_average_psnr_list_ymax:.4f}]')
 
 	# (Validation results) Generate and save the figure of [Average SSIM vs Epoch]
-	plt.figure() # creates a new figure
-	print('epoch_validation_average_ssim_list:', epoch_validation_average_ssim_list)
-	x_epoch_validation_average_ssim_list = [x for x in range(len(epoch_validation_average_ssim_list))] # create the x-axis elements
-	plt.plot(x_epoch_validation_average_ssim_list, epoch_validation_average_ssim_list) # plot the graph
-	plt.xlabel('Epoch') # set the x-label
-	plt.ylabel('Average SSIM') # set the y-label
-	plt.title('{}-{}-{}'.format(current_date_time_string, config.model_name, config.dataset_name) + '\nTraining Results [Average SSIM vs Epoch]') # set the figure title
-	plt.xticks(np.arange(min(x_epoch_validation_average_ssim_list), max(x_epoch_validation_average_ssim_list)+1, 1)) # set the interval of x-axis 
-	epoch_validation_average_ssim_history_filename = '{}-{}-{}-epoch_validation_average_ssim_history.jpg'.format(current_date_time_string, config.model_name, config.dataset_name) # define the filename
-	epoch_validation_average_ssim_history_filepath = os.path.join(resultPath_csv, epoch_validation_average_ssim_history_filename) # define the filepath, used to save the figure as an image
-	plt.savefig(epoch_validation_average_ssim_history_filepath, bbox_inches='tight') # save the figure as an image
-	
+	epoch_validation_average_ssim_list_ymax = max(epoch_validation_average_ssim_list)
+	epoch_validation_average_ssim_list_xpos = epoch_validation_average_ssim_list.index(epoch_validation_average_ssim_list_ymax)
+	epoch_validation_average_ssim_list_xmax = epoch_list[epoch_validation_average_ssim_list_xpos]
+	ax7 = fig.add_subplot(gs[0, 1])
+	ax7.plot(epoch_list, epoch_validation_average_ssim_list, 'b') #row=0, col=0, 1
+	ax7.plot(epoch_validation_average_ssim_list_xmax, epoch_validation_average_ssim_list_ymax, 'b', marker='o', fillstyle='none') # plot the maximum point
+	ax7.set_ylabel('Average SSIM') # set the y-label
+	ax7.set_xlabel('Epoch') # set the x-label
+	ax7.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, config.snapshot_iter)) # set the interval of x-axis 
+	ax7.set_title(f'Y-max. coord.:[{epoch_validation_average_ssim_list_xmax},{epoch_validation_average_ssim_list_ymax:.4f}]')
+
 	# (Validation results) Generate and save the figure of [Average MAE vs Epoch]
-	plt.figure() # creates a new figure
-	print('epoch_validation_average_mae_list:', epoch_validation_average_mae_list)
-	x_epoch_validation_average_mae_list = [x for x in range(len(epoch_validation_average_mae_list))] # create the x-axis elements
-	plt.plot(x_epoch_validation_average_mae_list, epoch_validation_average_mae_list) # plot the graph
-	plt.xlabel('Epoch') # set the x-label
-	plt.ylabel('Average MAE') # set the y-label
-	plt.title('{}-{}-{}'.format(current_date_time_string, config.model_name, config.dataset_name) + '\nTraining Results [Average MAE vs Epoch]') # set the figure title
-	plt.xticks(np.arange(min(x_epoch_validation_average_mae_list), max(x_epoch_validation_average_mae_list)+1, 1)) # set the interval of x-axis 
-	epoch_validation_average_mae_history_filename = '{}-{}-{}-epoch_validation_average_mae_history.jpg'.format(current_date_time_string, config.model_name, config.dataset_name) # define the filename
-	epoch_validation_average_mae_history_filepath = os.path.join(resultPath_csv, epoch_validation_average_mae_history_filename) # define the filepath, used to save the figure as an image
-	plt.savefig(epoch_validation_average_mae_history_filepath, bbox_inches='tight') # save the figure as an image
+	epoch_validation_average_mae_list_ymin = min(epoch_validation_average_mae_list)
+	epoch_validation_average_mae_list_xpos = epoch_validation_average_mae_list.index(epoch_validation_average_mae_list_ymin)
+	epoch_validation_average_mae_list_xmin = epoch_list[epoch_validation_average_mae_list_xpos]
+	ax8 = fig.add_subplot(gs[1, 0])
+	ax8.plot(epoch_list, epoch_validation_average_mae_list, 'b') #row=0, col=0, 1
+	ax8.plot(epoch_validation_average_mae_list_xmin, epoch_validation_average_mae_list_ymin, 'b', marker='o', fillstyle='none') # plot the minimum point
+	ax8.set_ylabel('Average MAE') # set the y-label
+	ax8.set_xlabel('Epoch') # set the x-label
+	ax8.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, config.snapshot_iter)) # set the interval of x-axis 
+	ax8.set_title(f'Y-min. coord.:[{epoch_validation_average_mae_list_xmin},{epoch_validation_average_mae_list_ymin:.4f}]')
+
 
 	# (Validation results) Generate and save the figure of [Average LPIPS vs Epoch]
-	plt.figure() # creates a new figure
+	epoch_validation_average_lpips_list_ymin = min(epoch_validation_average_lpips_list)
+	epoch_validation_average_lpips_list_xpos = epoch_validation_average_lpips_list.index(epoch_validation_average_lpips_list_ymin)
+	epoch_validation_average_lpips_list_xmin = epoch_list[epoch_validation_average_lpips_list_xpos]
+	ax9 = fig.add_subplot(gs[1, 1])
+	ax9.plot(epoch_list, epoch_validation_average_lpips_list, 'b') #row=0, col=0, 1
+	ax9.plot(epoch_validation_average_lpips_list_xmin, epoch_validation_average_lpips_list_ymin, 'b', marker='o', fillstyle='none') # plot the minimum point
+	ax9.set_ylabel('Average LPIPS') # set the y-label
+	ax9.set_xlabel('Epoch') # set the x-label
+	ax9.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, config.snapshot_iter)) # set the interval of x-axis 
+	ax9.set_title(f'Y-min. coord.:[{epoch_validation_average_lpips_list_xmin},{epoch_validation_average_lpips_list_ymin:.4f}]')
+
+
+	epoch_validation_results_filename = '{}-{}-{}-epoch_validation_results_history.jpg'.format(current_date_time_string, config.model_name, config.dataset_name) # define the filename
+	epoch_validation_results_filepath = os.path.join(resultPath_csv, epoch_validation_results_filename) # define the filepath, used to save the figure as an image
+
+	plt.margins() 
+	plt.savefig(epoch_validation_results_filepath, bbox_inches='tight') # save the figure as an image
+	plt.show()
+
+	# # (Validation results) Generate and save the figure of [Average PSNR vs Epoch] **DONE
+	# plt.figure() # creates a new figure
+	print('epoch_validation_average_psnr_list:', epoch_validation_average_psnr_list)
+	# x_epoch_validation_average_psnr_list = [x for x in range(len(epoch_validation_average_psnr_list))] # create the x-axis elements
+	# plt.plot(x_epoch_validation_average_psnr_list, epoch_validation_average_psnr_list) # plot the graph
+	# plt.xlabel('Epoch') # set the x-label
+	# plt.ylabel('Average PSNR [dB]') # set the y-label
+	# plt.title('{}-{}-{}'.format(current_date_time_string, config.model_name, config.dataset_name) + '\nTraining Results [Average PSNR vs Epoch]') # set the figure title
+	# plt.xticks(np.arange(min(x_epoch_validation_average_psnr_list), max(x_epoch_validation_average_psnr_list)+1, 1)) # set the interval of x-axis 
+	# epoch_validation_average_psnr_history_filename = '{}-{}-{}-epoch_validation_average_psnr_history.jpg'.format(current_date_time_string, config.model_name, config.dataset_name) # define the filename
+	# epoch_validation_average_psnr_history_filepath = os.path.join(resultPath_csv, epoch_validation_average_psnr_history_filename) # define the filepath, used to save the figure as an image
+	# plt.savefig(epoch_validation_average_psnr_history_filepath, bbox_inches='tight') # save the figure as an image
+
+	# # (Validation results) Generate and save the figure of [Average SSIM vs Epoch] **DONE
+	# plt.figure() # creates a new figure
+	print('epoch_validation_average_ssim_list:', epoch_validation_average_ssim_list)
+	# x_epoch_validation_average_ssim_list = [x for x in range(len(epoch_validation_average_ssim_list))] # create the x-axis elements
+	# plt.plot(x_epoch_validation_average_ssim_list, epoch_validation_average_ssim_list) # plot the graph
+	# plt.xlabel('Epoch') # set the x-label
+	# plt.ylabel('Average SSIM') # set the y-label
+	# plt.title('{}-{}-{}'.format(current_date_time_string, config.model_name, config.dataset_name) + '\nTraining Results [Average SSIM vs Epoch]') # set the figure title
+	# plt.xticks(np.arange(min(x_epoch_validation_average_ssim_list), max(x_epoch_validation_average_ssim_list)+1, 1)) # set the interval of x-axis 
+	# epoch_validation_average_ssim_history_filename = '{}-{}-{}-epoch_validation_average_ssim_history.jpg'.format(current_date_time_string, config.model_name, config.dataset_name) # define the filename
+	# epoch_validation_average_ssim_history_filepath = os.path.join(resultPath_csv, epoch_validation_average_ssim_history_filename) # define the filepath, used to save the figure as an image
+	# plt.savefig(epoch_validation_average_ssim_history_filepath, bbox_inches='tight') # save the figure as an image
+	
+	# # (Validation results) Generate and save the figure of [Average MAE vs Epoch] **DONE
+	# plt.figure() # creates a new figure
+	print('epoch_validation_average_mae_list:', epoch_validation_average_mae_list)
+	# x_epoch_validation_average_mae_list = [x for x in range(len(epoch_validation_average_mae_list))] # create the x-axis elements
+	# plt.plot(x_epoch_validation_average_mae_list, epoch_validation_average_mae_list) # plot the graph
+	# plt.xlabel('Epoch') # set the x-label
+	# plt.ylabel('Average MAE') # set the y-label
+	# plt.title('{}-{}-{}'.format(current_date_time_string, config.model_name, config.dataset_name) + '\nTraining Results [Average MAE vs Epoch]') # set the figure title
+	# plt.xticks(np.arange(min(x_epoch_validation_average_mae_list), max(x_epoch_validation_average_mae_list)+1, 1)) # set the interval of x-axis 
+	# epoch_validation_average_mae_history_filename = '{}-{}-{}-epoch_validation_average_mae_history.jpg'.format(current_date_time_string, config.model_name, config.dataset_name) # define the filename
+	# epoch_validation_average_mae_history_filepath = os.path.join(resultPath_csv, epoch_validation_average_mae_history_filename) # define the filepath, used to save the figure as an image
+	# plt.savefig(epoch_validation_average_mae_history_filepath, bbox_inches='tight') # save the figure as an image
+
+	# # (Validation results) Generate and save the figure of [Average LPIPS vs Epoch] **DONE
+	# plt.figure() # creates a new figure
 	print('epoch_validation_average_lpips_list:', epoch_validation_average_lpips_list)
-	x_epoch_validation_average_lpips_list = [x for x in range(len(epoch_validation_average_lpips_list))] # create the x-axis elements
-	plt.plot(x_epoch_validation_average_lpips_list, epoch_validation_average_lpips_list) # plot the graph
-	plt.xlabel('Epoch') # set the x-label
-	plt.ylabel('Average LPIPS') # set the y-label
-	plt.title('{}-{}-{}'.format(current_date_time_string, config.model_name, config.dataset_name) + '\nTraining Results [Average LPIPS vs Epoch]') # set the figure title
-	plt.xticks(np.arange(min(x_epoch_validation_average_lpips_list), max(x_epoch_validation_average_lpips_list)+1, 1)) # set the interval of x-axis 
-	epoch_validation_average_lpips_history_filename = '{}-{}-{}-epoch_validation_average_lpips_history.jpg'.format(current_date_time_string, config.model_name, config.dataset_name) # define the filename
-	epoch_validation_average_lpips_history_filepath = os.path.join(resultPath_csv, epoch_validation_average_lpips_history_filename) # define the filepath, used to save the figure as an image
-	plt.savefig(epoch_validation_average_lpips_history_filepath, bbox_inches='tight') # save the figure as an image
+	# x_epoch_validation_average_lpips_list = [x for x in range(len(epoch_validation_average_lpips_list))] # create the x-axis elements
+	# plt.plot(x_epoch_validation_average_lpips_list, epoch_validation_average_lpips_list) # plot the graph
+	# plt.xlabel('Epoch') # set the x-label
+	# plt.ylabel('Average LPIPS') # set the y-label
+	# plt.title('{}-{}-{}'.format(current_date_time_string, config.model_name, config.dataset_name) + '\nTraining Results [Average LPIPS vs Epoch]') # set the figure title
+	# plt.xticks(np.arange(min(x_epoch_validation_average_lpips_list), max(x_epoch_validation_average_lpips_list)+1, 1)) # set the interval of x-axis 
+	# epoch_validation_average_lpips_history_filename = '{}-{}-{}-epoch_validation_average_lpips_history.jpg'.format(current_date_time_string, config.model_name, config.dataset_name) # define the filename
+	# epoch_validation_average_lpips_history_filepath = os.path.join(resultPath_csv, epoch_validation_average_lpips_history_filename) # define the filepath, used to save the figure as an image
+	# plt.savefig(epoch_validation_average_lpips_history_filepath, bbox_inches='tight') # save the figure as an image
 
 
 
@@ -345,6 +480,7 @@ if __name__ == '__main__':
 
 # **Subpart 5: Initialize the optimizer used for training**
 	optimizer = torch.optim.Adam(DCE_net.parameters(), lr=config.lr, weight_decay=config.weight_decay) # Set the hyperparameters for the optimizer to adjust the model parameters (weights and biases), after each loss.backward() [perform backpropagation = calculate the partial derivative of loss with respect to each weight] of a batch of samples
+	# scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma=0.1, last_epoch=-1) # Decays the learning rate of each parameter group by gamma every step_size epochs.
 
 # **Subpart 6: Initialize the IQA metric-related functions to calculate IQA results during validation**
 	ssim = SSIM(data_range=1.).cuda() # Performance metric: SSIM
@@ -352,6 +488,7 @@ if __name__ == '__main__':
 	lpips = LPIPS(net_type='alex', normalize=True).cuda() # Performance metric: LPIPS (perceptual loss provided by a pretrained learning-based model), using alexnet as the backbone (LPIPS with alexnet performs the best according to its official Github)
 
 # ** Initialize the lists to record different average losses at each epoch of training, for plotting purposes
+	epoch_list = []
 	epoch_training_average_loss_list = []
 	epoch_training_average_loss_TV_list = []
 	epoch_training_average_loss_spa_list = []
@@ -381,6 +518,8 @@ if __name__ == '__main__':
 		Training_losses_data ={'epoch':0, 'epoch_average_loss':0., 'epoch_average_Loss_TV':0., 'epoch_average_loss_spa':0., 'epoch_average_loss_col': 0., 'epoch_average_loss_exp':0., 'epoch_accumulate_number_of_training_input_samples_processed': 0, 'epoch_accumulate_loss':0., 'epoch_accumulate_Loss_TV':0., 'epoch_accumulate_loss_spa':0., 'epoch_accumulate_loss_col': 0., 'epoch_accumulate_loss_exp':0.}
 		Training_losses_data['epoch'] = epoch # Update the current epoch (The number of epoch and batch, when necessary) to the IQA_metrics_data dictionary
 		
+		epoch_list.append(epoch)
+
 		print('Epoch: {}/{} | Model training begins'.format(Training_losses_data['epoch'] + 1, config.num_epochs))
 		train_bar = tqdm(train_loader) # tqdm automatically detects the length of the iterable object (train_loader) [The length of the iterable object = The total number of batches of samples] and generates a progress bar that updates dynamically as each item=(batch of samples) is processed.
 		for iteration, (ori_image, LL_image) in enumerate(train_bar):
@@ -426,6 +565,8 @@ if __name__ == '__main__':
 						)
 					)
 			
+		# scheduler.step()
+
 		if (epoch == 0): # if it reaches the first epoch
 			with open(csv_TrainingResult_filepath, 'w', newline='') as csvfile: # Create and open an empty csv file at the path of csv_ValidationResult_filepath with write mode, later we append different dictionaries of metric data as required. Now the opened csv file is called csvfile object.
 				writer = csv.DictWriter(csvfile, fieldnames=Training_losses_data.keys()) # The writer (csv.DictWriter) takes the csvfile object as the csv file to write and Training_losses_data.keys() as the elements=keys of the header
@@ -442,10 +583,9 @@ if __name__ == '__main__':
 		epoch_training_average_loss_col_list.append(Training_losses_data['epoch_average_loss_col'])
 		epoch_training_average_loss_exp_list.append(Training_losses_data['epoch_average_loss_exp'])
 
-		# scheduler.step()
 
 		# save model parameters at certain checkpoints
-		if ((iteration+1) % config.snapshot_iter) == 0: # at every (snapshot_iter)th iteration
+		if ((epoch+1) % config.snapshot_iter) == 0: # at every (snapshot_iter)th iteration
 			save_model(epoch, resultPath_ModelParametersResults, DCE_net, optimizer, config.model_name)	
 
 		# -------------------------------------------------------------------
@@ -464,11 +604,12 @@ if __name__ == '__main__':
 
 		save_image = None
 
-		for iteration, (ori_image, LL_image) in enumerate(val_bar):
-            
-			ori_image, LL_image = ori_image.cuda(), LL_image.cuda()
+		with torch.no_grad():
+			for iteration, (ori_image, LL_image) in enumerate(val_bar):
+				
+				ori_image, LL_image = ori_image.cuda(), LL_image.cuda()
 
-			with torch.no_grad():
+				
 				# **Subpart 8: Perform image enhancement on the current batch of samples using the model**
 				start = time.time() # Get the starting time of image enhancement process on a batch of samples, in the unit of second.
 
@@ -479,54 +620,54 @@ if __name__ == '__main__':
 				# ComputationalComplexity_metrics_data['accumulate_batch_duration'] += IQA_metrics_data['batch_duration'] # Update the accumulate batch duration to the ComputationalComplexity_metrics_data dictionary
 				ComputationalComplexity_metrics_data['accumulate_val_batch_duration_forCompleteOperations'] += val_batch_duration # Update the accumulate batch duration to the ComputationalComplexity_metrics_data dictionary
 				# print("\nDuration of image enhancement process on the current batch of input samples [second (s)]:", IQA_metrics_data['batch_duration'])
-			
-			# **Subpart 9: Perform Image Quality Assessment (IQA) metric calculations**
-			IQA_metrics_calculation(IQA_metrics_data) 
+				
+				# **Subpart 9: Perform Image Quality Assessment (IQA) metric calculations**
+				IQA_metrics_calculation(IQA_metrics_data) 
 
-			if iteration <= (max_firstNBatches_ImageGroups_VisualizationSample - 1):   # before reaching the first max_step number of iterations/batches in each epoch, the LL_image (Input), enhanced_image (Output), and ori_image (GroundTruth) image groups the network has dealt with will be concatenated horizontally together as an image grid. So max_step determines the number of groups will be concatenated horizontally in the image grid. In other words, only the first max_step groups will be chosen as the samples to be concatenated as the image grid to show/visualize the network performance.
-				sv_im = torchvision.utils.make_grid(torch.cat((LL_image, enhanced_image, ori_image), 0), nrow=ori_image.shape[0])
-				if save_image == None:
-					save_image = sv_im
-				else:
-					save_image = torch.cat((save_image, sv_im), dim=2)
-			if iteration == (max_firstNBatches_ImageGroups_VisualizationSample - 1):   # when reaching max_step number of iterations/batches in each epoch, the image grid will be saved on the device. The number of image groups in the image grid = firstNBatches * batch_size.
-				torchvision.utils.save_image(
-					save_image,
-					os.path.join(sample_dir, '{}-{}-{}-{}-{}-VisualiationImageGroupsSamples.jpg'.format(current_date_time_string, config.model_name, config.dataset_name, 'Epoch', epoch))
-				)
+				if iteration <= (max_firstNBatches_ImageGroups_VisualizationSample - 1):   # before reaching the first max_step number of iterations/batches in each epoch, the LL_image (Input), enhanced_image (Output), and ori_image (GroundTruth) image groups the network has dealt with will be concatenated horizontally together as an image grid. So max_step determines the number of groups will be concatenated horizontally in the image grid. In other words, only the first max_step groups will be chosen as the samples to be concatenated as the image grid to show/visualize the network performance.
+					sv_im = torchvision.utils.make_grid(torch.cat((LL_image, enhanced_image, ori_image), 0), nrow=ori_image.shape[0])
+					if save_image == None:
+						save_image = sv_im
+					else:
+						save_image = torch.cat((save_image, sv_im), dim=2)
+				if iteration == (max_firstNBatches_ImageGroups_VisualizationSample - 1):   # when reaching max_step number of iterations/batches in each epoch, the image grid will be saved on the device. The number of image groups in the image grid = firstNBatches * batch_size.
+					torchvision.utils.save_image(
+						save_image,
+						os.path.join(sample_dir, '{}-{}-{}-{}-{}-VisualiationImageGroupsSamples.jpg'.format(current_date_time_string, config.model_name, config.dataset_name, 'Epoch', epoch))
+					)
 
-			val_bar.set_description_str('Iteration: %d/%d | Accumulated processed validation samples: %d | Average PSNR: %.4f dB; Average SSIM: %.4f; Average MAE:  %.4f; Average LPIPS: %.4f' % (
-						iteration + 1, val_number, 
-						IQA_metrics_data['epoch_accumulate_number_of_val_input_samples_processed'], 
-						IQA_metrics_data['epoch_average_psnr'], IQA_metrics_data['epoch_average_ssim'], IQA_metrics_data['epoch_average_mae'], IQA_metrics_data['epoch_average_lpips']))
-			
-		# **Subpart 10: Record the calculated (IQA) metrics to that csv file**
-		if (epoch == 0): # if it reaches the first epoch
-			with open(csv_ValidationResult_filepath, 'w', newline='') as csvfile: # Create and open an empty csv file at the path of csv_ValidationResult_filepath with write mode, later we append different dictionaries of metric data as required. Now the opened csv file is called csvfile object.
+				val_bar.set_description_str('Iteration: %d/%d | Accumulated processed validation samples: %d | Average PSNR: %.4f dB; Average SSIM: %.4f; Average MAE:  %.4f; Average LPIPS: %.4f' % (
+							iteration + 1, val_number, 
+							IQA_metrics_data['epoch_accumulate_number_of_val_input_samples_processed'], 
+							IQA_metrics_data['epoch_average_psnr'], IQA_metrics_data['epoch_average_ssim'], IQA_metrics_data['epoch_average_mae'], IQA_metrics_data['epoch_average_lpips']))
+				
+			# **Subpart 10: Record the calculated (IQA) metrics to that csv file**
+			if (epoch == 0): # if it reaches the first epoch
+				with open(csv_ValidationResult_filepath, 'w', newline='') as csvfile: # Create and open an empty csv file at the path of csv_ValidationResult_filepath with write mode, later we append different dictionaries of metric data as required. Now the opened csv file is called csvfile object.
+					writer = csv.DictWriter(csvfile, fieldnames=IQA_metrics_data.keys()) # The writer (csv.DictWriter) takes the csvfile object as the csv file to write and IQA_metrics_data.keys() as the elements=keys of the header
+					writer.writeheader() # The writer writes the header on the csv file
+							
+			with open(csv_ValidationResult_filepath, 'a', newline='') as csvfile: # Open that csv file at the path of csv_ValidationResult_filepath with append mode, so that we can append the data of IQA_metrics_data dictionary to that csv file.
 				writer = csv.DictWriter(csvfile, fieldnames=IQA_metrics_data.keys()) # The writer (csv.DictWriter) takes the csvfile object as the csv file to write and IQA_metrics_data.keys() as the elements=keys of the header
-				writer.writeheader() # The writer writes the header on the csv file
-						
-		with open(csv_ValidationResult_filepath, 'a', newline='') as csvfile: # Open that csv file at the path of csv_ValidationResult_filepath with append mode, so that we can append the data of IQA_metrics_data dictionary to that csv file.
-			writer = csv.DictWriter(csvfile, fieldnames=IQA_metrics_data.keys()) # The writer (csv.DictWriter) takes the csvfile object as the csv file to write and IQA_metrics_data.keys() as the elements=keys of the header
-			writer.writerow(IQA_metrics_data) # The writer writes the data (value) of IQA_metrics_data dictionary in sequence as a row on the csv file
+				writer.writerow(IQA_metrics_data) # The writer writes the data (value) of IQA_metrics_data dictionary in sequence as a row on the csv file
 
-		if (epoch == config.num_epochs - 1): # if it reaches the last epoch 
-			# **Subpart 12: Perform computation complexity metric calculations**
-			ComputationComplexity_metrics_calculation(ComputationalComplexity_metrics_data)
-			# print('\nAccumulate validation batch duration, for complete training (s):', ComputationalComplexity_metrics_data['accumulate_val_batch_duration_forCompleteOperations'])
-			# print('Accumulate number of enhanced/processed validation input samples, for complete training:', (IQA_metrics_data['epoch_accumulate_number_of_val_input_samples_processed'] * config.num_epochs))
-			# print('Average runtime for enhancing/processing each validation input sample (s):', ComputationalComplexity_metrics_data['average_val_runtime_forCompleteOperations'])
+			if (epoch == config.num_epochs - 1): # if it reaches the last epoch 
+				# **Subpart 12: Perform computation complexity metric calculations**
+				ComputationComplexity_metrics_calculation(ComputationalComplexity_metrics_data)
+				# print('\nAccumulate validation batch duration, for complete training (s):', ComputationalComplexity_metrics_data['accumulate_val_batch_duration_forCompleteOperations'])
+				# print('Accumulate number of enhanced/processed validation input samples, for complete training:', (IQA_metrics_data['epoch_accumulate_number_of_val_input_samples_processed'] * config.num_epochs))
+				# print('Average runtime for enhancing/processing each validation input sample (s):', ComputationalComplexity_metrics_data['average_val_runtime_forCompleteOperations'])
 
-			# **Subpart 13: Record the calculated computation complexity metrics to that csv file**
-			with open(csv_ValidationResult_filepath, 'a', newline='') as csvfile: # Open that csv file at the path of csv_ValidationResult_filepath with append mode, so that we can append the data of ComputationalComplexity_metrics_data dictionary to that csv file.
-				writer = csv.DictWriter(csvfile, fieldnames=ComputationalComplexity_metrics_data.keys()) # The writer (csv.DictWriter) takes the csvfile object as the csv file to write and ComputationalComplexity_metrics_data.keys() as the elements=keys of the header
-				writer.writeheader() # The writer writes the header on the csv file
-				writer.writerow(ComputationalComplexity_metrics_data)  # The writer writes the data (value) of ComputationalComplexity_metrics_data dictionary in sequence as a row on the csv file
+				# **Subpart 13: Record the calculated computation complexity metrics to that csv file**
+				with open(csv_ValidationResult_filepath, 'a', newline='') as csvfile: # Open that csv file at the path of csv_ValidationResult_filepath with append mode, so that we can append the data of ComputationalComplexity_metrics_data dictionary to that csv file.
+					writer = csv.DictWriter(csvfile, fieldnames=ComputationalComplexity_metrics_data.keys()) # The writer (csv.DictWriter) takes the csvfile object as the csv file to write and ComputationalComplexity_metrics_data.keys() as the elements=keys of the header
+					writer.writeheader() # The writer writes the header on the csv file
+					writer.writerow(ComputationalComplexity_metrics_data)  # The writer writes the data (value) of ComputationalComplexity_metrics_data dictionary in sequence as a row on the csv file
 
-		epoch_validation_average_psnr_list.append(IQA_metrics_data['epoch_average_psnr'])
-		epoch_validation_average_ssim_list.append(IQA_metrics_data['epoch_average_ssim'])
-		epoch_validation_average_mae_list.append(IQA_metrics_data['epoch_average_mae'])
-		epoch_validation_average_lpips_list.append(IQA_metrics_data['epoch_average_lpips'])
+			epoch_validation_average_psnr_list.append(IQA_metrics_data['epoch_average_psnr'])
+			epoch_validation_average_ssim_list.append(IQA_metrics_data['epoch_average_ssim'])
+			epoch_validation_average_mae_list.append(IQA_metrics_data['epoch_average_mae'])
+			epoch_validation_average_lpips_list.append(IQA_metrics_data['epoch_average_lpips'])
 
 
 		DCE_net.train()
@@ -546,6 +687,7 @@ if __name__ == '__main__':
 # 1) [Done] At each epoch, try use reduction = sum to directly add psnr_subtotal of each batch, then at last batch only divide the total psnr_subtotal of all batches to get the average psnr of that epoch. Then verify the results by checking the psnr of each image, by using reduction = 'none'. More info: https://github.com/Lightning-AI/torchmetrics/blob/master/src/torchmetrics/utilities/distributed.py#L22
 # 2) [Done] Verify all IQA metrics and Computational Complexity metrics calculation
 # 3) [Done] Add csv to record the average total loss at each epoch, then plot its graph over epoch and save on device. Same goes to IQA metrics.
+
 
 
 
