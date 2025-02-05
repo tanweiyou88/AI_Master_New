@@ -26,6 +26,8 @@ import torch.utils.data
 
 from calflops import calculate_flops # for calflops to calculate MACs, FLOPs, and trainable parameters
 import csv
+import pandas as pd
+import numpy as np
 
 
 
@@ -136,8 +138,29 @@ def save_model(epoch, path, net, optimizer, net_name, key): # this function save
 
 
 def generate_save_TrainingResults_History():
-	
 
+	# Extract data from the CSV file part:
+	df_TrainingResult = pd.read_csv(csv_TrainingResult_filepath) # convert the csv file into a Dataframe
+	
+	epoch_list = df_TrainingResult['epoch'].values.tolist() # slice a column from the dataframe, then convert it into a list. 
+	epoch_list = [float(i) for i in epoch_list] # convert each string floating point number in a list into a floating point number.
+
+	epoch_training_average_loss_list = df_TrainingResult['epoch_average_loss'].values.tolist() # slice a column from the dataframe, then convert it into a list. [:-2] is to exclude the data of computational_complexity metrics results
+	epoch_training_average_loss_list = [float(i) for i in epoch_training_average_loss_list] # convert each string floating point number in a list into a floating point number.
+	
+	epoch_training_average_loss_TV_list = df_TrainingResult['epoch_average_Loss_TV'].values.tolist() # slice a column from the dataframe, then convert it into a list. [:-2] is to exclude the data of computational_complexity metrics results
+	epoch_training_average_loss_TV_list = [float(i) for i in epoch_training_average_loss_TV_list] # convert each string floating point number in a list into a floating point number.
+	
+	epoch_training_average_loss_spa_list = df_TrainingResult['epoch_average_loss_spa'].values.tolist() # slice a column from the dataframe, then convert it into a list. [:-2] is to exclude the data of computational_complexity metrics results
+	epoch_training_average_loss_spa_list = [float(i) for i in epoch_training_average_loss_spa_list] # convert each string floating point number in a list into a floating point number.
+	
+	epoch_training_average_loss_col_list = df_TrainingResult['epoch_average_loss_col'].values.tolist() # slice a column from the dataframe, then convert it into a list. [:-2] is to exclude the data of computational_complexity metrics results
+	epoch_training_average_loss_col_list = [float(i) for i in epoch_training_average_loss_col_list] # convert each string floating point number in a list into a floating point number.
+	
+	epoch_training_average_loss_exp_list = df_TrainingResult['epoch_average_loss_exp'].values.tolist() # slice a column from the dataframe, then convert it into a list. [:-2] is to exclude the data of computational_complexity metrics results
+	epoch_training_average_loss_exp_list = [float(i) for i in epoch_training_average_loss_exp_list] # convert each string floating point number in a list into a floating point number.
+	
+	# Plot subplots part:
 	fig = plt.figure(figsize=(10, 10), dpi=100, constrained_layout=True)
 	fig.suptitle('{}-{}-{}'.format(current_date_time_string, config.model_name, config.dataset_name) + '\nTraining Results: Losses') # set the figure super title
 	gs = fig.add_gridspec(3, 2)
@@ -277,6 +300,25 @@ def generate_save_TrainingResults_History():
 
 def generate_save_ValidationResults_History():
 
+	# Extract data from the CSV file part:
+	df_ValidationResult = pd.read_csv(csv_ValidationResult_filepath) # convert the csv file into a Dataframe
+	
+	epoch_list = df_ValidationResult['epoch'][:-2].values.tolist() # slice a column from the dataframe, then convert it into a list. [:-2] is to exclude the data of computational_complexity metrics results
+	epoch_list = [float(i) for i in epoch_list] # convert each string floating point number in a list into a floating point number.
+
+	epoch_validation_average_psnr_list = df_ValidationResult['epoch_average_psnr'][:-2].values.tolist() # slice a column from the dataframe, then convert it into a list. [:-2] is to exclude the data of computational_complexity metrics results
+	epoch_validation_average_psnr_list = [float(i) for i in epoch_validation_average_psnr_list] # convert each string floating point number in a list into a floating point number.
+	
+	epoch_validation_average_ssim_list = df_ValidationResult['epoch_average_ssim'][:-2].values.tolist() # slice a column from the dataframe, then convert it into a list. [:-2] is to exclude the data of computational_complexity metrics results
+	epoch_validation_average_ssim_list = [float(i) for i in epoch_validation_average_ssim_list] # convert each string floating point number in a list into a floating point number.
+	
+	epoch_validation_average_mae_list = df_ValidationResult['epoch_average_mae'][:-2].values.tolist() # slice a column from the dataframe, then convert it into a list. [:-2] is to exclude the data of computational_complexity metrics results
+	epoch_validation_average_mae_list = [float(i) for i in epoch_validation_average_mae_list] # convert each string floating point number in a list into a floating point number.
+
+	epoch_validation_average_lpips_list = df_ValidationResult['epoch_average_lpips'][:-2].values.tolist() # slice a column from the dataframe, then convert it into a list. [:-2] is to exclude the data of computational_complexity metrics results
+	epoch_validation_average_lpips_list = [float(i) for i in epoch_validation_average_lpips_list] # convert each string floating point number in a list into a floating point number.
+
+	# Plot subplots part:
 	fig = plt.figure(figsize=(10, 10), dpi=100, constrained_layout=True)
 	fig.suptitle('{}-{}-{}'.format(current_date_time_string, config.model_name, config.dataset_name) + '\nValidation Results: IQA Metrics') # set the figure super title
 	gs = fig.add_gridspec(2, 2) # create 2x2 grid
@@ -505,39 +547,10 @@ if __name__ == '__main__':
 	mae = MAE(num_outputs=1).cuda() # Performance metric: MAE
 	lpips = LPIPS(net_type='alex', normalize=True).cuda() # Performance metric: LPIPS (perceptual loss provided by a pretrained learning-based model), using alexnet as the backbone (LPIPS with alexnet performs the best according to its official Github)
 
-# ** Initialize the lists to record different average losses at each epoch of training, for plotting purposes
-	epoch_list = []
-	epoch_training_average_loss_list = []
-	epoch_training_average_loss_TV_list = []
-	epoch_training_average_loss_spa_list = []
-	epoch_training_average_loss_col_list = []
-	epoch_training_average_loss_exp_list = []
-
-# ** Initialize the lists to record different average IQA results at each epoch of validation, for plotting purposes
-	epoch_validation_average_psnr_list = []
-	epoch_validation_average_ssim_list = []
-	epoch_validation_average_mae_list = []
-	epoch_validation_average_lpips_list = []
-
 # ** Initialize the variables and threshold related to early stopping
 	patience = config.earlystopping_patience # the threshold (the number of consecutive epoch for no improvement on all IQA metrics) to wait before stopping model training, when there are consecutives no improvements on all IQA metrics
 	wait = 0
-	# current_epoch_validation_average_psnr = torch.tensor([-1])
-	# current_epoch_validation_average_psnr = current_epoch_validation_average_psnr.cuda() 
-	# current_epoch_validation_average_ssim = torch.tensor([-1])
-	# current_epoch_validation_average_ssim = current_epoch_validation_average_ssim.cuda() 
-	# current_epoch_validation_average_mae = torch.tensor([-1])
-	# current_epoch_validation_average_mae = current_epoch_validation_average_mae.cuda() 
-	# current_epoch_validation_average_lpips = torch.tensor([-1])
-	# current_epoch_validation_average_lpips = current_epoch_validation_average_lpips.cuda() 
-	# best_epoch_validation_average_psnr = torch.tensor([-torch.inf])
-	# best_epoch_validation_average_psnr = best_epoch_validation_average_psnr.cuda()
-	# best_epoch_validation_average_ssim = torch.tensor([-torch.inf])
-	# best_epoch_validation_average_ssim = best_epoch_validation_average_ssim.cuda()
-	# best_epoch_validation_average_mae = torch.tensor([torch.inf])
-	# best_epoch_validation_average_mae = best_epoch_validation_average_mae.cuda()
-	# best_epoch_validation_average_lpips = torch.tensor([torch.inf])
-	# best_epoch_validation_average_lpips = best_epoch_validation_average_lpips.cuda()
+	
 
 ### **Part 3: Training**
 	print('-----Operations begin-----')
@@ -556,7 +569,6 @@ if __name__ == '__main__':
 		Training_losses_data ={'epoch':0, 'epoch_average_loss':0., 'epoch_average_Loss_TV':0., 'epoch_average_loss_spa':0., 'epoch_average_loss_col': 0., 'epoch_average_loss_exp':0., 'epoch_accumulate_number_of_training_input_samples_processed': 0, 'epoch_accumulate_loss':0., 'epoch_accumulate_Loss_TV':0., 'epoch_accumulate_loss_spa':0., 'epoch_accumulate_loss_col': 0., 'epoch_accumulate_loss_exp':0.}
 		Training_losses_data['epoch'] = epoch # Update the current epoch (The number of epoch and batch, when necessary) to the IQA_metrics_data dictionary
 		
-		epoch_list.append(epoch)
 
 		print('Epoch: {}/{} | Model training begins'.format(Training_losses_data['epoch'] + 1, config.num_epochs))
 		train_bar = tqdm(train_loader) # tqdm automatically detects the length of the iterable object (train_loader) [The length of the iterable object = The total number of batches of samples] and generates a progress bar that updates dynamically as each item=(batch of samples) is processed.
@@ -614,14 +626,7 @@ if __name__ == '__main__':
 			writer = csv.DictWriter(csvfile, fieldnames=Training_losses_data.keys()) # The writer (csv.DictWriter) takes the csvfile object as the csv file to write and IQA_metrics_data.keys() as the elements=keys of the header
 			writer.writerow(Training_losses_data) # The writer writes the data (value) of IQA_metrics_data dictionary in sequence as a row on the csv file
 
-
-		epoch_training_average_loss_list.append(Training_losses_data['epoch_average_loss'])
-		epoch_training_average_loss_TV_list.append(Training_losses_data['epoch_average_Loss_TV'])
-		epoch_training_average_loss_spa_list.append(Training_losses_data['epoch_average_loss_spa'])
-		epoch_training_average_loss_col_list.append(Training_losses_data['epoch_average_loss_col'])
-		epoch_training_average_loss_exp_list.append(Training_losses_data['epoch_average_loss_exp'])
-
-
+		
 		# save model parameters at certain checkpoints
 		if ((epoch+1) % config.snapshot_iter) == 0: # at every (snapshot_iter)th iteration
 			save_model(epoch, resultPath_ModelParametersResults, DCE_net, optimizer, config.model_name, key=0)	
@@ -694,12 +699,6 @@ if __name__ == '__main__':
 				writer.writerow(IQA_metrics_data) # The writer writes the data (value) of IQA_metrics_data dictionary in sequence as a row on the csv file
 
 			
-			epoch_validation_average_psnr_list.append(IQA_metrics_data['epoch_average_psnr'])
-			epoch_validation_average_ssim_list.append(IQA_metrics_data['epoch_average_ssim'])
-			epoch_validation_average_mae_list.append(IQA_metrics_data['epoch_average_mae'])
-			epoch_validation_average_lpips_list.append(IQA_metrics_data['epoch_average_lpips'])
-
-
 			# Early stopping section:
 			if (epoch == 0): # if it reaches the first epoch
 				best_epoch_validation_average_psnr = IQA_metrics_data['epoch_average_psnr']
@@ -733,7 +732,6 @@ if __name__ == '__main__':
 				if  IQA_metrics_data['epoch_average_ssim'] > best_epoch_validation_average_ssim :
 					best_epoch_validation_average_ssim = IQA_metrics_data['epoch_average_ssim']
 					save_model(epoch, resultPath_ModelParametersResults, DCE_net, optimizer, config.model_name, key=2)
-					print('best_epoch_validation_average_ssim:', best_epoch_validation_average_ssim)	
 
 				if  IQA_metrics_data['epoch_average_mae'] < best_epoch_validation_average_mae :
 					best_epoch_validation_average_mae = IQA_metrics_data['epoch_average_mae']
@@ -742,7 +740,6 @@ if __name__ == '__main__':
 				if  IQA_metrics_data['epoch_average_lpips'] < best_epoch_validation_average_lpips :
 					best_epoch_validation_average_lpips = IQA_metrics_data['epoch_average_lpips']
 					save_model(epoch, resultPath_ModelParametersResults, DCE_net, optimizer, config.model_name, key=4)
-					print('best_epoch_validation_average_lpips:', best_epoch_validation_average_lpips)
 
 		DCE_net.train()
 
@@ -752,17 +749,16 @@ if __name__ == '__main__':
 		writer.writeheader() # The writer writes the header on the csv file
 		writer.writerow(ComputationalComplexity_metrics_data)  # The writer writes the data (value) of ComputationalComplexity_metrics_data dictionary in sequence as a row on the csv file
 
-
-	
-        		
-
-
 	# -------------------------------------------------------------------
     # train finish
-	print("-----Operations completed-----")
 
 	generate_save_TrainingResults_History() # generate and save the training results history as images
 	generate_save_ValidationResults_History() # generate and save the validation results history as images
+
+	print("-----Operations completed-----")
+
+	
+	
 
 
 
@@ -770,7 +766,7 @@ if __name__ == '__main__':
 # 1) [Done] At each epoch, try use reduction = sum to directly add psnr_subtotal of each batch, then at last batch only divide the total psnr_subtotal of all batches to get the average psnr of that epoch. Then verify the results by checking the psnr of each image, by using reduction = 'none'. More info: https://github.com/Lightning-AI/torchmetrics/blob/master/src/torchmetrics/utilities/distributed.py#L22
 # 2) [Done] Verify all IQA metrics and Computational Complexity metrics calculation
 # 3) [Done] Add csv to record the average total loss at each epoch, then plot its graph over epoch and save on device. Same goes to IQA metrics.
-# 4) Summary: Take this script as the template to perform model training, but memery management might not efficient for large dataset. Because all training and validation results used for plotting purposes are appended into lists respectively before perform plotting. Instead, use ZTWV_self_lowlight_train_withMetrics_ChangeTorchNoGrad_withsnapshot_scheduler_earlystopping_dataframe.py. It might be more memory efficient because all training and validation results used for plotting purposes are saved into respective csv files first, then convert them into dataframes, then convert into lists respectively before perform plotting. Since much less append() operations involved, its memory efficiency might be better.
+# 4) Summary: Take this script as the template to perform model training. This is the best version out of all versions tried.
 
 
 
