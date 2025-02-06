@@ -1,9 +1,7 @@
 # Ignore the image files
 Reorganize_dataset/sampling_SICE_Part1_TrainingSet
-Reorganize_dataset/Reorganized_sampling_SICE_Part1_TrainingSet/GroundTruth_All
-Reorganize_dataset/Reorganized_sampling_SICE_Part1_TrainingSet/Input_All
-Reorganize_dataset/Reorganized_sampling_SICE_Part1_TrainingSet/train
-Reorganize_dataset/Reorganized_sampling_SICE_Part1_TrainingSet/val
+Reorganize_dataset/Reorganized_sampling_SICE_Part1_TrainingSet
+Reorganize_dataset/Reorganized_sampling_SICE_Part1_TrainingSet_try2
 try_imagepairs
 
 ImageProcessing_AdjustBrightness/sampling_SICE_Part1_TrainingSet
@@ -14,6 +12,7 @@ ImageProcessing_AdjustBrightness/PlantDoc.v1-resize-416x416.yolov8-high-light
 
 Verify_ResizeSpeed/big_images
 Verify_ResizeSpeed/ori_images
+Verify_ResizeSpeed/try_images
 
 
 dataset
