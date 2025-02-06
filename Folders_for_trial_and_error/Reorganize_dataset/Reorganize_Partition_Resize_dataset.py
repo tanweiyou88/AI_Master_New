@@ -251,7 +251,7 @@ def resize():
             
             ori_image = Image.open(file) # Open the image located at the given image's absolute path, using PIL. That image has the shape of [height,width,channels].
             if not ori_image.mode == 'RGB': # if the image is not a RGB image
-                ori_image = ori_image.convert('RGB') # convert an RGBA (Red, Green, Blue, Alpha) PNG image to RGB (Red, Green, Blue), More info: https://dnmtechs.com/converting-rgba-png-to-rgb-using-pil-in-python-3/
+                ori_image = ori_image.convert('RGB') # convert the image to RGB (Red, Green, Blue), More info: https://dnmtechs.com/converting-rgba-png-to-rgb-using-pil-in-python-3/
             resized_image = ori_image.resize((config.image_square_size,config.image_square_size), Image.LANCZOS) # resize the input image
 
             # resized_image.save(os.path.join(big_img_folder_path, os.path.basename(file))) # save resized images to a new folder, while remain its filename unchanged
