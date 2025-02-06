@@ -250,7 +250,7 @@ def resize():
         for file in tqdm(glob.iglob(folder + "/*"), desc= f"Resizing images in {foldernames_list_forRecordPurposeOnly[foldername_index_forRecordPurposeOnly]}"): # For each image in the file list (available inside the current folder)
             
             ori_image = Image.open(file) # Open the image located at the given image's absolute path, using PIL. That image has the shape of [height,width,channels].
-            if not ori_image.mode == 'RGB':
+            if not ori_image.mode == 'RGB': # if the image is not a RGB image
                 ori_image = ori_image.convert('RGB') # convert an RGBA (Red, Green, Blue, Alpha) PNG image to RGB (Red, Green, Blue), More info: https://dnmtechs.com/converting-rgba-png-to-rgb-using-pil-in-python-3/
             resized_image = ori_image.resize((config.image_square_size,config.image_square_size), Image.LANCZOS) # resize the input image
 
