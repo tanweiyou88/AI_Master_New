@@ -766,7 +766,7 @@ if __name__ == '__main__':
 # 1) [Done] At each epoch, try use reduction = sum to directly add psnr_subtotal of each batch, then at last batch only divide the total psnr_subtotal of all batches to get the average psnr of that epoch. Then verify the results by checking the psnr of each image, by using reduction = 'none'. More info: https://github.com/Lightning-AI/torchmetrics/blob/master/src/torchmetrics/utilities/distributed.py#L22
 # 2) [Done] Verify all IQA metrics and Computational Complexity metrics calculation
 # 3) [Done] Add csv to record the average total loss at each epoch, then plot its graph over epoch and save on device. Same goes to IQA metrics.
-# 4) Summary: Take this script as the template to perform model training. This is the best version out of all versions tried.
+# 4) Summary: Can take this script as the template to perform model training, but the IQA metric functions are not imported from the latest torchmetrics library. Instead, use ZTWV_self_lowlight_train_withMetrics_ChangeTorchNoGrad_withsnapshot_scheduler_earlystopping_dataframe2.py. Because its IQA metric functions are imported from the latest torchmetrics library.
 
 
 
