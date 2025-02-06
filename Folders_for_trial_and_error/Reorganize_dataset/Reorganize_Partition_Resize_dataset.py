@@ -21,67 +21,23 @@ def check_lists(list1, list2): # Used to check if 2 lists have the same elements
     
 
 def reorganize(): # Used to reorganize the original dataset
-# # ** Save all the files into their subfolders respectively **: Version 1
-# for folder_name in sorted_folder_list: # For each folder in the sorted folder list
-#     if folder_name != "Label": 
-#         file_list = glob.glob(src_dir+"/"+folder_name+"/*") # Returns a list of files' absolute path (of any extension) that are inside the specified path (src_dir+"/"+folder_name+"/*")
-#         print("Folder name:" + folder_name + "; Number of files in this folder:" + str(len(file_list)) ) # Show the current folder name and the number of files available in it
-#         for file in file_list: # For each image in the file list (available inside the current folder)
-#             destination_folder_path = dst_dir+"/"+folder_name # Create the absolute path of the folder/destination that will save the files, in the destination root folder
-#             os.makedirs(destination_folder_path, exist_ok=True) # Create the folder/destination that will save the files, in the destination root folder
-#             shutil.copy2(file, destination_folder_path) # Argument1: Absolute path of the file; Argument2: Absolute path of the folder/destination that will save the file. References: https://expertbeacon.com/python-copy-file-copying-files-to-another-directory/
 
-
-# # ** Save all the files according to 2 subfolders only, "Input" OR "Label" **: Version 2
-# destination_Input_folder_path = dst_dir+"/Input" # Create the absolute path of the folder/destination that will save the input files/images, in the destination root folder
-# os.makedirs(destination_Input_folder_path, exist_ok=True) # Create the folder/destination that will save the input files/images, in the destination root folder
-# destination_GroundTruth_folder_path = dst_dir+"/GroundTruth" # Create the absolute path of the folder/destination that will save the ground truth files/images, in the destination root folder
-# os.makedirs(destination_GroundTruth_folder_path, exist_ok=True) # Create the folder/destination that will save the ground truth files/images, in the destination root folder
-# GroundTruth_src_dir = src_dir+"/Label" # The absolute path of the folder that contains the ground truth files/images, in the source folder
-# temp_destination_GroundTruth_folder_path = destination_GroundTruth_folder_path+"/Temp_GroundTruth"
-# os.makedirs(temp_destination_GroundTruth_folder_path, exist_ok=True)
-
-# for folder_name in sorted_folder_list: # For each folder in the sorted folder list
-#     # if folder_name != "Label": 
-#     if folder_name == "92": 
-#         file_list = glob.glob(src_dir+"/"+folder_name+"/*") # Returns a list of files' absolute path (of any extension) that are inside the specified path (src_dir+"/"+folder_name+"/*")
-#         file_num = len(file_list)
-#         print("Folder name:" + folder_name + "; Number of files in this folder:" + str(file_num) ) # Show the current folder name and the number of files available in it
-#         for file in file_list: # For each image in the file list (available inside the current folder)
-#             # destination_input_folder_path = dst_dir+"/Input" # Create the absolute path of the folder/destination that will save the files, in the destination root folder
-#             # os.makedirs(destination_input_folder_path, exist_ok=True) # Create the folder/destination that will save the files, in the destination root folder
-#             shutil.copy2(file, destination_Input_folder_path) # Argument1: Absolute path of the file; Argument2: Absolute path of the folder/destination that will save the file. References: https://expertbeacon.com/python-copy-file-copying-files-to-another-directory/
-#         for i in range(file_num):
-#             # GroundTruth_file = GroundTruth_src_dir  + "/" + folder_name
-#             GroundTruth_file, = glob.glob(GroundTruth_src_dir + "/" + folder_name + ".*") # Use sequence unpacking method to get the only element from the list. Ref: https://stackoverflow.com/questions/33161448/getting-only-element-from-a-single-element-list-in-python
-#             print(GroundTruth_file)
-#             # GroundTruth_file = GroundTruth_file.replace(folder_name,str(i))
-#             shutil.copy2(GroundTruth_file, temp_destination_GroundTruth_folder_path) # Copy the ground truth image from source folder, then paste it to the Temp_GroundTruth folder inside the Ground Truth folder, in the destination root folder
-#             Temp_GroundTruth_file, = glob.glob(temp_destination_GroundTruth_folder_path + "/" + folder_name + ".*") # Get the absolute path of the file available in the Temp_GroundTruth folder, in the destination root folder
-#             print(Temp_GroundTruth_file)
-#             renamed_GroundTruth_file = str(i) + ".jpg"
-#             shutil.move(Temp_GroundTruth_file, destination_GroundTruth_folder_path + "/" + renamed_GroundTruth_file )
-#             # os.rename(destination_GroundTruth_folder_path + "/" , dest)
-#             # Temp_GroundTruth_file = Temp_GroundTruth_file.replace(folder_name,str(i)) # In the Temp folder, replace the part of the absolute path of the file that having "folder_name" with "str(i)" 
-#             # shutil.copy2(Temp_GroundTruth_file, destination_GroundTruth_folder_path) # Copy the renamed ground truth image from the Temp_GroundTruth folder to the Ground Truth folder, in the destination root folder
-#         shutil.rmtree(temp_destination_GroundTruth_folder_path) # Remove the Temp_GroundTruth folder, in the destination root folder
-
-
-# ** Save all the files according to 2 subfolders only, "Input" OR "Label" **: Version 3, Use This
+    print("-------------------------Part 1:Reorganizing dataset operations begins-------------------------\n")
+# ** Save all the files according to 2 subfolders only, "Input" OR "Label"
     # Take the target dataset from the source path, then save it in the destination path in the rearranged way
     folder_list = os.listdir(config.src_dir) # Return a list of folder names available in the root directory specified by src_dir.
-    print("Folder list:", folder_list)
+    # print("Folder list:", folder_list)
     sorted_folder_list = sorted(folder_list, key=len) # sort the folder names in the list called folder_list based on the length of name
-    print("\nSorted folder list:", sorted_folder_list)
-    print("\n")
+    # print("\nSorted folder list:", sorted_folder_list)
+    # print("\n")
     
     # Create a csv file to record the metadata of the rearranged dataset
     current_date_time_string = time.strftime("%Y_%m_%d-%H_%M_%S") # Get the current date and time as a string, according to the specified format (YYYY_MM_DD-HH_MM_SS)
-    csv_result_filename = 'Metadata-Reorganized-' + config.source_dataset_name + '-' + config.partition_name + '-' + current_date_time_string + '.csv' # Create the filename of the csv that stores the metrics data
+    csv_result_filename = 'Metadata-Reorganized-' + config.source_dataset_name + '-All' + '-' + current_date_time_string + '.csv' # Create the filename of the csv that stores the metrics data
     csv_result_filepath = os.path.join(config.dst_dir,csv_result_filename) # Create the path to the csv that stores the metrics data
     with open(csv_result_filepath, 'w', newline='') as csvfile: # Create and open an empty csv file at the path of csv_result_filepath with write mode, later we append different dictionaries of metric data as required. Now the opened csv file is called csvfile object.
         writer = csv.writer(csvfile, delimiter=',') # Create a csv writer. From the list of strings called title, the delimiter split the string after a "," into an element
-        title = ['Source dataset name:', config.source_dataset_name, 'Partition name', config.partition_name, 'Date and Time:', current_date_time_string]
+        title = ['Source dataset name:', config.source_dataset_name, 'Partition name', 'All', 'Date and Time:', current_date_time_string]
         writer.writerow(title) # The writer writes the list of strings called "title"
         writer.writerow([]) # The writer writes a blank new line
         writer.writerow(['The sorted folder list:'])
@@ -90,15 +46,13 @@ def reorganize(): # Used to reorganize the original dataset
         writer = csv.DictWriter(csvfile, fieldnames=metadata.keys()) # Create a new csv writer. The writer (csv.DictWriter) takes the csvfile object as the csv file to write and IQA_metrics_data.keys() as the elements=keys of the header
         writer.writeheader() # The writer writes the header on the csv file
 
-    
-
     for folder_name in tqdm(sorted_folder_list, initial=1, total=len(sorted_folder_list)-1, desc="Reorganizing original dataset"): # For each folder in the sorted folder list. tqdm is used to create the progress bar.
         if folder_name != "Label": 
         # if folder_name == "92": 
             file_list = glob.glob(config.src_dir+"/"+folder_name+"/*") # Returns a list of files' absolute path (of any extension) that are inside the specified path (src_dir+"/"+folder_name+"/*")
             metadata['folder_name'] = folder_name # Current folder name
             metadata['files_num_for_the_folder'] = len(file_list)
-            print("\nFolder name:" + metadata['folder_name'] + "; Number of files in this folder:" + str(metadata['files_num_for_the_folder']) + "\n" ) # Show the current folder name and the number of files available in it
+            # print("\nFolder name:" + metadata['folder_name'] + "; Number of files in this folder:" + str(metadata['files_num_for_the_folder']) + "\n" ) # Show the current folder name and the number of files available in it
             for file in file_list: # For each image in the file list (available inside the current folder)
                 metadata['image_counter'] += 1 # Increase the image counter by 1
                 
@@ -134,7 +88,7 @@ def reorganize(): # Used to reorganize the original dataset
     total_num_Input_image = len(os.listdir(destination_Input_folder_path) )
     total_num_GroundTruth_image = len(os.listdir(destination_GroundTruth_folder_path) )
 
-    print("-------------------------Reorganizing dataset operations status-------------------------")
+    print("\n-------------------------Reorganizing dataset operations status-------------------------")
     print("Operations completed, Summary:")
     print("Total number of images in Input folder [Reorganized dataset]:", total_num_Input_image)
     print("Total number of images in Ground Truth folder [Reorganized dataset]:", total_num_GroundTruth_image)
@@ -147,15 +101,15 @@ def reorganize(): # Used to reorganize the original dataset
         summary = ['Total number of images in Input folder [Reorganized dataset]:', total_num_Input_image, 'Total number of images in Ground Truth folder [Reorganized dataset]:', total_num_GroundTruth_image]
         writer.writerow(summary) # The writer writes the list of strings called "title"
         if check_lists(os.listdir(destination_Input_folder_path), os.listdir(destination_GroundTruth_folder_path)): # check if original dataset Input folder and GroundTruth folder have the same elements
-            print("The original dataset Input folder and GroundTruth folder have the same elements\n")
+            print("The original dataset Input folder and GroundTruth folder have the same elements")
             writer.writerow(['The original dataset Input folder and GroundTruth folder have the same elements'])
         else:
-            print("The original dataset Input folder and GroundTruth folder do not have the same elements\n")
+            print("The original dataset Input folder and GroundTruth folder do not have the same elements")
             writer.writerow(['The original dataset Input folder and GroundTruth folder do not have the same elements'])
         
 
 def partition(): # Used to partition the original dataset into train dataset and validation dataset, with the predefined ratios
-    print("-------------------------Partitioning dataset operations begins-------------------------\n")
+    print("-------------------------Part 2:Partitioning dataset operations begins-------------------------\n")
     # random_seed = 42 # The seed value used to initialize the numpy random number generator for reproducible random number generations
     # val_ratio = 0.1 # The ratio of validation data from the original dataset
     val_ratio = config.val_ratio # The ratio of validation data from the original dataset
@@ -214,7 +168,7 @@ def partition(): # Used to partition the original dataset into train dataset and
     #Part3: Generate summary
     print("\n-------------------------Partitioning dataset operations status-------------------------")
     print("Operations completed, Summary:")
-    print(f'Ratio:\n(Train dataset:Validation dataset) = ({train_ratio}:{val_ratio})\n\nTotal number of:')
+    print(f'Ratio: (Train dataset:Validation dataset) = ({train_ratio}:{val_ratio})\nTotal number of:')
     print('Original dataset Input images:', len(src_Input_FileNames)) # Get the total number of the original dataset Input images
     print('Original dataset GroundTruth images:', len(src_GroundTruth_FileNames)) # Get the total number of the original dataset GroundTruth images
     print('Train dataset Input images:', len(train_Input_FilePaths)) # Get the total number of the train dataset Input images 
@@ -285,44 +239,51 @@ def partition(): # Used to partition the original dataset into train dataset and
                         writer.writerow(['The validation dataset Input folder and GroundTruth folder do not have the same elements'])
 
 def resize():
-    # try_img_folder_path = "D:/AI_Master_New/Folders_for_trial_and_error/Verify_ResizeSpeed/try_images" # absolute path of the input image
+    
+    print("-------------------------Part 3:Resizing dataset operations begins-------------------------\n")
 
     folderpaths_to_resize = [train_Input_folder_path, train_GroundTruth_folder_path, val_Input_folder_path, val_GroundTruth_folder_path]
-
-    image_square_size = 400 # the size of the input image to be resized
+    foldernames_list_forRecordPurposeOnly = ['train_Input_Folder', 'train_GroundTruth_Folder','val_Input_Folder', 'val_GroundTruth_Folder']
+    foldername_index_forRecordPurposeOnly = 0
 
     for folder in folderpaths_to_resize:
-        for file in tqdm(glob.iglob(folder + "/*")): # For each image in the file list (available inside the current folder)
+        for file in tqdm(glob.iglob(folder + "/*"), desc= f"Resizing images in {foldernames_list_forRecordPurposeOnly[foldername_index_forRecordPurposeOnly]}"): # For each image in the file list (available inside the current folder)
             
             ori_image = Image.open(file) # Open the image located at the given image's absolute path, using PIL. That image has the shape of [height,width,channels].
-            resized_image = ori_image.resize((image_square_size,image_square_size), Image.LANCZOS) # resize the input image
+            if not ori_image.mode == 'RGB':
+                ori_image = ori_image.convert('RGB') # convert an RGBA (Red, Green, Blue, Alpha) PNG image to RGB (Red, Green, Blue), More info: https://dnmtechs.com/converting-rgba-png-to-rgb-using-pil-in-python-3/
+            resized_image = ori_image.resize((config.image_square_size,config.image_square_size), Image.LANCZOS) # resize the input image
 
             # resized_image.save(os.path.join(big_img_folder_path, os.path.basename(file))) # save resized images to a new folder, while remain its filename unchanged
             resized_image.save(os.path.join(folder, os.path.basename(file))) # save resized images to the existing folder, while remain its filename unchanged
+        
+        foldername_index_forRecordPurposeOnly += 1
 
-    
+    print("\n-------------------------Resizing dataset operations status-------------------------")
+    print("Operations completed, Summary:")
+    print(f'Each resized image has dimensions of {config.image_square_size}x{config.image_square_size}')
 
 
 
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser() # The parser is the ArgumentParser object that holds all the information necessary to read the command-line arguments.
-    # Input Parameters
+    
     parser.add_argument('--src_dir', type=str, default= "D:/AI_Master_New/Folders_for_trial_and_error/Reorganize_dataset/sampling_SICE_Part1_TrainingSet") # The absolute path of the source dataset
     parser.add_argument('--dst_dir', type=str, default="D:/AI_Master_New/Folders_for_trial_and_error/Reorganize_dataset/Reorganized_sampling_SICE_Part1_TrainingSet_try2") # The absolute path of the destination root folder that saves the rearranged dataset
     parser.add_argument('--source_dataset_name', type=str, default="SICE_Dataset_Part1") # The name of the source dataset
-    parser.add_argument('--partition_name', type=str, default="All") # The name of the partition (All/Train/Validation)
     parser.add_argument('--Input_folder_basename', type=str, default= "/Input") # Base name for the Input folder for the train and validation datasets
     parser.add_argument('--GroundTruth_folder_basename', type=str, default= "/GroundTruth") # Base name for the GroundTruth folder for the train and validation datasets
-    parser.add_argument('--random_seed', type=int, default=42) # The seed value used to initialize the numpy random number generator for reproducible random number generations
+    parser.add_argument('--image_square_size', type=int, default=512) # The size of the input image to be resized
     parser.add_argument('--val_ratio', type=float, default=0.1) # The ratio of validation data from the original dataset
+    parser.add_argument('--random_seed', type=int, default=42) # The seed value used to initialize the numpy random number generator for reproducible random number generations
+    
    
     config = parser.parse_args() 
 
     # Create the dictionary to record the metadata of the reorganized dataset
     metadata = {'folder_name': 0, 'files_num_for_the_folder': 0, 'image_counter': -1}
 
-    print("-------------------------Reorganizing dataset operations begins-------------------------")
     # Create the required directories for reorganize()
     os.makedirs(config.src_dir, exist_ok=True)
     destination_Input_folder_path = config.dst_dir+"/Input_All" # Create the absolute path of the folder/destination that will save the input files/images, in the destination root folder
@@ -347,14 +308,23 @@ if __name__ == '__main__':
     
     # Reorganize the original dataset
     # So rule of thumb of using self-defined functions, must have the return operator, but the function argument is optional.
-    reorganize() # when using self-defined functions, must have return operator at the end to get the results obtained from the operations within the function. You only can get the results by using the return operator. But any changes made to a dictionary within the function will also be reflected outside the function, even without using return operator. 
     
+    print("***********************************************************************************************")
+    reorganize() # when using self-defined functions, must have return operator at the end to get the results obtained from the operations within the function. You only can get the results by using the return operator. But any changes made to a dictionary within the function will also be reflected outside the function, even without using return operator. 
+    print("***********************************************************************************************\n")
+
+    print("***********************************************************************************************")
     # Partition the original dataset into train dataset and validation dataset, with the predefined ratios
     partition()
+    print("***********************************************************************************************\n")
 
+    print("***********************************************************************************************")
     resize()
+    print("***********************************************************************************************\n")
     
-    print("-------------------------Reorganizing dataset operations completed-------------------------")
+    print("-------------------------All operations completed-------------------------")
 
 # Instruction: Use this script to reorganize, partition, and resize the original image dataset.
-    
+
+
+
