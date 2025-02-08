@@ -250,8 +250,8 @@ def resize():
         for file in tqdm(glob.iglob(folder + "/*"), desc= f"Resizing images in {foldernames_list_forRecordPurposeOnly[foldername_index_forRecordPurposeOnly]}"): # For each image in the file list (available inside the current folder)
             
             ori_image = Image.open(file) # Open the image located at the given image's absolute path, using PIL. That image has the shape of [height,width,channels].
-            if not ori_image.mode == 'RGB': # if the image is not a RGB image
-                ori_image = ori_image.convert('RGB') # convert the image to RGB (Red, Green, Blue), More info: https://dnmtechs.com/converting-rgba-png-to-rgb-using-pil-in-python-3/
+            if not ori_image.mode == 'RGB': # if the image is not a RGB image (using RGB color representation, RGB mode). Because .jpeg and .png are the most widely found graphic file formats on website. .jpeg only supports RGB mode, but .png can support multiple color modes including RGB and RGBA. While the image data tensors in this script are required to be in RGB mode (must have 3 color channels, as R,G,B respectively) [because the model's first convolutional layer is defined to take each sample/image of 3 channels(RGB image), for a batch of input samples/images], so we need to convert any color modes of image data into RGB mode. Color representation = color mode.
+                ori_image = ori_image.convert('RGB') # convert the image data color representation into RGB (Red, Green, Blue) mode, More info: https://dnmtechs.com/converting-rgba-png-to-rgb-using-pil-in-python-3/
             resized_image = ori_image.resize((config.image_square_size,config.image_square_size), Image.LANCZOS) # resize the input image
 
             # resized_image.save(os.path.join(big_img_folder_path, os.path.basename(file))) # save resized images to a new folder, while remain its filename unchanged
