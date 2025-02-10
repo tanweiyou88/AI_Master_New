@@ -14,7 +14,7 @@ from torchvision import transforms
 import torchvision.transforms.functional as F
 from PIL import Image
 
-from EMP_dataloader_AdjustBrightness import image_loader 
+from dataloader_AdjustBrightness_EMP import image_loader 
 import argparse
 from tqdm import tqdm
 import shutil
@@ -153,7 +153,8 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser() # The parser is the ArgumentParser object that holds all the information necessary to read the command-line arguments.
     # Input Parameters
-    parser.add_argument('--images_src_path', type=str, default="D:/AI_Master_New/PlantDoc.v1-resize-416x416.yolov8-normal-light") # The source image dataset folder path 
+    # parser.add_argument('--images_src_path', type=str, default="C:/Master_XMUM_usages/AI_Master_New/PlantDoc.v1-resize-416x416.yolov8-datacleaned-normal-light") # The source image dataset folder path 
+    parser.add_argument('--images_src_path', type=str, default="C:/Master_XMUM_usages/AI_Master_New/PlantDoc.v1-resize-416x416.yolov8-filenamecleaned-normal-light") # The source image dataset folder path 
     parser.add_argument('--train_folder_name', type=str, default="train") # The folder name that stores images and labels of train datasets 
     parser.add_argument('--test_folder_name', type=str, default="test") # The folder name that stores images and labels of test datasets 
     parser.add_argument('--image_folder_name', type=str, default="images") # The folder name that stores images of train and test datasets 
