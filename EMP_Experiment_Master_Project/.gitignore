@@ -1,7 +1,3 @@
 # Ignore the image files
-/EMP_SICE_Dataset_Part1
-/EMP_Reorganized_SICE_Dataset_Part1
+/Dataset_EMP
 
-/EMP_ImageProcessing_AdjustBrightness/PlantDoc.v1-resize-416x416.yolov8-normal-light
-/EMP_ImageProcessing_AdjustBrightness/PlantDoc.v1-resize-416x416.yolov8-low-light
-/EMP_ImageProcessing_AdjustBrightness/PlantDoc.v1-resize-416x416.yolov8-high-light
