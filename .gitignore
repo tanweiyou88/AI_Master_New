@@ -64,6 +64,7 @@
 
 /test.py
 /todelete.py
+/dataset1_todelete
 
 # Ignore the folders containing virtual environment
 /.venv
