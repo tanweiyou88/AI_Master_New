@@ -233,6 +233,14 @@ def generate_save_TrainingResults_History():
 	plt.margins() 
 	plt.savefig(epoch_training_results_history_filepath, bbox_inches='tight') # save the figure as an image
 	# plt.show()
+	with open(csv_TrainingResult_filepath, 'a', newline='') as csvfile: # Open that csv file at the path of csv_ValidationResult_filepath with append mode, so that we can append the data of ComputationalComplexity_metrics_data dictionary to that csv file.
+		CC_fieldnames = ['Fieldnames', 'BestEpochAverageLoss', 'BestEpochAverageLoss_TV', 'BestEpochAverageLoss_Spa', 'BestEpochAverageLoss_Col', 'BestEpochAverageLoss_Exp']
+		best_CCMetrics_HistoryPoint = ['Y-value', epoch_training_average_loss_list_ymin, epoch_training_average_loss_TV_list_ymin, epoch_training_average_loss_spa_list_ymin, epoch_training_average_loss_col_list_ymin, epoch_training_average_loss_exp_list_ymin]
+		best_CCMetrics_epoch_location = ['X-value', epoch_training_average_loss_list_xmin, epoch_training_average_loss_TV_list_xmin, epoch_training_average_loss_spa_list_xmin, epoch_training_average_loss_col_list_xmin, epoch_training_average_loss_exp_list_xmin]
+		writer = csv.writer(csvfile, delimiter= ',') # The writer (csv.DictWriter) takes the csvfile object as the csv file to write and ComputationalComplexity_metrics_data.keys() as the elements=keys of the header
+		writer.writerow(CC_fieldnames)  
+		writer.writerow(best_CCMetrics_HistoryPoint)  
+		writer.writerow(best_CCMetrics_epoch_location)  
 
 	# # (Training results) Generate and save the figure of [Average loss vs Epoch] **DONE
 	# plt.figure() # creates a new figure
@@ -382,6 +390,16 @@ def generate_save_ValidationResults_History():
 	plt.savefig(epoch_validation_results_filepath, bbox_inches='tight') # save the figure as an image
 	# plt.show()
 
+	with open(csv_ValidationResult_filepath, 'a', newline='') as csvfile: # Open that csv file at the path of csv_ValidationResult_filepath with append mode, so that we can append the data of ComputationalComplexity_metrics_data dictionary to that csv file.
+		IQA_fieldnames = ['Fieldnames', 'BestEpochAveragePSNR', 'BestEpochAverageSSIM', 'BestEpochAverageMAE', 'BestEpochAverageLPIPS']
+		best_IQAMetrics_HistoryPoint = ['Y-value', epoch_validation_average_psnr_list_ymax, epoch_validation_average_ssim_list_ymax, epoch_validation_average_mae_list_ymin, epoch_validation_average_lpips_list_ymin]
+		best_IQAMetrics_epoch_location = ['X-value', epoch_validation_average_psnr_list_xmax, epoch_validation_average_ssim_list_xmax, epoch_validation_average_mae_list_xmin, epoch_validation_average_lpips_list_xmin]
+		writer = csv.writer(csvfile, delimiter= ',') # The writer (csv.DictWriter) takes the csvfile object as the csv file to write and ComputationalComplexity_metrics_data.keys() as the elements=keys of the header
+		writer.writerow(IQA_fieldnames)  
+		writer.writerow(best_IQAMetrics_HistoryPoint)  
+		writer.writerow(best_IQAMetrics_epoch_location)  
+
+
 	# # (Validation results) Generate and save the figure of [Average PSNR vs Epoch] **DONE
 	# plt.figure() # creates a new figure
 	# print('epoch_validation_average_psnr_list:', epoch_validation_average_psnr_list)
@@ -444,16 +462,16 @@ if __name__ == '__main__':
 	# Input Parameters
 	parser.add_argument('--model_name', type=str, default= "ZeroDCE_ori") # Max 30 characters. The random name you give to your created model, so that it appears as the model name at the end of the printed results. This is not involved in the calflop operations, so this information is optional.
 	parser.add_argument('--dataset_name', type=str, default= "SICE_Part1") # Max 15 characters
-	parser.add_argument('--train_GroundTruth_root', type=str, default="C:/Master_XMUM_usages/AI_Master_New/dataset1/train/GroundTruth") # Add an argument type (optional argument) named lowlight_images_path. The value given to this argument type must be string data type. If no value is given to this argument type, then the default value will become the value of this argument type.
-	parser.add_argument('--train_Input_root', type=str, default="C:/Master_XMUM_usages/AI_Master_New/dataset1/train/Input") # Add an argument type (optional argument) named lowlight_images_path. The value given to this argument type must be string data type. If no value is given to this argument type, then the default value will become the value of this argument type.
-	parser.add_argument('--val_GroundTruth_root', type=str, default="C:/Master_XMUM_usages/AI_Master_New/dataset1/val/GroundTruth") # Add an argument type (optional argument) named lowlight_images_path. The value given to this argument type must be string data type. If no value is given to this argument type, then the default value will become the value of this argument type.
-	parser.add_argument('--val_Input_root', type=str, default="C:/Master_XMUM_usages/AI_Master_New/dataset1/val/Input") # Add an argument type (optional argument) named lowlight_images_path. The value given to this argument type must be string data type. If no value is given to this argument type, then the default value will become the value of this argument type.
+	parser.add_argument('--train_GroundTruth_root', type=str, default="C:/Master_XMUM_usages/AI_Master_New/Experiment_Master_Project_EMP/Dataset_EMP/Preprocessed_SICE_Dataset_Part1_EMP/train/GroundTruth") # Add an argument type (optional argument) named lowlight_images_path. The value given to this argument type must be string data type. If no value is given to this argument type, then the default value will become the value of this argument type.
+	parser.add_argument('--train_Input_root', type=str, default="C:/Master_XMUM_usages/AI_Master_New/Experiment_Master_Project_EMP/Dataset_EMP/Preprocessed_SICE_Dataset_Part1_EMP/train/Input") # Add an argument type (optional argument) named lowlight_images_path. The value given to this argument type must be string data type. If no value is given to this argument type, then the default value will become the value of this argument type.
+	parser.add_argument('--val_GroundTruth_root', type=str, default="C:/Master_XMUM_usages/AI_Master_New/Experiment_Master_Project_EMP/Dataset_EMP/Preprocessed_SICE_Dataset_Part1_EMP/val/GroundTruth") # Add an argument type (optional argument) named lowlight_images_path. The value given to this argument type must be string data type. If no value is given to this argument type, then the default value will become the value of this argument type.
+	parser.add_argument('--val_Input_root', type=str, default="C:/Master_XMUM_usages/AI_Master_New/Experiment_Master_Project_EMP/Dataset_EMP/Preprocessed_SICE_Dataset_Part1_EMP/val/Input") # Add an argument type (optional argument) named lowlight_images_path. The value given to this argument type must be string data type. If no value is given to this argument type, then the default value will become the value of this argument type.
 	parser.add_argument('--dir_store_results', type=str, default="C:/Master_XMUM_usages/AI_Master_New/Experiment_Master_Project_EMP/ZeroDCE_ori_EMP") 
 	parser.add_argument('--image_square_size', type=int, default=256) # The size of the input image to be resized
 	parser.add_argument('--lr', type=float, default=0.0001) # Add an argument type (optional argument) named lr. The value given to this argument type must be float data type. If no value is given to this argument type, then the default value will become the value of this argument type.
 	parser.add_argument('--weight_decay', type=float, default=0.0001)
 	parser.add_argument('--grad_clip_norm', type=float, default=0.1)
-	parser.add_argument('--num_epochs', type=int, default=500)
+	parser.add_argument('--num_epochs', type=int, default=3)
 	parser.add_argument('--train_batch_size', type=int, default=8)
 	parser.add_argument('--val_batch_size', type=int, default=4)
 	parser.add_argument('--num_workers', type=int, default=4)
