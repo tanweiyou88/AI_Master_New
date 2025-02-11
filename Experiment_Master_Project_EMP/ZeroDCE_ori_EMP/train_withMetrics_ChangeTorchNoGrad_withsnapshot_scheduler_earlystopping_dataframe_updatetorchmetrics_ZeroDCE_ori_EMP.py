@@ -471,7 +471,7 @@ if __name__ == '__main__':
 	parser.add_argument('--lr', type=float, default=0.0001) # Add an argument type (optional argument) named lr. The value given to this argument type must be float data type. If no value is given to this argument type, then the default value will become the value of this argument type.
 	parser.add_argument('--weight_decay', type=float, default=0.0001)
 	parser.add_argument('--grad_clip_norm', type=float, default=0.1)
-	parser.add_argument('--num_epochs', type=int, default=3)
+	parser.add_argument('--num_epochs', type=int, default=500)
 	parser.add_argument('--train_batch_size', type=int, default=8)
 	parser.add_argument('--val_batch_size', type=int, default=4)
 	parser.add_argument('--num_workers', type=int, default=4)
@@ -735,47 +735,47 @@ if __name__ == '__main__':
 				writer.writerow(IQA_metrics_data) # The writer writes the data (value) of IQA_metrics_data dictionary in sequence as a row on the csv file
 
 			
-			# Early stopping section:
-			if (epoch == 0): # if it reaches the first epoch
-				best_epoch_validation_average_psnr = IQA_metrics_data['epoch_average_psnr']
-				best_epoch_validation_average_ssim = IQA_metrics_data['epoch_average_ssim']
-				best_epoch_validation_average_mae = IQA_metrics_data['epoch_average_mae']
-				best_epoch_validation_average_lpips = IQA_metrics_data['epoch_average_lpips']
+			# # Early stopping section:
+			# if (epoch == 0): # if it reaches the first epoch
+			# 	best_epoch_validation_average_psnr = IQA_metrics_data['epoch_average_psnr']
+			# 	best_epoch_validation_average_ssim = IQA_metrics_data['epoch_average_ssim']
+			# 	best_epoch_validation_average_mae = IQA_metrics_data['epoch_average_mae']
+			# 	best_epoch_validation_average_lpips = IQA_metrics_data['epoch_average_lpips']
 
-			# If all IQA metrics do not improve for 'patience' epochs, stop training early.
-			elif (
-					IQA_metrics_data['epoch_average_psnr'] <= best_epoch_validation_average_psnr  and \
-					IQA_metrics_data['epoch_average_ssim'] <= best_epoch_validation_average_ssim   and \
-					IQA_metrics_data['epoch_average_mae'] >= best_epoch_validation_average_mae     and \
-					IQA_metrics_data['epoch_average_lpips'] >= best_epoch_validation_average_lpips
-				):
+			# # If all IQA metrics do not improve for 'patience' epochs, stop training early.
+			# elif (
+			# 		IQA_metrics_data['epoch_average_psnr'] <= best_epoch_validation_average_psnr  and \
+			# 		IQA_metrics_data['epoch_average_ssim'] <= best_epoch_validation_average_ssim   and \
+			# 		IQA_metrics_data['epoch_average_mae'] >= best_epoch_validation_average_mae     and \
+			# 		IQA_metrics_data['epoch_average_lpips'] >= best_epoch_validation_average_lpips
+			# 	):
 
-				wait += 1
-				if wait >= patience:
-					stopped_epoch = epoch
-					print("Early stopped training at epoch %d" % stopped_epoch)
+			# 	wait += 1
+			# 	if wait >= patience:
+			# 		stopped_epoch = epoch
+			# 		print("Early stopped training at epoch %d" % stopped_epoch)
 
-					ComputationComplexity_metrics_calculation(ComputationalComplexity_metrics_data)
+			# 		ComputationComplexity_metrics_calculation(ComputationalComplexity_metrics_data)
 					
-					break
-			else:
-				wait = 0
+			# 		break
+			# else:
+			# 	wait = 0
 
-				if  IQA_metrics_data['epoch_average_psnr'] > best_epoch_validation_average_psnr :
-					best_epoch_validation_average_psnr = IQA_metrics_data['epoch_average_psnr']
-					save_model(epoch, resultPath_ModelParametersResults, DCE_net, optimizer, config.model_name, key=1)	
+			# 	if  IQA_metrics_data['epoch_average_psnr'] > best_epoch_validation_average_psnr :
+			# 		best_epoch_validation_average_psnr = IQA_metrics_data['epoch_average_psnr']
+			# 		save_model(epoch, resultPath_ModelParametersResults, DCE_net, optimizer, config.model_name, key=1)	
 				
-				if  IQA_metrics_data['epoch_average_ssim'] > best_epoch_validation_average_ssim :
-					best_epoch_validation_average_ssim = IQA_metrics_data['epoch_average_ssim']
-					save_model(epoch, resultPath_ModelParametersResults, DCE_net, optimizer, config.model_name, key=2)
+			# 	if  IQA_metrics_data['epoch_average_ssim'] > best_epoch_validation_average_ssim :
+			# 		best_epoch_validation_average_ssim = IQA_metrics_data['epoch_average_ssim']
+			# 		save_model(epoch, resultPath_ModelParametersResults, DCE_net, optimizer, config.model_name, key=2)
 
-				if  IQA_metrics_data['epoch_average_mae'] < best_epoch_validation_average_mae :
-					best_epoch_validation_average_mae = IQA_metrics_data['epoch_average_mae']
-					save_model(epoch, resultPath_ModelParametersResults, DCE_net, optimizer, config.model_name, key=3)	
+			# 	if  IQA_metrics_data['epoch_average_mae'] < best_epoch_validation_average_mae :
+			# 		best_epoch_validation_average_mae = IQA_metrics_data['epoch_average_mae']
+			# 		save_model(epoch, resultPath_ModelParametersResults, DCE_net, optimizer, config.model_name, key=3)	
 				
-				if  IQA_metrics_data['epoch_average_lpips'] < best_epoch_validation_average_lpips :
-					best_epoch_validation_average_lpips = IQA_metrics_data['epoch_average_lpips']
-					save_model(epoch, resultPath_ModelParametersResults, DCE_net, optimizer, config.model_name, key=4)
+			# 	if  IQA_metrics_data['epoch_average_lpips'] < best_epoch_validation_average_lpips :
+			# 		best_epoch_validation_average_lpips = IQA_metrics_data['epoch_average_lpips']
+			# 		save_model(epoch, resultPath_ModelParametersResults, DCE_net, optimizer, config.model_name, key=4)
 
 		DCE_net.train()
 
