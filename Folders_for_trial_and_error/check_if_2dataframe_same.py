@@ -20,4 +20,3 @@ check_dataframes_similarity(df1, df2)
 print("\ndf1:\n", df1)
 print("df2:\n", df2)
 
-
