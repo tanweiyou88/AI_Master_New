@@ -588,8 +588,13 @@ if __name__ == '__main__':
 
 # **Subpart 1: Select the device for computations**
 	os.environ['CUDA_VISIBLE_DEVICES']='0'
-	torch.manual_seed(1) # This function ensures the reproducibility of the parameters (weights and biases) of the network which are initialized using random normal functions. The PyTorch RNG is seeded/initialized everytime before the dataloader object is called (at the beginning of each epoch)
-	
+	random.seed(1) # For deterministic/reproducible results:
+	np.random.seed(1) # For deterministic/reproducible results:
+	torch.manual_seed(1) # For deterministic/reproducible results: This function ensures the reproducibility of the parameters (weights and biases) of the network which are initialized using random normal functions. The PyTorch RNG is seeded/initialized everytime before the dataloader object is called (at the beginning of each epoch)
+	torch.cuda.manual_seed_all(1) # For deterministic/reproducible results:
+	torch.backends.cudnn.deterministic=True # For deterministic/reproducible results: Ensures that cuDNN uses deterministic algorithms for convolution operations
+	torch.backends.cudnn.benchmark=False # For deterministic/reproducible results: Ensures that CUDA selects the same algorithm each time an application is run
+
 	print('-------LLIE model training information-------')
 	print('1) Model name:', config.model_name)
 	print('2) Dataset name:', config.dataset_name)
@@ -653,7 +658,6 @@ if __name__ == '__main__':
 	
 
 # **Subpart 2: Initialize training and validation dataset**
-	torch.manual_seed(1)
 	train_loader, train_number, val_loader, val_number = load_data(config)
 
 
@@ -693,8 +697,6 @@ if __name__ == '__main__':
 
 	# **Subpart 2: Initialize a dictionary to store the computational complexity metric data , so they will be updated from time to time later**
 	Validation_ComputationalComplexity_metrics_data ={'average_val_runtime_forCompleteOperations':0., 'trainable_parameters':0., 'MACs':0., 'FLOPs': 0., 'accumulate_val_batch_duration_forCompleteOperations':0.}
-	
-	torch.manual_seed(1) # This function ensures the reproducibility of the shuffled indices used in the train_loader and val_loader. The PyTorch RNG is seeded/initialized everytime before the dataloader object is called (at the beginning of each epoch)
 	
 	for epoch in range(config.num_epochs):
 
