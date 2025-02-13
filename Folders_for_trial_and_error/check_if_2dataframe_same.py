@@ -12,8 +12,8 @@ def check_dataframes_similarity(df1, df2):
 # # Making dataframe 2
 # df2 = pd.read_csv("D:/AI_Master_New/Low-Light_Image_Enhancement/Zero-DCE_code_LiChongYi_2021/data/result/self_CompileMetrics/self_CompileMetrics_csvFile/Zero-DCE-Outputs-2025_01_05-16_07_29.csv")
 
-df1 = pd.read_csv("D:/AI_Master_New/Folders_for_trial_and_error/ZTWV_ZeroDCE_train_with_val/results/csvFile/LLIE-ValidationResults-History-Zero-DCE-dataset1-2025_01_24-18_02_15_val3_Copy.csv")
-df2 = pd.read_csv("D:/AI_Master_New/Folders_for_trial_and_error/ZTWV_ZeroDCE_train_with_val/results/csvFile/LLIE-ValidationResults-History-Zero-DCE-dataset1-2025_01_24-18_13_47_val3_trial2_Copy.csv")
+df1 = pd.read_csv("C:/Master_XMUM_usages/AI_Master_New/Experiment_Master_Project_EMP/ZeroDCE_ori_EMP/2025_02_13-19_18_33-SICE_Part1-TrainResultsPool/csvFile/2025_02_13-19_18_33-ZeroDCE_ori-SICE_Part1-ValLossesHistory.csv")
+df2 = pd.read_csv("C:/Master_XMUM_usages/AI_Master_New/Experiment_Master_Project_EMP/ZeroDCE_ori_EMP/2025_02_13-19_33_11-SICE_Part1-TrainResultsPool/csvFile/2025_02_13-19_33_11-ZeroDCE_ori-SICE_Part1-ValLossesHistory.csv")
 
 
 check_dataframes_similarity(df1, df2)
