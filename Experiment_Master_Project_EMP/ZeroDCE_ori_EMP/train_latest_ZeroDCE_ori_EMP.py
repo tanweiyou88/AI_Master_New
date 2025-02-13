@@ -215,7 +215,7 @@ def generate_save_LossesResults_History():
 	ax1.plot(epoch_validation_average_loss_list_xmin, epoch_validation_average_loss_list_ymin, 'b-', marker='o', fillstyle='none', label='Validation') # plot the minimum point
 	ax1.set_ylabel('Average loss') # set the y-label
 	ax1.set_xlabel('Epoch') # set the x-label
-	ax1.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, config.snapshot_iter*0.2)) # set the interval of x-axis 
+	ax1.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, config.num_epochs*0.2)) # set the interval of x-axis 
 	ax1.set_title(f'Train Y-min. coord.:[{epoch_training_average_loss_list_xmin},{epoch_training_average_loss_list_ymin:.4f}]\n Val Y-min. coord.:[{epoch_validation_average_loss_list_xmin},{epoch_validation_average_loss_list_ymin:.4f}]')
 	ax1.legend()
 
@@ -235,7 +235,7 @@ def generate_save_LossesResults_History():
 	ax2.plot(epoch_validation_average_loss_TV_list_xmin, epoch_validation_average_loss_TV_list_ymin, 'b-', marker='o', fillstyle='none', label='Validation') # plot the minimum point
 	ax2.set_ylabel('Average loss_TV') # set the y-label
 	ax2.set_xlabel('Epoch') # set the x-label
-	ax2.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, config.snapshot_iter*0.2)) # set the interval of x-axis 
+	ax2.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, config.num_epochs*0.2)) # set the interval of x-axis 
 	ax2.set_title(f'Train Y-min. coord.:[{epoch_training_average_loss_TV_list_xmin},{epoch_training_average_loss_TV_list_ymin:.4f}]\n Val Y-min. coord.:[{epoch_validation_average_loss_TV_list_xmin},{epoch_validation_average_loss_TV_list_ymin:.4f}]')
 	ax2.legend()
  	
@@ -255,7 +255,7 @@ def generate_save_LossesResults_History():
 	ax3.plot(epoch_validation_average_loss_spa_list_xmin, epoch_validation_average_loss_spa_list_ymin, 'b-', marker='o', fillstyle='none', label='Validation') # plot the minimum point
 	ax3.set_ylabel('Average loss_spa') # set the y-label
 	ax3.set_xlabel('Epoch') # set the x-label
-	ax3.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, config.snapshot_iter*0.2)) # set the interval of x-axis 
+	ax3.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, config.num_epochs*0.2)) # set the interval of x-axis 
 	ax3.set_title(f'Train Y-min. coord.:[{epoch_training_average_loss_spa_list_xmin},{epoch_training_average_loss_spa_list_ymin:.4f}]\n Val Y-min. coord.:[{epoch_validation_average_loss_spa_list_xmin},{epoch_validation_average_loss_spa_list_ymin:.4f}]')
 	ax3.legend()
 
@@ -275,7 +275,7 @@ def generate_save_LossesResults_History():
 	ax4.plot(epoch_validation_average_loss_col_list_xmin, epoch_validation_average_loss_col_list_ymin, 'b-', marker='o', fillstyle='none', label='Validation') # plot the minimum point
 	ax4.set_ylabel('Average loss_col') # set the y-label
 	ax4.set_xlabel('Epoch') # set the x-label
-	ax4.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, config.snapshot_iter*0.2)) # set the interval of x-axis 
+	ax4.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, config.num_epochs*0.2)) # set the interval of x-axis 
 	ax4.set_title(f'Train Y-min. coord.:[{epoch_training_average_loss_col_list_xmin},{epoch_training_average_loss_col_list_ymin:.4f}]\n Val Y-min. coord.:[{epoch_validation_average_loss_col_list_xmin},{epoch_validation_average_loss_col_list_ymin:.4f}]')
 	ax4.legend()
 
@@ -295,7 +295,7 @@ def generate_save_LossesResults_History():
 	ax5.plot(epoch_validation_average_loss_exp_list_xmin, epoch_validation_average_loss_exp_list_ymin, 'b-', marker='o', fillstyle='none', label='Validation') # plot the minimum point
 	ax5.set_ylabel('Average loss_exp') # set the y-label
 	ax5.set_xlabel('Epoch') # set the x-label
-	ax5.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, config.snapshot_iter*0.2)) # set the interval of x-axis 
+	ax5.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, config.num_epochs*0.2)) # set the interval of x-axis 
 	ax5.set_title(f'Train Y-min. coord.:[{epoch_training_average_loss_exp_list_xmin},{epoch_training_average_loss_exp_list_ymin:.4f}]\n Val Y-min. coord.:[{epoch_validation_average_loss_exp_list_xmin},{epoch_validation_average_loss_exp_list_ymin:.4f}]')
 	ax5.legend()
 
@@ -427,7 +427,7 @@ def generate_save_ValidationIQAResults_History():
 	ax6.plot(epoch_validation_average_psnr_list_xmax, epoch_validation_average_psnr_list_ymax, 'b', marker='o', fillstyle='none') # plot the maximum point
 	ax6.set_ylabel('Average PSNR [dB]') # set the y-label
 	ax6.set_xlabel('Epoch') # set the x-label
-	ax6.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, config.snapshot_iter*0.2)) # set the interval of x-axis 
+	ax6.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, config.num_epochs*0.2)) # set the interval of x-axis 
 	ax6.set_title(f'Y-max. coord.:[{epoch_validation_average_psnr_list_xmax},{epoch_validation_average_psnr_list_ymax:.4f}]')
 
 	# (Validation results) Generate and save the figure of [Average SSIM vs Epoch]
@@ -439,7 +439,7 @@ def generate_save_ValidationIQAResults_History():
 	ax7.plot(epoch_validation_average_ssim_list_xmax, epoch_validation_average_ssim_list_ymax, 'b', marker='o', fillstyle='none') # plot the maximum point
 	ax7.set_ylabel('Average SSIM') # set the y-label
 	ax7.set_xlabel('Epoch') # set the x-label
-	ax7.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, config.snapshot_iter*0.2)) # set the interval of x-axis 
+	ax7.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, config.num_epochs*0.2)) # set the interval of x-axis 
 	ax7.set_title(f'Y-max. coord.:[{epoch_validation_average_ssim_list_xmax},{epoch_validation_average_ssim_list_ymax:.4f}]')
 
 	# (Validation results) Generate and save the figure of [Average MAE vs Epoch]
@@ -451,7 +451,7 @@ def generate_save_ValidationIQAResults_History():
 	ax8.plot(epoch_validation_average_mae_list_xmin, epoch_validation_average_mae_list_ymin, 'b', marker='o', fillstyle='none') # plot the minimum point
 	ax8.set_ylabel('Average MAE') # set the y-label
 	ax8.set_xlabel('Epoch') # set the x-label
-	ax8.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, config.snapshot_iter*0.2)) # set the interval of x-axis 
+	ax8.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, config.num_epochs*0.2)) # set the interval of x-axis 
 	ax8.set_title(f'Y-min. coord.:[{epoch_validation_average_mae_list_xmin},{epoch_validation_average_mae_list_ymin:.4f}]')
 
 
@@ -464,7 +464,7 @@ def generate_save_ValidationIQAResults_History():
 	ax9.plot(epoch_validation_average_lpips_list_xmin, epoch_validation_average_lpips_list_ymin, 'b', marker='o', fillstyle='none') # plot the minimum point
 	ax9.set_ylabel('Average LPIPS') # set the y-label
 	ax9.set_xlabel('Epoch') # set the x-label
-	ax9.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, config.snapshot_iter*0.2)) # set the interval of x-axis 
+	ax9.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, config.num_epochs*0.2)) # set the interval of x-axis 
 	ax9.set_title(f'Y-min. coord.:[{epoch_validation_average_lpips_list_xmin},{epoch_validation_average_lpips_list_ymin:.4f}]')
 
 
