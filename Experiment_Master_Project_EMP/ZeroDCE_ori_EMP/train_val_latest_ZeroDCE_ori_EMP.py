@@ -558,8 +558,8 @@ if __name__ == '__main__':
 	parser.add_argument('--dir_store_results', type=str, default="C:/Master_XMUM_usages/AI_Master_New/Experiment_Master_Project_EMP/ZeroDCE_ori_EMP") 
 	# parser.add_argument('--pretrain_dir', type=str, default= "D:/AI_Master_New/Folders_for_trial_and_error/ZTWV_ZeroDCE_train_with_val/snapshots/Epoch99.pth") # The pretrained model parameters provided by the author
 	parser.add_argument('--checkpoint_dir', type=str, default= "D:/AI_Master_New/Folders_for_trial_and_error/ZTWV_ZeroDCE_train_with_val/results/model_parameters/Zero-DCE/enhance_1.pt") # The pretrained model parameters obtained by myself
-	parser.add_argument('--snapshot_iter', type=int, default=5) # The interval to save the checkpoint
-	parser.add_argument('--BatchesNum_ImageGroups_VisualizationSample', type=int, default=16) # The number of image groups in the image grid = firstNBatches * batch_size during validation.: At each epoch, save the maximum first N batches of val_LL_image (Input), val_enhanced_image (Output), and val_ori_image (GroundTruth) image groups in validation as the samples to visualize the network performance 
+	parser.add_argument('--snapshot_iter', type=int, default=1) # The interval to save the checkpoint
+	parser.add_argument('--BatchesNum_ImageGroups_VisualizationSample', type=int, default=1) # The number of image groups in the image grid = firstNBatches * batch_size during validation.: At each epoch, save the maximum first N batches of val_LL_image (Input), val_enhanced_image (Output), and val_ori_image (GroundTruth) image groups in validation as the samples to visualize the network performance. Max can have 32 images (image grid = 1 * 32) of 256x256 dimensions concatenated on a horizontal line for each epoch. 
 	
 	# Train & Validation hyperparameters
 	parser.add_argument('--load_pretrain', type=bool, default= False) # Set if want to load the pretrained model's parameter. "False" means does not load the pretrained model's parameters; "True" means load the pretrained model's parameters
@@ -569,13 +569,13 @@ if __name__ == '__main__':
 	parser.add_argument('--val_image_size_width', type=int, default=256) # The width size of the input validation images to be resized (in pixel dimension)
 	parser.add_argument('--num_epochs', type=int, default=2)
 	parser.add_argument('--train_batch_size', type=int, default=8)
-	parser.add_argument('--val_batch_size', type=int, default=1)
+	parser.add_argument('--val_batch_size', type=int, default=32)
 	parser.add_argument('--num_workers', type=int, default=4)
-	parser.add_argument('--lr', type=float, default=0.0001) # Learning rate. Add an argument type (optional argument) named lr. The value given to this argument type must be float data type. If no value is given to this argument type, then the default value will become the value of this argument type.
+	parser.add_argument('--lr', type=float, default=0.01) # Learning rate. Add an argument type (optional argument) named lr. The value given to this argument type must be float data type. If no value is given to this argument type, then the default value will become the value of this argument type.
 	parser.add_argument('--weight_decay', type=float, default=0.0001)
 	parser.add_argument('--grad_clip_norm', type=float, default=0.1)
-	parser.add_argument('--scheduler_step_size', type=int, default = 2) # The step size of scheduler: Period of learning rate decay
-	parser.add_argument('--scheduler_gamma', type=float, default = 1) # Multiplicative factor of learning rate decay. "1" means disable scheduler; else, means enable scheduler with that gamma
+	parser.add_argument('--scheduler_step_size', type=int, default = 125) # The step size of scheduler: Period of learning rate decay. EG: value = num_epochs*0.3 to use 3 different learning rates along the training; value = num_epochs*0.5 to use 2 different learning rates along the training...
+	parser.add_argument('--scheduler_gamma', type=float, default = 0.1) # Multiplicative factor of learning rate decay (EG: _last_lr = lr*scheduler_gamma). "1" means disable scheduler; else, means enable scheduler with that gamma
 	parser.add_argument('--earlystopping_switch', type=bool, default= False) # Set if want to enable early stopping. "False" means disable early stopping; "True" means enable early stopping  
 	parser.add_argument('--earlystopping_patience', type=int, default = 100) # the threshold (the number of consecutive epoch for no improvement on all IQA metrics) to wait before stopping model training, when there are consecutives no improvements on all IQA metrics
 	
