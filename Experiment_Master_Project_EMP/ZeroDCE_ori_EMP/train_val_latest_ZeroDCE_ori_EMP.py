@@ -777,7 +777,7 @@ if __name__ == '__main__':
 			torch.nn.utils.clip_grad_norm_(DCE_net.parameters(),config.grad_clip_norm) # Perform Gradient Clipping by Norm to prevent the gradients from becoming excessively large during the training of neural networks, which will lead to exploding gradients problem.
 			optimizer.step() # Update the parameters (weights and biases) of the model
 
-			train_bar.set_description_str('Iteration: {}/{} | Accumulated processed training samples: {} | lr: {:.6f} | Epoch average loss: {:.6f}'
+			train_bar.set_description_str('Iteration: {}/{} | Accum_processed_Train_samples: {} | lr: {:.6f} | Epoch_Ave_loss: {:.6f}'
 					.format(iteration + 1, train_number,
 			 				Training_losses_data['epoch_accumulate_number_of_training_input_samples_processed'],
 							optimizer.param_groups[0]['lr'], 
@@ -881,10 +881,10 @@ if __name__ == '__main__':
 						os.path.join(sample_output_folder, '{}-{}-{}-{}-{}-SampleValOutput.jpg'.format(current_date_time_string, config.model_name, config.dataset_name, 'Epoch', epoch))
 					)
 
-				val_bar.set_description_str('Iteration: %d/%d | Accumulated processed validation samples: %d | Average PSNR: %.4f dB; Average SSIM: %.4f; Average MAE:  %.4f; Average LPIPS: %.4f' % (
+				val_bar.set_description_str('Iteration: %d/%d | Accum_processed_Val_samples: %d | Epoch_Ave_loss: %.6f; Epoch_Ave_PSNR: %.4f dB; Epoch_Ave_SSIM: %.4f; Epoch_Ave_MAE: %.4f; Epoch_Ave_LPIPS: %.4f' % (
 							iteration + 1, val_number, 
 							Validation_IQA_metrics_data['epoch_accumulate_number_of_val_input_samples_processed'], 
-							Validation_IQA_metrics_data['epoch_average_psnr'], Validation_IQA_metrics_data['epoch_average_ssim'], Validation_IQA_metrics_data['epoch_average_mae'], Validation_IQA_metrics_data['epoch_average_lpips']))
+							Validation_losses_data['epoch_average_loss'], Validation_IQA_metrics_data['epoch_average_psnr'], Validation_IQA_metrics_data['epoch_average_ssim'], Validation_IQA_metrics_data['epoch_average_mae'], Validation_IQA_metrics_data['epoch_average_lpips']))
 				
 			# **Subpart 10: Record the calculated (IQA) and losses metrics on validation set to the respective csv file**
 			if (epoch == 0): # if it reaches the first epoch
