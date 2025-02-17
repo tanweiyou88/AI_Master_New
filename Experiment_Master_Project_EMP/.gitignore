@@ -1,6 +1,8 @@
 # ignore the dataset
-/Dataset_EMP/Preprocessed_SICE_Dataset_Part1_EMP
 /Dataset_EMP/Unprocessed
+/Dataset_EMP/Preprocessed_SICE_Dataset_Part1_EMP
+/Dataset_EMP/SICE_Dataset_Part2_OnlyLLImages_EMP
+
 
 
 
