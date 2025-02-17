@@ -49,9 +49,9 @@ def load_data(config):
 # function used to initialize the parameters (weights and biases) of the network. This function will be used only when the network is not using the pretrained parameters
 def weights_init(m): # A custom function that checks the layer type and applies an appropriate initialization strategy for each case, so that it ensures that the initialization is applied consistently across all layers. It iterating through model layers and systematically apply weight initialization across all layers in a model using the model.apply method. Means in this case, all layers whose name containing "Conv" and "BatchNorm" as part will be initialized using the defined methods.
     classname = m.__class__.__name__
-    if classname.find('Conv') != -1: # if layer whose part of its name having 'Conv' is not found by find(), it will return '-1'
+    if classname.find('Conv') != -1: # if layer whose part of its name having 'Conv' is not found by find(), it will return '-1'. So when classname.find('Conv') != -1, it means at least a convolutional layer is found in the model structure, then the parameters of every convolutional layer are set with the predefined ones. The find() method returns the index of first occurrence of the substring (if found). If not found, it returns -1. More info: https://www.programiz.com/python-programming/methods/string/find
         m.weight.data.normal_(0.0, 0.02)
-    elif classname.find('BatchNorm') != -1: # if layer whose part of its name having 'BatchNorm' is not found by find(), it will return '-1'
+    elif classname.find('BatchNorm') != -1: # if layer whose part of its name having 'BatchNorm' is not found by find(), it will return '-1'. So when classname.find('BatchNorm') != -1, it means at least a convolutional layer is found in the model structure, then the parameters of every BatchNorm layer are set with the predefined ones. The find() method returns the index of first occurrence of the substring (if found). If not found, it returns -1. More info: https://www.programiz.com/python-programming/methods/string/find
         m.weight.data.normal_(1.0, 0.02)
         m.bias.data.fill_(0)
 
