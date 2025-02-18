@@ -412,7 +412,7 @@ def generate_save_History():
 
 	# Extract validation IQA results from the CSV file part:
 	df_ValidationResult = pd.read_csv(csv_ValidationIQAResult_filepath) # convert the csv file into a Dataframe
-	print("df_ValidationResult:", df_ValidationResult)
+	# print("df_ValidationResult:", df_ValidationResult)
 	epoch_list = df_ValidationResult['epoch'][:-2].values.tolist() # slice a column from the dataframe, then convert it into a list. [:-2] is to exclude the data of computational_complexity metrics results
 	epoch_list = [int(i) for i in epoch_list] # convert each string integer number in a list into an integer number.
 
@@ -464,62 +464,51 @@ def generate_save_History():
 	ax7 = fig.add_subplot(gs[1, 0])
 	ax7.plot(epoch_list, epoch_validation_average_psnr_db_list, 'b') #row=0, col=0, 1
 	ax7.plot(epoch_validation_average_psnr_db_list_xmax, epoch_validation_average_psnr_db_list_ymax, 'b', marker='o', fillstyle='none') # plot the maximum point
-	ax7.set_ylabel('Average PSNR [dB]', color='b') # set the y-label
+	ax7.set_ylabel('Average PSNR [dB]') # set the y-label
 	ax7.set_xlabel('Epoch') # set the x-label
 	ax7.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, math.ceil(config.num_epochs*0.2))) # set the interval of x-axis 
-
+	ax7.set_title(f'Y-max. coord.:[{epoch_validation_average_psnr_db_list_xmax},{epoch_validation_average_psnr_db_list_ymax:.4f}]')
+	ax7.grid()
 	
-	# (Validation results) Generate and save the figure of [Average PSNR vs Epoch]
-	epoch_validation_average_psnr_list_ymax = max(epoch_validation_average_psnr_list)
-	epoch_validation_average_psnr_list_xpos = epoch_validation_average_psnr_list.index(epoch_validation_average_psnr_list_ymax)
-	epoch_validation_average_psnr_list_xmax = epoch_list[epoch_validation_average_psnr_list_xpos]
-	ax8 = ax7.twinx() # make twin axis with ax7 based on the same x
-	ax8.plot(epoch_list, epoch_validation_average_psnr_list, 'r--') #row=0, col=0, 1
-	ax8.plot(epoch_validation_average_psnr_list_xmax, epoch_validation_average_psnr_list_ymax, 'r', marker='o', fillstyle='none') # plot the maximum point
-	ax8.set_ylabel('Average PSNR [norm]', color='r') # set the y-label
-	ax8.set_xlabel('Epoch') # set the x-label
-	ax8.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, math.ceil(config.num_epochs*0.2))) # set the interval of x-axis 
-	ax8.set_title(f'PSNR [dB]: Y-max. coord.:[{epoch_validation_average_psnr_db_list_xmax},{epoch_validation_average_psnr_db_list_ymax:.4f}]\nPSNR [norm]: Y-max. coord.:[{epoch_validation_average_psnr_list_xmax},{epoch_validation_average_psnr_list_ymax:.4f}]')
-	ax8.grid()
 
 	# (Validation results) Generate and save the figure of [Average SSIM vs Epoch]
 	epoch_validation_average_ssim_list_ymax = max(epoch_validation_average_ssim_list)
 	epoch_validation_average_ssim_list_xpos = epoch_validation_average_ssim_list.index(epoch_validation_average_ssim_list_ymax)
 	epoch_validation_average_ssim_list_xmax = epoch_list[epoch_validation_average_ssim_list_xpos]
-	ax9 = fig.add_subplot(gs[1, 1])
-	ax9.plot(epoch_list, epoch_validation_average_ssim_list, 'b') #row=0, col=0, 1
-	ax9.plot(epoch_validation_average_ssim_list_xmax, epoch_validation_average_ssim_list_ymax, 'b', marker='o', fillstyle='none') # plot the maximum point
-	ax9.set_ylabel('Average SSIM') # set the y-label
-	ax9.set_xlabel('Epoch') # set the x-label
-	ax9.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, math.ceil(config.num_epochs*0.2))) # set the interval of x-axis 
-	ax9.set_title(f'Y-max. coord.:[{epoch_validation_average_ssim_list_xmax},{epoch_validation_average_ssim_list_ymax:.4f}]')
-	ax9.grid()
+	ax8 = fig.add_subplot(gs[1, 1])
+	ax8.plot(epoch_list, epoch_validation_average_ssim_list, 'b') #row=0, col=0, 1
+	ax8.plot(epoch_validation_average_ssim_list_xmax, epoch_validation_average_ssim_list_ymax, 'b', marker='o', fillstyle='none') # plot the maximum point
+	ax8.set_ylabel('Average SSIM') # set the y-label
+	ax8.set_xlabel('Epoch') # set the x-label
+	ax8.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, math.ceil(config.num_epochs*0.2))) # set the interval of x-axis 
+	ax8.set_title(f'Y-max. coord.:[{epoch_validation_average_ssim_list_xmax},{epoch_validation_average_ssim_list_ymax:.4f}]')
+	ax8.grid()
 
 	# (Validation results) Generate and save the figure of [Average MAE vs Epoch]
 	epoch_validation_average_mae_list_ymin = min(epoch_validation_average_mae_list)
 	epoch_validation_average_mae_list_xpos = epoch_validation_average_mae_list.index(epoch_validation_average_mae_list_ymin)
 	epoch_validation_average_mae_list_xmin = epoch_list[epoch_validation_average_mae_list_xpos]
-	ax10 = fig.add_subplot(gs[2, 0])
-	ax10.plot(epoch_list, epoch_validation_average_mae_list, 'b') #row=0, col=0, 1
-	ax10.plot(epoch_validation_average_mae_list_xmin, epoch_validation_average_mae_list_ymin, 'b', marker='o', fillstyle='none') # plot the minimum point
-	ax10.set_ylabel('Average MAE') # set the y-label
-	ax10.set_xlabel('Epoch') # set the x-label
-	ax10.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, math.ceil(config.num_epochs*0.2))) # set the interval of x-axis 
-	ax10.set_title(f'Y-min. coord.:[{epoch_validation_average_mae_list_xmin},{epoch_validation_average_mae_list_ymin:.4f}]')
-	ax10.grid()
+	ax9 = fig.add_subplot(gs[2, 0])
+	ax9.plot(epoch_list, epoch_validation_average_mae_list, 'b') #row=0, col=0, 1
+	ax9.plot(epoch_validation_average_mae_list_xmin, epoch_validation_average_mae_list_ymin, 'b', marker='o', fillstyle='none') # plot the minimum point
+	ax9.set_ylabel('Average MAE') # set the y-label
+	ax9.set_xlabel('Epoch') # set the x-label
+	ax9.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, math.ceil(config.num_epochs*0.2))) # set the interval of x-axis 
+	ax9.set_title(f'Y-min. coord.:[{epoch_validation_average_mae_list_xmin},{epoch_validation_average_mae_list_ymin:.4f}]')
+	ax9.grid()
 
 	# (Validation results) Generate and save the figure of [Average LPIPS vs Epoch]
 	epoch_validation_average_lpips_list_ymin = min(epoch_validation_average_lpips_list)
 	epoch_validation_average_lpips_list_xpos = epoch_validation_average_lpips_list.index(epoch_validation_average_lpips_list_ymin)
 	epoch_validation_average_lpips_list_xmin = epoch_list[epoch_validation_average_lpips_list_xpos]
-	ax11 = fig.add_subplot(gs[2, 1])
-	ax11.plot(epoch_list, epoch_validation_average_lpips_list, 'b') #row=0, col=0, 1
-	ax11.plot(epoch_validation_average_lpips_list_xmin, epoch_validation_average_lpips_list_ymin, 'b', marker='o', fillstyle='none') # plot the minimum point
-	ax11.set_ylabel('Average LPIPS') # set the y-label
-	ax11.set_xlabel('Epoch') # set the x-label
-	ax11.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, math.ceil(config.num_epochs*0.2))) # set the interval of x-axis 
-	ax11.set_title(f'Y-min. coord.:[{epoch_validation_average_lpips_list_xmin},{epoch_validation_average_lpips_list_ymin:.4f}]')
-	ax11.grid()
+	ax10 = fig.add_subplot(gs[2, 1])
+	ax10.plot(epoch_list, epoch_validation_average_lpips_list, 'b') #row=0, col=0, 1
+	ax10.plot(epoch_validation_average_lpips_list_xmin, epoch_validation_average_lpips_list_ymin, 'b', marker='o', fillstyle='none') # plot the minimum point
+	ax10.set_ylabel('Average LPIPS') # set the y-label
+	ax10.set_xlabel('Epoch') # set the x-label
+	ax10.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, math.ceil(config.num_epochs*0.2))) # set the interval of x-axis 
+	ax10.set_title(f'Y-min. coord.:[{epoch_validation_average_lpips_list_xmin},{epoch_validation_average_lpips_list_ymin:.4f}]')
+	ax10.grid()
 
 	epoch_validation_results_filename = '{}-{}-{}-epoch_validation_results_history.jpg'.format(current_date_time_string, config.model_name, config.dataset_name) # define the filename
 	epoch_validation_results_filepath = os.path.join(resultPath_csv, epoch_validation_results_filename) # define the filepath, used to save the figure as an image
@@ -529,9 +518,9 @@ def generate_save_History():
 	# plt.show()
 
 	with open(csv_ValidationIQAResult_filepath, 'a', newline='') as csvfile: # Open that csv file at the path of csv_ValidationResult_filepath with append mode, so that we can append the data of Validation_ComputationalComplexity_metrics_data dictionary to that csv file.
-		IQA_fieldnames = ['Fieldnames','MaximumEpochAverageIQAScore', 'MaximumEpochAveragePSNR_dB', 'MaximumEpochAveragePSNR', 'MaximumEpochAverageSSIM', 'MinimumEpochAverageMAE', 'MinimumEpochAverageLPIPS']
-		best_IQAMetrics_HistoryPoint = ['Y-value', epoch_validation_average_IQAScore_list_ymax, epoch_validation_average_psnr_db_list_ymax, epoch_validation_average_psnr_list_ymax, epoch_validation_average_ssim_list_ymax, epoch_validation_average_mae_list_ymin, epoch_validation_average_lpips_list_ymin]
-		best_IQAMetrics_epoch_location = ['X-value', epoch_validation_average_IQAScore_list_xmax, epoch_validation_average_psnr_db_list_xmax,epoch_validation_average_psnr_list_xmax, epoch_validation_average_ssim_list_xmax, epoch_validation_average_mae_list_xmin, epoch_validation_average_lpips_list_xmin]
+		IQA_fieldnames = ['Fieldnames','MaximumEpochAverageIQAScore', 'MaximumEpochAveragePSNR_dB', 'MaximumEpochAverageSSIM', 'MinimumEpochAverageMAE', 'MinimumEpochAverageLPIPS']
+		best_IQAMetrics_HistoryPoint = ['Y-value', epoch_validation_average_IQAScore_list_ymax, epoch_validation_average_psnr_db_list_ymax, epoch_validation_average_ssim_list_ymax, epoch_validation_average_mae_list_ymin, epoch_validation_average_lpips_list_ymin]
+		best_IQAMetrics_epoch_location = ['X-value', epoch_validation_average_IQAScore_list_xmax, epoch_validation_average_psnr_db_list_xmax, epoch_validation_average_ssim_list_xmax, epoch_validation_average_mae_list_xmin, epoch_validation_average_lpips_list_xmin]
 		writer = csv.writer(csvfile, delimiter= ',') # The writer (csv.DictWriter) takes the csvfile object as the csv file to write and Validation_ComputationalComplexity_metrics_data.keys() as the elements=keys of the header
 		writer.writerow(IQA_fieldnames)  
 		writer.writerow(best_IQAMetrics_HistoryPoint)  
@@ -622,11 +611,11 @@ if __name__ == '__main__':
 	parser.add_argument('--train_image_size_width', type=int, default=256) # The width size of the input train images to be resized (in pixel dimension)
 	parser.add_argument('--val_image_size_height', type=int, default=256) # The height size of the input validation images to be resized (in pixel dimension)
 	parser.add_argument('--val_image_size_width', type=int, default=256) # The width size of the input validation images to be resized (in pixel dimension)
-	parser.add_argument('--num_epochs', type=int, default=2)
-	parser.add_argument('--train_batch_size', type=int, default=8)
+	parser.add_argument('--num_epochs', type=int, default=1)
+	parser.add_argument('--train_batch_size', type=int, default=16)
 	parser.add_argument('--val_batch_size', type=int, default=32)
 	parser.add_argument('--num_workers', type=int, default=4)
-	parser.add_argument('--lr', type=float, default=0.001) # Learning rate. Add an argument type (optional argument) named lr. The value given to this argument type must be float data type. If no value is given to this argument type, then the default value will become the value of this argument type.
+	parser.add_argument('--lr', type=float, default=0.0001) # Learning rate. Add an argument type (optional argument) named lr. The value given to this argument type must be float data type. If no value is given to this argument type, then the default value will become the value of this argument type.
 	parser.add_argument('--weight_decay', type=float, default=0.0001)
 	parser.add_argument('--grad_clip_norm', type=float, default=0.1)
 	parser.add_argument('--scheduler_step_size', type=int, default = 125) # The step size of scheduler: Period of learning rate decay. EG: value = num_epochs*0.3 to use 3 different learning rates along the training; value = num_epochs*0.5 to use 2 different learning rates along the training...
