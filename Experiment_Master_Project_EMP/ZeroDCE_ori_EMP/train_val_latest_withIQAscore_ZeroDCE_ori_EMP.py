@@ -57,7 +57,7 @@ def weights_init(m): # A custom function that checks the layer type and applies 
 
 
 def PSNR(preds, target, data_range=torch.tensor(1.0), base =10.0): # self-written function to return the total PSNR of a batch of images
-
+	
 	diff = preds - target # calculate the error of each pixel for each output-input image pair in the batch
 	# print('\ndiff:', diff)
 	# print('diff.size():\n', diff.size())
@@ -82,7 +82,9 @@ def IQA_metrics_calculation(Validation_IQA_metrics_data): # We define Validation
 	# PSNR part
 	batch_sum_psnr = PSNR(val_enhanced_image, val_ori_image) # get the total PSNR of a batch of images
 	Validation_IQA_metrics_data['epoch_accumulate_psnr'] += batch_sum_psnr
-	Validation_IQA_metrics_data['epoch_average_psnr'] = Validation_IQA_metrics_data['epoch_accumulate_psnr'] / Validation_IQA_metrics_data['epoch_accumulate_number_of_val_input_samples_processed'] # Get the average PSNR of all image pairs the model has gone through. The mathematical concept behinds is: (Summation of PSNR of all image pairs the model has gone through)/[Total batches of images the model has gone through, which is same as the total number of image pairs the model has gone through]).
+	Validation_IQA_metrics_data['epoch_average_psnr_db'] = Validation_IQA_metrics_data['epoch_accumulate_psnr'] / Validation_IQA_metrics_data['epoch_accumulate_number_of_val_input_samples_processed'] # Get the average PSNR of all image pairs the model has gone through. The mathematical concept behinds is: (Summation of PSNR of all image pairs the model has gone through)/[Total batches of images the model has gone through, which is same as the total number of image pairs the model has gone through]).
+	Validation_IQA_metrics_data['epoch_average_psnr'] = Validation_IQA_metrics_data['epoch_average_psnr_db']/48.13 # PSNR value is normalized with 48.13 using min max normalization. For 8-bit image, min max normalization = (inst_value - ori_min_value)/(ori_max_value - ori_min_value); where ori_max_value = 20 log (255/255) - 10 log [(1/255)^2]= 48.13dB,  ori_min_value = 20 log (255/255) - 10 log [(255/255)^2]= 0dB
+
 
 	# SSIM part
 	batch_average_ssim = ssim(val_enhanced_image, val_ori_image).item()
@@ -98,6 +100,11 @@ def IQA_metrics_calculation(Validation_IQA_metrics_data): # We define Validation
 	batch_average_lpips = lpips(val_enhanced_image, val_ori_image).item()
 	Validation_IQA_metrics_data['epoch_accumulate_lpips'] += batch_average_lpips * sample_size
 	Validation_IQA_metrics_data['epoch_average_lpips'] = Validation_IQA_metrics_data['epoch_accumulate_lpips'] / Validation_IQA_metrics_data['epoch_accumulate_number_of_val_input_samples_processed']
+
+	# IQA score part
+	Validation_IQA_metrics_data['epoch_average_IQAScore'] = Validation_IQA_metrics_data['epoch_average_psnr'] + Validation_IQA_metrics_data['epoch_average_ssim'] - Validation_IQA_metrics_data['epoch_average_mae'] - Validation_IQA_metrics_data['epoch_average_lpips']
+
+
 
 def ComputationComplexity_metrics_calculation(Validation_ComputationalComplexity_metrics_data): # We define Validation_ComputationalComplexity_metrics_data as the input argument, so that the results related to Validation_ComputationalComplexity_metrics_data calculated in this self-defined function can be directly updated to the metric dictionary located in the main() of this script.
 	
@@ -127,32 +134,36 @@ def save_model(epoch, path, net, optimizer, scheduler, key): # this function sav
 					f=os.path.join(path, '{}-{}-{}-{}-{}-checkpoint.pt'.format(current_date_time_string, config.model_name, config.dataset_name, 'Epoch', epoch)))
 	elif key == 1:
 		torch.save({'epoch': epoch, 'model_state_dict': net.state_dict(), 'optimizer_state_dict': optimizer.state_dict(), 'scheduler_state_dict': scheduler.state_dict()}, # save the checkpoints that has the best epoch_average_psnr
-					f=os.path.join(path, '{}-{}-{}-BestEpoAvePSNR_checkpoint.pt'.format(current_date_time_string, config.model_name, config.dataset_name)))
+					f=os.path.join(path, BestEpoAvePSNR_checkpoint_filename))
 
 	elif key == 2:
 		torch.save({'epoch': epoch, 'model_state_dict': net.state_dict(), 'optimizer_state_dict': optimizer.state_dict(), 'scheduler_state_dict': scheduler.state_dict()}, # save the checkpoints that has the best epoch_average_ssim
-					f=os.path.join(path, '{}-{}-{}-BestEpoAveSSIM_checkpoint.pt'.format(current_date_time_string, config.model_name, config.dataset_name)))
+					f=os.path.join(path, BestEpoAveSSIM_checkpoint_filename))
 
 	elif key == 3:
 		torch.save({'epoch': epoch, 'model_state_dict': net.state_dict(), 'optimizer_state_dict': optimizer.state_dict(), 'scheduler_state_dict': scheduler.state_dict()}, # save the checkpoints that has the best epoch_average_mae
-					f=os.path.join(path, '{}-{}-{}-BestEpoAveMAE_checkpoint.pt'.format(current_date_time_string, config.model_name, config.dataset_name)))
+					f=os.path.join(path, BestEpoAveMAE_checkpoint_filename))
 
 	elif key == 4:
 		torch.save({'epoch': epoch, 'model_state_dict': net.state_dict(), 'optimizer_state_dict': optimizer.state_dict(), 'scheduler_state_dict': scheduler.state_dict()}, # save the checkpoints that has the best epoch_average_lpips
-					f=os.path.join(path, '{}-{}-{}-BestEpoAveLPIPS_checkpoint.pt'.format(current_date_time_string, config.model_name, config.dataset_name)))
+					f=os.path.join(path, BestEpoAveLPIPS_checkpoint_filename))
 		
 	elif key == 5:
 		torch.save({'epoch': epoch, 'model_state_dict': net.state_dict(), 'optimizer_state_dict': optimizer.state_dict(), 'scheduler_state_dict': scheduler.state_dict()}, # save the checkpoints that has the best epoch_average_lpips
-					f=os.path.join(path, '{}-{}-{}-BestValEpoAveLoss_checkpoint.pt'.format(current_date_time_string, config.model_name, config.dataset_name)))
+					f=os.path.join(path, BestValEpoAveLoss_checkpoint_filename))
 		
 	elif key == 6:
 		torch.save({'epoch': epoch, 'model_state_dict': net.state_dict(), 'optimizer_state_dict': optimizer.state_dict(), 'scheduler_state_dict': scheduler.state_dict()}, # save the checkpoints that has the best epoch_average_lpips
-					f=os.path.join(path, '{}-{}-{}-LastEpoch_checkpoint.pt'.format(current_date_time_string, config.model_name, config.dataset_name)))
+					f=os.path.join(path, BestValEpoAveIQAScore_checkpoint_filename))
+	
+	elif key == 7:
+		torch.save({'epoch': epoch, 'model_state_dict': net.state_dict(), 'optimizer_state_dict': optimizer.state_dict(), 'scheduler_state_dict': scheduler.state_dict()}, # save the checkpoints that has the best epoch_average_lpips
+					f=os.path.join(path, LastEpoch_checkpoint_filename))
 
 
-def generate_save_LossesResults_History():
+def generate_save_History():
 
-	# Extract data from the CSV file part:
+	# Extract losses data from the CSV file part:
 	df_TrainingLossesResult = pd.read_csv(csv_TrainingLossesResult_filepath) # convert the csv file into a Dataframe
 	
 	epoch_list = df_TrainingLossesResult['epoch'].values.tolist() # slice a column from the dataframe, then convert it into a list. 
@@ -398,15 +409,18 @@ def generate_save_LossesResults_History():
 	# epoch_training_average_loss_exp_history_filename = '{}-{}-{}-epoch_training_average_loss_exp_history.jpg'.format(current_date_time_string, config.model_name, config.dataset_name) # define the filename
 	# epoch_training_average_loss_exp_history_filepath = os.path.join(resultPath_csv, epoch_training_average_loss_exp_history_filename) # define the filepath, used to save the figure as an image
 	# plt.savefig(epoch_training_average_loss_exp_history_filepath, bbox_inches='tight') # save the figure as an image
-	
-
-def generate_save_ValidationIQAResults_History():
 
 	# Extract validation IQA results from the CSV file part:
 	df_ValidationResult = pd.read_csv(csv_ValidationIQAResult_filepath) # convert the csv file into a Dataframe
-	
+	print("df_ValidationResult:", df_ValidationResult)
 	epoch_list = df_ValidationResult['epoch'][:-2].values.tolist() # slice a column from the dataframe, then convert it into a list. [:-2] is to exclude the data of computational_complexity metrics results
 	epoch_list = [int(i) for i in epoch_list] # convert each string integer number in a list into an integer number.
+
+	epoch_validation_average_IQAScore_list = df_ValidationResult['epoch_average_IQAScore'][:-2].values.tolist() # slice a column from the dataframe, then convert it into a list. [:-2] is to exclude the data of computational_complexity metrics results
+	epoch_validation_average_IQAScore_list = [float(i) for i in epoch_validation_average_IQAScore_list] # convert each string floating point number in a list into a floating point number.
+
+	epoch_validation_average_psnr_db_list = df_ValidationResult['epoch_average_psnr_db'][:-2].values.tolist() # slice a column from the dataframe, then convert it into a list. [:-2] is to exclude the data of computational_complexity metrics results
+	epoch_validation_average_psnr_db_list = [float(i) for i in epoch_validation_average_psnr_db_list] # convert each string floating point number in a list into a floating point number.
 
 	epoch_validation_average_psnr_list = df_ValidationResult['epoch_average_psnr'][:-2].values.tolist() # slice a column from the dataframe, then convert it into a list. [:-2] is to exclude the data of computational_complexity metrics results
 	epoch_validation_average_psnr_list = [float(i) for i in epoch_validation_average_psnr_list] # convert each string floating point number in a list into a floating point number.
@@ -423,59 +437,89 @@ def generate_save_ValidationIQAResults_History():
 	# Plot subplots part:
 	fig = plt.figure(figsize=(10, 10), dpi=100, constrained_layout=True)
 	fig.suptitle('{}-{}-{}'.format(current_date_time_string, config.model_name, config.dataset_name) + '\nValidation Results: IQA Metrics') # set the figure super title
-	gs = fig.add_gridspec(2, 2) # create 2x2 grid
+	gs = fig.add_gridspec(3, 2) # create 3x2 grid
 
+	# (Validation results) Generate and save the figure of [Average IQA Score vs Epoch]
+	epoch_validation_average_IQAScore_list_ymax = max(epoch_validation_average_IQAScore_list)
+	epoch_validation_average_IQAScore_list_xpos = epoch_validation_average_IQAScore_list.index(epoch_validation_average_IQAScore_list_ymax)
+	epoch_validation_average_IQAScore_list_xmax = epoch_list[epoch_validation_average_IQAScore_list_xpos]
+	ax6 = fig.add_subplot(gs[0, :])
+	ax6.plot(epoch_list, epoch_training_average_loss_list, 'g--') #row=0, col=0, 1
+	ax6.plot(epoch_training_average_loss_list_xmin, epoch_training_average_loss_list_ymin, 'g--', marker='o', fillstyle='none', label='Average loss [Train]') # plot the minimum point
+	ax6.plot(epoch_validation_list, epoch_validation_average_loss_list, 'r-') #row=0, col=0, 1
+	ax6.plot(epoch_validation_average_loss_list_xmin, epoch_validation_average_loss_list_ymin, 'r-', marker='o', fillstyle='none', label='Average loss [Val]') # plot the minimum point
+	ax6.plot(epoch_list, epoch_validation_average_IQAScore_list, 'b--')
+	ax6.plot(epoch_validation_average_IQAScore_list_xmax, epoch_validation_average_IQAScore_list_ymax, 'b--', marker='o', fillstyle='none', label = 'Average IQA score') # plot the maximum point
+	ax6.set_ylabel('Average IQA Score or Average loss') # set the y-label
+	ax6.set_xlabel('Epoch') # set the x-label
+	ax6.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, math.ceil(config.num_epochs*0.2))) # set the interval of x-axis 
+	ax6.set_title(f'Average IQA score: Y-max. coord.:[{epoch_validation_average_IQAScore_list_xmax},{epoch_validation_average_IQAScore_list_ymax:.4f}]\nAverage loss [Train]: Y-min. coord.:[{epoch_training_average_loss_list_xmin},{epoch_training_average_loss_list_ymin:.4f}]\nAverage loss [Val]: Y-min. coord.:[{epoch_validation_average_loss_list_xmin},{epoch_validation_average_loss_list_ymin:.4f}]')
+	ax6.legend()
+	ax6.grid()
+
+	# (Validation results) Generate and save the figure of [Average PSNR (dB) vs Epoch]
+	epoch_validation_average_psnr_db_list_ymax = max(epoch_validation_average_psnr_db_list)
+	epoch_validation_average_psnr_db_list_xpos = epoch_validation_average_psnr_db_list.index(epoch_validation_average_psnr_db_list_ymax)
+	epoch_validation_average_psnr_db_list_xmax = epoch_list[epoch_validation_average_psnr_db_list_xpos]
+	ax7 = fig.add_subplot(gs[1, 0])
+	ax7.plot(epoch_list, epoch_validation_average_psnr_db_list, 'b') #row=0, col=0, 1
+	ax7.plot(epoch_validation_average_psnr_db_list_xmax, epoch_validation_average_psnr_db_list_ymax, 'b', marker='o', fillstyle='none') # plot the maximum point
+	ax7.set_ylabel('Average PSNR [dB]', color='b') # set the y-label
+	ax7.set_xlabel('Epoch') # set the x-label
+	ax7.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, math.ceil(config.num_epochs*0.2))) # set the interval of x-axis 
+
+	
 	# (Validation results) Generate and save the figure of [Average PSNR vs Epoch]
 	epoch_validation_average_psnr_list_ymax = max(epoch_validation_average_psnr_list)
 	epoch_validation_average_psnr_list_xpos = epoch_validation_average_psnr_list.index(epoch_validation_average_psnr_list_ymax)
 	epoch_validation_average_psnr_list_xmax = epoch_list[epoch_validation_average_psnr_list_xpos]
-	ax6 = fig.add_subplot(gs[0, 0])
-	ax6.plot(epoch_list, epoch_validation_average_psnr_list, 'b') #row=0, col=0, 1
-	ax6.plot(epoch_validation_average_psnr_list_xmax, epoch_validation_average_psnr_list_ymax, 'b', marker='o', fillstyle='none') # plot the maximum point
-	ax6.set_ylabel('Average PSNR [dB]') # set the y-label
-	ax6.set_xlabel('Epoch') # set the x-label
-	ax6.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, math.ceil(config.num_epochs*0.2))) # set the interval of x-axis 
-	ax6.set_title(f'Y-max. coord.:[{epoch_validation_average_psnr_list_xmax},{epoch_validation_average_psnr_list_ymax:.4f}]')
-	ax6.grid()
+	ax8 = ax7.twinx() # make twin axis with ax7 based on the same x
+	ax8.plot(epoch_list, epoch_validation_average_psnr_list, 'r--') #row=0, col=0, 1
+	ax8.plot(epoch_validation_average_psnr_list_xmax, epoch_validation_average_psnr_list_ymax, 'r', marker='o', fillstyle='none') # plot the maximum point
+	ax8.set_ylabel('Average PSNR [norm]', color='r') # set the y-label
+	ax8.set_xlabel('Epoch') # set the x-label
+	ax8.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, math.ceil(config.num_epochs*0.2))) # set the interval of x-axis 
+	ax8.set_title(f'PSNR [dB]: Y-max. coord.:[{epoch_validation_average_psnr_db_list_xmax},{epoch_validation_average_psnr_db_list_ymax:.4f}]\nPSNR [norm]: Y-max. coord.:[{epoch_validation_average_psnr_list_xmax},{epoch_validation_average_psnr_list_ymax:.4f}]')
+	ax8.grid()
 
 	# (Validation results) Generate and save the figure of [Average SSIM vs Epoch]
 	epoch_validation_average_ssim_list_ymax = max(epoch_validation_average_ssim_list)
 	epoch_validation_average_ssim_list_xpos = epoch_validation_average_ssim_list.index(epoch_validation_average_ssim_list_ymax)
 	epoch_validation_average_ssim_list_xmax = epoch_list[epoch_validation_average_ssim_list_xpos]
-	ax7 = fig.add_subplot(gs[0, 1])
-	ax7.plot(epoch_list, epoch_validation_average_ssim_list, 'b') #row=0, col=0, 1
-	ax7.plot(epoch_validation_average_ssim_list_xmax, epoch_validation_average_ssim_list_ymax, 'b', marker='o', fillstyle='none') # plot the maximum point
-	ax7.set_ylabel('Average SSIM') # set the y-label
-	ax7.set_xlabel('Epoch') # set the x-label
-	ax7.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, math.ceil(config.num_epochs*0.2))) # set the interval of x-axis 
-	ax7.set_title(f'Y-max. coord.:[{epoch_validation_average_ssim_list_xmax},{epoch_validation_average_ssim_list_ymax:.4f}]')
-	ax7.grid()
+	ax9 = fig.add_subplot(gs[1, 1])
+	ax9.plot(epoch_list, epoch_validation_average_ssim_list, 'b') #row=0, col=0, 1
+	ax9.plot(epoch_validation_average_ssim_list_xmax, epoch_validation_average_ssim_list_ymax, 'b', marker='o', fillstyle='none') # plot the maximum point
+	ax9.set_ylabel('Average SSIM') # set the y-label
+	ax9.set_xlabel('Epoch') # set the x-label
+	ax9.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, math.ceil(config.num_epochs*0.2))) # set the interval of x-axis 
+	ax9.set_title(f'Y-max. coord.:[{epoch_validation_average_ssim_list_xmax},{epoch_validation_average_ssim_list_ymax:.4f}]')
+	ax9.grid()
 
 	# (Validation results) Generate and save the figure of [Average MAE vs Epoch]
 	epoch_validation_average_mae_list_ymin = min(epoch_validation_average_mae_list)
 	epoch_validation_average_mae_list_xpos = epoch_validation_average_mae_list.index(epoch_validation_average_mae_list_ymin)
 	epoch_validation_average_mae_list_xmin = epoch_list[epoch_validation_average_mae_list_xpos]
-	ax8 = fig.add_subplot(gs[1, 0])
-	ax8.plot(epoch_list, epoch_validation_average_mae_list, 'b') #row=0, col=0, 1
-	ax8.plot(epoch_validation_average_mae_list_xmin, epoch_validation_average_mae_list_ymin, 'b', marker='o', fillstyle='none') # plot the minimum point
-	ax8.set_ylabel('Average MAE') # set the y-label
-	ax8.set_xlabel('Epoch') # set the x-label
-	ax8.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, math.ceil(config.num_epochs*0.2))) # set the interval of x-axis 
-	ax8.set_title(f'Y-min. coord.:[{epoch_validation_average_mae_list_xmin},{epoch_validation_average_mae_list_ymin:.4f}]')
-	ax8.grid()
+	ax10 = fig.add_subplot(gs[2, 0])
+	ax10.plot(epoch_list, epoch_validation_average_mae_list, 'b') #row=0, col=0, 1
+	ax10.plot(epoch_validation_average_mae_list_xmin, epoch_validation_average_mae_list_ymin, 'b', marker='o', fillstyle='none') # plot the minimum point
+	ax10.set_ylabel('Average MAE') # set the y-label
+	ax10.set_xlabel('Epoch') # set the x-label
+	ax10.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, math.ceil(config.num_epochs*0.2))) # set the interval of x-axis 
+	ax10.set_title(f'Y-min. coord.:[{epoch_validation_average_mae_list_xmin},{epoch_validation_average_mae_list_ymin:.4f}]')
+	ax10.grid()
 
 	# (Validation results) Generate and save the figure of [Average LPIPS vs Epoch]
 	epoch_validation_average_lpips_list_ymin = min(epoch_validation_average_lpips_list)
 	epoch_validation_average_lpips_list_xpos = epoch_validation_average_lpips_list.index(epoch_validation_average_lpips_list_ymin)
 	epoch_validation_average_lpips_list_xmin = epoch_list[epoch_validation_average_lpips_list_xpos]
-	ax9 = fig.add_subplot(gs[1, 1])
-	ax9.plot(epoch_list, epoch_validation_average_lpips_list, 'b') #row=0, col=0, 1
-	ax9.plot(epoch_validation_average_lpips_list_xmin, epoch_validation_average_lpips_list_ymin, 'b', marker='o', fillstyle='none') # plot the minimum point
-	ax9.set_ylabel('Average LPIPS') # set the y-label
-	ax9.set_xlabel('Epoch') # set the x-label
-	ax9.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, math.ceil(config.num_epochs*0.2))) # set the interval of x-axis 
-	ax9.set_title(f'Y-min. coord.:[{epoch_validation_average_lpips_list_xmin},{epoch_validation_average_lpips_list_ymin:.4f}]')
-	ax9.grid()
+	ax11 = fig.add_subplot(gs[2, 1])
+	ax11.plot(epoch_list, epoch_validation_average_lpips_list, 'b') #row=0, col=0, 1
+	ax11.plot(epoch_validation_average_lpips_list_xmin, epoch_validation_average_lpips_list_ymin, 'b', marker='o', fillstyle='none') # plot the minimum point
+	ax11.set_ylabel('Average LPIPS') # set the y-label
+	ax11.set_xlabel('Epoch') # set the x-label
+	ax11.set_xticks(np.arange(min(epoch_list), max(epoch_list)+1, math.ceil(config.num_epochs*0.2))) # set the interval of x-axis 
+	ax11.set_title(f'Y-min. coord.:[{epoch_validation_average_lpips_list_xmin},{epoch_validation_average_lpips_list_ymin:.4f}]')
+	ax11.grid()
 
 	epoch_validation_results_filename = '{}-{}-{}-epoch_validation_results_history.jpg'.format(current_date_time_string, config.model_name, config.dataset_name) # define the filename
 	epoch_validation_results_filepath = os.path.join(resultPath_csv, epoch_validation_results_filename) # define the filepath, used to save the figure as an image
@@ -485,9 +529,9 @@ def generate_save_ValidationIQAResults_History():
 	# plt.show()
 
 	with open(csv_ValidationIQAResult_filepath, 'a', newline='') as csvfile: # Open that csv file at the path of csv_ValidationResult_filepath with append mode, so that we can append the data of Validation_ComputationalComplexity_metrics_data dictionary to that csv file.
-		IQA_fieldnames = ['Fieldnames', 'MaximumEpochAveragePSNR', 'MaximumEpochAverageSSIM', 'MinimumEpochAverageMAE', 'MinimumEpochAverageLPIPS']
-		best_IQAMetrics_HistoryPoint = ['Y-value', epoch_validation_average_psnr_list_ymax, epoch_validation_average_ssim_list_ymax, epoch_validation_average_mae_list_ymin, epoch_validation_average_lpips_list_ymin]
-		best_IQAMetrics_epoch_location = ['X-value', epoch_validation_average_psnr_list_xmax, epoch_validation_average_ssim_list_xmax, epoch_validation_average_mae_list_xmin, epoch_validation_average_lpips_list_xmin]
+		IQA_fieldnames = ['Fieldnames','MaximumEpochAverageIQAScore', 'MaximumEpochAveragePSNR_dB', 'MaximumEpochAveragePSNR', 'MaximumEpochAverageSSIM', 'MinimumEpochAverageMAE', 'MinimumEpochAverageLPIPS']
+		best_IQAMetrics_HistoryPoint = ['Y-value', epoch_validation_average_IQAScore_list_ymax, epoch_validation_average_psnr_db_list_ymax, epoch_validation_average_psnr_list_ymax, epoch_validation_average_ssim_list_ymax, epoch_validation_average_mae_list_ymin, epoch_validation_average_lpips_list_ymin]
+		best_IQAMetrics_epoch_location = ['X-value', epoch_validation_average_IQAScore_list_xmax, epoch_validation_average_psnr_db_list_xmax,epoch_validation_average_psnr_list_xmax, epoch_validation_average_ssim_list_xmax, epoch_validation_average_mae_list_xmin, epoch_validation_average_lpips_list_xmin]
 		writer = csv.writer(csvfile, delimiter= ',') # The writer (csv.DictWriter) takes the csvfile object as the csv file to write and Validation_ComputationalComplexity_metrics_data.keys() as the elements=keys of the header
 		writer.writerow(IQA_fieldnames)  
 		writer.writerow(best_IQAMetrics_HistoryPoint)  
@@ -546,6 +590,10 @@ def generate_save_ValidationIQAResults_History():
 	# epoch_validation_average_lpips_history_filepath = os.path.join(resultPath_csv, epoch_validation_average_lpips_history_filename) # define the filepath, used to save the figure as an image
 	# plt.savefig(epoch_validation_average_lpips_history_filepath, bbox_inches='tight') # save the figure as an image
 
+	
+	
+
+
 
 
 
@@ -574,7 +622,7 @@ if __name__ == '__main__':
 	parser.add_argument('--train_image_size_width', type=int, default=256) # The width size of the input train images to be resized (in pixel dimension)
 	parser.add_argument('--val_image_size_height', type=int, default=256) # The height size of the input validation images to be resized (in pixel dimension)
 	parser.add_argument('--val_image_size_width', type=int, default=256) # The width size of the input validation images to be resized (in pixel dimension)
-	parser.add_argument('--num_epochs', type=int, default=300)
+	parser.add_argument('--num_epochs', type=int, default=2)
 	parser.add_argument('--train_batch_size', type=int, default=8)
 	parser.add_argument('--val_batch_size', type=int, default=32)
 	parser.add_argument('--num_workers', type=int, default=4)
@@ -674,6 +722,16 @@ if __name__ == '__main__':
 	sample_output_folder = os.path.join(resultPath, resultPath_subfolder_sample_val_output_folder) # Create a new path by changing a part of resultPath
 	os.makedirs(sample_output_folder, exist_ok=True) # Ensure the path that stores the validation output samples is created
 	
+	# Initialize filenames to save different best checkpoints
+	BestEpoAvePSNR_checkpoint_filename = '{}-{}-{}-BestEpoAvePSNR_checkpoint.pt'.format(current_date_time_string, config.model_name, config.dataset_name)
+	BestEpoAveSSIM_checkpoint_filename = '{}-{}-{}-BestEpoAveSSIM_checkpoint.pt'.format(current_date_time_string, config.model_name, config.dataset_name)
+	BestEpoAveMAE_checkpoint_filename = '{}-{}-{}-BestEpoAveMAE_checkpoint.pt'.format(current_date_time_string, config.model_name, config.dataset_name)
+	BestEpoAveLPIPS_checkpoint_filename = '{}-{}-{}-BestEpoAveLPIPS_checkpoint.pt'.format(current_date_time_string, config.model_name, config.dataset_name)
+	BestValEpoAveLoss_checkpoint_filename = '{}-{}-{}-BestValEpoAveLoss_checkpoint.pt'.format(current_date_time_string, config.model_name, config.dataset_name)
+	BestValEpoAveIQAScore_checkpoint_filename = '{}-{}-{}-BestValEpoAveIQAScore_checkpoint.pt'.format(current_date_time_string, config.model_name, config.dataset_name)
+	LastEpoch_checkpoint_filename = '{}-{}-{}-LastEpoch_checkpoint.pt'.format(current_date_time_string, config.model_name, config.dataset_name)
+
+
 	# Record training configurations
 	with open(csv_configuration_filepath, 'w', newline='') as csvfile: 
 		writer = csv.writer(csvfile, delimiter=',')
@@ -733,7 +791,7 @@ if __name__ == '__main__':
 		Training_losses_data['epoch'] = epoch # Update the current epoch (The number of epoch and batch, when necessary) to the Validation_IQA_metrics_data dictionary
 
 		# **Subpart 1: Initialize a dictionary to store the Image Quality Assessment (IQA) metric data , so they will be updated from time to time later**
-		Validation_IQA_metrics_data = {'epoch':0, 'epoch_average_psnr': 0., 'epoch_average_ssim': 0., 'epoch_average_mae': 0., 'epoch_average_lpips': 0., 'epoch_accumulate_number_of_val_input_samples_processed': 0., 'epoch_accumulate_psnr': 0., 'epoch_accumulate_ssim': 0., 'epoch_accumulate_mae': 0.,'epoch_accumulate_lpips': 0.}
+		Validation_IQA_metrics_data = {'epoch':0, 'epoch_average_IQAScore': 0., 'epoch_average_psnr_db': 0., 'epoch_average_psnr': 0.,'epoch_average_ssim': 0., 'epoch_average_mae': 0., 'epoch_average_lpips': 0., 'epoch_accumulate_number_of_val_input_samples_processed': 0., 'epoch_accumulate_psnr': 0., 'epoch_accumulate_ssim': 0., 'epoch_accumulate_mae': 0.,'epoch_accumulate_lpips': 0.}
 		Validation_IQA_metrics_data['epoch'] = epoch # Update the current epoch (The number of epoch and batch, when necessary) to the Validation_IQA_metrics_data dictionary
 
 		Validation_losses_data ={'epoch':0, 'epoch_average_loss':0., 'epoch_average_Loss_TV':0., 'epoch_average_loss_spa':0., 'epoch_average_loss_col': 0., 'epoch_average_loss_exp':0., 'epoch_accumulate_number_of_training_input_samples_processed': 0, 'epoch_accumulate_loss':0., 'epoch_accumulate_Loss_TV':0., 'epoch_accumulate_loss_spa':0., 'epoch_accumulate_loss_col': 0., 'epoch_accumulate_loss_exp':0.}
@@ -777,7 +835,7 @@ if __name__ == '__main__':
 			torch.nn.utils.clip_grad_norm_(DCE_net.parameters(),config.grad_clip_norm) # Perform Gradient Clipping by Norm to prevent the gradients from becoming excessively large during the training of neural networks, which will lead to exploding gradients problem.
 			optimizer.step() # Update the parameters (weights and biases) of the model
 
-			train_bar.set_description_str('Iteration: {}/{} | Accum_processed_Train_samples: {} | lr: {:.6f} | Epoch_Ave_loss: {:.6f}'
+			train_bar.set_description_str('Iteration: {}/{} | AccumProcessed_TrainSamples: {} | lr: {:.6f} | EpochAve_loss: {:.4f}'
 					.format(iteration + 1, train_number,
 			 				Training_losses_data['epoch_accumulate_number_of_training_input_samples_processed'],
 							optimizer.param_groups[0]['lr'], 
@@ -881,10 +939,10 @@ if __name__ == '__main__':
 						os.path.join(sample_output_folder, '{}-{}-{}-{}-{}-SampleValOutput.jpg'.format(current_date_time_string, config.model_name, config.dataset_name, 'Epoch', epoch))
 					)
 
-				val_bar.set_description_str('Iteration: %d/%d | Accum_processed_Val_samples: %d | Epoch_Ave_loss: %.6f; Epoch_Ave_PSNR: %.4f dB; Epoch_Ave_SSIM: %.4f; Epoch_Ave_MAE: %.4f; Epoch_Ave_LPIPS: %.4f' % (
+				val_bar.set_description_str('Iteration: %d/%d | AccumProcessed_ValSamples: %d | EpochAve_loss: %.4f; EpochAve_IQAScore: %.4f; EpochAve_PSNR: %.4f dB; EpochAve_SSIM: %.4f; EpochAve_MAE: %.4f; EpochAve_LPIPS: %.4f' % (
 							iteration + 1, val_number, 
 							Validation_IQA_metrics_data['epoch_accumulate_number_of_val_input_samples_processed'], 
-							Validation_losses_data['epoch_average_loss'], Validation_IQA_metrics_data['epoch_average_psnr'], Validation_IQA_metrics_data['epoch_average_ssim'], Validation_IQA_metrics_data['epoch_average_mae'], Validation_IQA_metrics_data['epoch_average_lpips']))
+							Validation_losses_data['epoch_average_loss'], Validation_IQA_metrics_data['epoch_average_IQAScore'], Validation_IQA_metrics_data['epoch_average_psnr_db'], Validation_IQA_metrics_data['epoch_average_ssim'], Validation_IQA_metrics_data['epoch_average_mae'], Validation_IQA_metrics_data['epoch_average_lpips']))
 				
 			# **Subpart 10: Record the calculated (IQA) and losses metrics on validation set to the respective csv file**
 			if (epoch == 0): # if it reaches the first epoch
@@ -908,15 +966,16 @@ if __name__ == '__main__':
 			
 			
 			if (epoch == 0): # if it reaches the first epoch				
-				best_epoch_validation_average_psnr = Validation_IQA_metrics_data['epoch_average_psnr']
+				best_epoch_validation_average_psnr_db = Validation_IQA_metrics_data['epoch_average_psnr_db']
 				best_epoch_validation_average_ssim = Validation_IQA_metrics_data['epoch_average_ssim']
 				best_epoch_validation_average_mae = Validation_IQA_metrics_data['epoch_average_mae']
 				best_epoch_validation_average_lpips = Validation_IQA_metrics_data['epoch_average_lpips']
 				best_epoch_validation_average_loss = Validation_losses_data['epoch_average_loss']
+				best_epoch_validation_IQAScore = Validation_IQA_metrics_data['epoch_average_IQAScore']
 
 			# Save the checkpoint that has the best IQA results respectively
-			if  Validation_IQA_metrics_data['epoch_average_psnr'] > best_epoch_validation_average_psnr :
-				best_epoch_validation_average_psnr = Validation_IQA_metrics_data['epoch_average_psnr']
+			if  Validation_IQA_metrics_data['epoch_average_psnr_db'] > best_epoch_validation_average_psnr_db :
+				best_epoch_validation_average_psnr_db = Validation_IQA_metrics_data['epoch_average_psnr_db']
 				save_model(epoch, resultPath_ModelParametersResults, DCE_net, optimizer, scheduler, key=1)	
 				
 			if  Validation_IQA_metrics_data['epoch_average_ssim'] > best_epoch_validation_average_ssim :
@@ -935,18 +994,23 @@ if __name__ == '__main__':
 				best_epoch_validation_average_loss = Validation_losses_data['epoch_average_loss']
 				save_model(epoch, resultPath_ModelParametersResults, DCE_net, optimizer, scheduler, key=5)
 
-			if (epoch == config.num_epochs - 1): # if it reaches the last epoch 
+			if  Validation_IQA_metrics_data['epoch_average_IQAScore'] > best_epoch_validation_IQAScore :
+				best_epoch_validation_IQAScore = Validation_IQA_metrics_data['epoch_average_IQAScore']
 				save_model(epoch, resultPath_ModelParametersResults, DCE_net, optimizer, scheduler, key=6)
+
+			if (epoch == config.num_epochs - 1): # if it reaches the last epoch 
+				save_model(epoch, resultPath_ModelParametersResults, DCE_net, optimizer, scheduler, key=7)
 
 
 			# Early stopping section:
 			if config.earlystopping_switch:
 				# If epoch_average_loss on validation set and all IQA metrics on validation set do not improve for 'patience' epochs, stop training early.
 				if (
-						Validation_IQA_metrics_data['epoch_average_psnr'] <= best_epoch_validation_average_psnr  and \
+						Validation_IQA_metrics_data['epoch_average_psnr_db'] <= best_epoch_validation_average_psnr_db  and \
 						Validation_IQA_metrics_data['epoch_average_ssim'] <= best_epoch_validation_average_ssim   and \
 						Validation_IQA_metrics_data['epoch_average_mae'] >= best_epoch_validation_average_mae     and \
 						Validation_IQA_metrics_data['epoch_average_lpips'] >= best_epoch_validation_average_lpips and \
+						Validation_IQA_metrics_data['epoch_average_IQAScore'] <= best_epoch_validation_IQAScore and \
 						Validation_losses_data['epoch_average_loss'] >= best_epoch_validation_average_loss
 					):
 
@@ -974,8 +1038,8 @@ if __name__ == '__main__':
 	# -------------------------------------------------------------------
     # train finish
 
-	generate_save_LossesResults_History() # generate and save the training results history as images
-	generate_save_ValidationIQAResults_History() # generate and save the validation results history as images
+	generate_save_History() # generate and save the results history as images
+	
 
 	print("-------Operations completed-------")
 
