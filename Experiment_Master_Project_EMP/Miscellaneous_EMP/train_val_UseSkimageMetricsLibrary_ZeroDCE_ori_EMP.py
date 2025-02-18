@@ -6,7 +6,7 @@ import torch.optim
 import os
 import argparse
 import time
-import dataloader_WithPair_StandaloneVal_EMP
+import dataloader_WithPair_latest_EMP
 import model_ZeroDCE_ori_EMP
 import Myloss_ZeroDCE_ori_EMP
 import numpy as np
@@ -36,11 +36,11 @@ from skimage.io import imread
 
 def load_data(config):
 	print('10) For train set:')
-	train_dataset = dataloader_WithPair_StandaloneVal_EMP.LLIEDataset(config.train_GroundTruth_root, config.train_Input_root, config.image_square_size)
+	train_dataset = dataloader_WithPair_latest_EMP.LLIEDataset(config.train_GroundTruth_root, config.train_Input_root, config.train_image_size_width, config.train_image_size_height)
 	train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=config.train_batch_size, shuffle=True,
 												num_workers=config.num_workers, pin_memory=True)
-	print('11) For validation set:')
-	val_dataset = dataloader_WithPair_StandaloneVal_EMP.LLIEDataset_val(config.val_GroundTruth_root, config.val_Input_root, config.image_square_size)
+	print('12) For validation set:')
+	val_dataset = dataloader_WithPair_latest_EMP.LLIEDataset(config.val_GroundTruth_root, config.val_Input_root, config.val_image_size_width, config.val_image_size_height)
 	val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=config.val_batch_size, shuffle=True,
 												num_workers=config.num_workers, pin_memory=True)
 
@@ -546,7 +546,10 @@ if __name__ == '__main__':
 	parser.add_argument('--val_GroundTruth_root', type=str, default="C:/Master_XMUM_usages/AI_Master_New/Experiment_Master_Project_EMP/Dataset_EMP/Preprocessed_SICE_Dataset_Part1_EMP/val/GroundTruth") # Add an argument type (optional argument) named lowlight_images_path. The value given to this argument type must be string data type. If no value is given to this argument type, then the default value will become the value of this argument type.
 	parser.add_argument('--val_Input_root', type=str, default="C:/Master_XMUM_usages/AI_Master_New/Experiment_Master_Project_EMP/Dataset_EMP/Preprocessed_SICE_Dataset_Part1_EMP/val/Input") # Add an argument type (optional argument) named lowlight_images_path. The value given to this argument type must be string data type. If no value is given to this argument type, then the default value will become the value of this argument type.
 	parser.add_argument('--dir_store_results', type=str, default="C:/Master_XMUM_usages/AI_Master_New/Experiment_Master_Project_EMP/ZeroDCE_ori_UseScimageMetricslibrary_EMP") 
-	parser.add_argument('--image_square_size', type=int, default=256) # The size of the input image to be resized
+	parser.add_argument('--train_image_size_height', type=int, default=256) # The height size of the input train images to be resized (in pixel dimension)
+	parser.add_argument('--train_image_size_width', type=int, default=256) # The width size of the input train images to be resized (in pixel dimension)
+	parser.add_argument('--val_image_size_height', type=int, default=256) # The height size of the input validation images to be resized (in pixel dimension)
+	parser.add_argument('--val_image_size_width', type=int, default=256) # The width size of the input validation images to be resized (in pixel dimension)
 	parser.add_argument('--lr', type=float, default=0.0001) # Add an argument type (optional argument) named lr. The value given to this argument type must be float data type. If no value is given to this argument type, then the default value will become the value of this argument type.
 	parser.add_argument('--weight_decay', type=float, default=0.0001)
 	parser.add_argument('--grad_clip_norm', type=float, default=0.1)
@@ -573,7 +576,7 @@ if __name__ == '__main__':
 	os.environ['CUDA_VISIBLE_DEVICES']='0'
 	torch.manual_seed(1) # This function ensures the reproducibility of the parameters (weights and biases) of the network which are initialized using random normal functions. The PyTorch RNG is seeded/initialized everytime before the dataloader object is called (at the beginning of each epoch)
 
-	print('-------LLIE model training information-------')
+	print('-------LLIE model training and validation configurations-------')
 	print('1) Model name:', config.model_name)
 	print('2) Dataset name:', config.dataset_name)
 	print('3) Using pretrained model?:', config.load_pretrain)
@@ -582,7 +585,8 @@ if __name__ == '__main__':
 	print('6) Directory containing validation set [GroundTruth]:', config.val_GroundTruth_root)
 	print('7) Directory containing validation set [Input]:', config.val_Input_root)
 	print('8) Directory to store training results:', config.dir_store_results)
-	print("9) The images in train and validation sets will be resized to (dimensions): {}x{}".format(config.image_square_size, config.image_square_size))
+	print('9) The images in train set will be resized to (height x width, pixel dimensions): {} x {}'.format(config.train_image_size_height, config.train_image_size_width))
+	print('10) The images in validation set will be resized to (height x width, pixel dimensions): {} x {}'.format(config.val_image_size_height, config.val_image_size_width))
 	
 
 # **Initialize folders
