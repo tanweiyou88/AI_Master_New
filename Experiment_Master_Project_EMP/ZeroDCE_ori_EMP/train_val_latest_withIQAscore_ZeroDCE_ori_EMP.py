@@ -611,7 +611,7 @@ if __name__ == '__main__':
 	parser.add_argument('--train_image_size_width', type=int, default=256) # The width size of the input train images to be resized (in pixel dimension)
 	parser.add_argument('--val_image_size_height', type=int, default=256) # The height size of the input validation images to be resized (in pixel dimension)
 	parser.add_argument('--val_image_size_width', type=int, default=256) # The width size of the input validation images to be resized (in pixel dimension)
-	parser.add_argument('--num_epochs', type=int, default=1)
+	parser.add_argument('--num_epochs', type=int, default=300)
 	parser.add_argument('--train_batch_size', type=int, default=16)
 	parser.add_argument('--val_batch_size', type=int, default=32)
 	parser.add_argument('--num_workers', type=int, default=4)
