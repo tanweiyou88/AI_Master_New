@@ -1,4 +1,5 @@
 # This script aims to take an original dataset to reorganize it, followed by partitioning it into train dataset and validation dataset with the predefined ratios. Then, resize the images.
+# This script aims to take an original SICE dataset Part 1 to filter, reorganize, partition and followed by resizing it.
 
 import glob
 import shutil
