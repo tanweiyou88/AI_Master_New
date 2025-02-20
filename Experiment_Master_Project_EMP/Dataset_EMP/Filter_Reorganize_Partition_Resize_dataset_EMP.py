@@ -202,7 +202,6 @@ if __name__ == '__main__':
     parser.add_argument('--GroundTruth_folder_basename', type=str, default= "/GroundTruth") # Base name for the GroundTruth folder for the train and validation datasets
     parser.add_argument('--image_size_height', type=int, default=900) # The height size of the input validation images to be resized (in pixel dimension)
     parser.add_argument('--image_size_width', type=int, default=1200) # The width size of the input validation images to be resized (in pixel dimension)
-    # parser.add_argument('--val_ratio', type=float, default=0.2) # The ratio of validation data from the original dataset
     parser.add_argument('--random_seed', type=int, default=42) # The seed value used to initialize the numpy random number generator for reproducible random number generations
     
     config = parser.parse_args() 
