@@ -56,9 +56,71 @@ def reorganize(): # Used to reorganize the original dataset
             # print("file_num:", metadata['files_num_for_the_folder'])
             # print("\nFolder name:" + metadata['folder_name'] + "; Number of files in this folder:" + str(metadata['files_num_for_the_folder']) + "\n" ) # Show the current folder name and the number of files available in it
             
-            if metadata['files_num_for_the_folder'] == 7: # Retain the first 3 images and remove the remaining images if there are 7 images in the folder
+            # if metadata['files_num_for_the_folder'] == 7: # Retain the first 3 images and remove the remaining images if there are 7 images in the folder
+            #     for index, file in enumerate(file_list):
+            #         if index <= 2: # Only copy the 0th, 1st, and 2nd images  (total 3 images)
+            # # for file in file_list: # For each image in the file list (available inside the current folder)
+            #             metadata['image_counter'] += 1 # Increase the image counter by 1
+                        
+            #             # Part 1: Input image
+            #             shutil.copy2(file, temp_destination_Input_folder_path) # Copy the ground truth image from source folder, then paste it to the Temp_Input folder inside the Input folder, in the destination root folder. # Argument1: Absolute path of the file; Argument2: Absolute path of the folder/destination that will save the file. References: https://expertbeacon.com/python-copy-file-copying-files-to-another-directory/
+            #             Temp_Input_file, = glob.glob(temp_destination_Input_folder_path + "/*") # Match every file and folder from a given folder
+            #             # print("File in Temp_Input_file: ",Temp_Input_file)
+            #             Temp_Input_filename, Temp_Input_file_extension = os.path.splitext(Temp_Input_file) # Get an absolute path of a file and split it into path and file extension respectively. Ref:https://docs.python.org/3/library/os.path.html#os.path.splitext
+            #             new_name_Input_file = str(metadata['image_counter']).zfill(4) + Temp_Input_file_extension # Rename the file with the current image counter and its original file extension. ".zfill(4)" will perform zero-padding for str having length (character numbers) less than 4, else the str will be returned as it is. Ref:https://note.nkmk.me/en/python-zero-padding/
+            #             shutil.move(Temp_Input_file, destination_Input_folder_path + "/" + new_name_Input_file ) # Move the renamed file from Temp_Input folder out to the Input folder, in the destination root folder
+                        
+            #             # Part 2: Ground truth image
+            #             GroundTruth_file, = glob.glob(GroundTruth_src_dir + "/" + folder_name + ".*") # Use sequence unpacking method to get the only element from the list. Ref: https://stackoverflow.com/questions/33161448/getting-only-element-from-a-single-element-list-in-python
+            #             # print(GroundTruth_file)
+            #             shutil.copy2(GroundTruth_file, temp_destination_GroundTruth_folder_path) # Copy the ground truth image from source folder, then paste it to the Temp_GroundTruth folder inside the Ground Truth folder, in the destination root folder
+            #             Temp_GroundTruth_file, = glob.glob(temp_destination_GroundTruth_folder_path + "/" + folder_name + ".*") # Get the absolute path of the file available in the Temp_GroundTruth folder, in the destination root folder
+            #             # print(Temp_GroundTruth_file)
+            #             Temp_GroundTruth_filename, Temp_GroundTruth_file_extension = os.path.splitext(Temp_GroundTruth_file) # Get an absolute path of a file and split it into path and file extension respectively. Ref:https://docs.python.org/3/library/os.path.html#os.path.splitext
+            #             # print(Temp_GroundTruth_file_extension)
+            #             new_name_GroundTruth_file = str(metadata['image_counter']).zfill(4) + Temp_GroundTruth_file_extension # Rename the file with the current image counter and its original file extension
+            #             shutil.move(Temp_GroundTruth_file, destination_GroundTruth_folder_path + "/" + new_name_GroundTruth_file ) # Move the renamed file from Temp_GroundTruth folder out to the GroundTruth folder, in the destination root folder
+                
+
+            #             # Part 3: Update the metadata in the csv file
+            #             with open(csv_result_filepath, 'a', newline='') as csvfile: # Open that csv file at the path of csv_result_filepath with append mode, so that we can append the data of IQA_metrics_data dictionary to that csv file.
+            #                 writer = csv.DictWriter(csvfile, fieldnames=metadata.keys()) # The writer (csv.DictWriter) takes the csvfile object as the csv file to write and IQA_metrics_data.keys() as the elements=keys of the header
+            #                 writer.writerow(metadata) # The writer writes the data (value) of IQA_metrics_data dictionary in sequence as a row on the csv file
+
+            # if metadata['files_num_for_the_folder'] == 9: # Retain the first 3 images and remove the remaining images if there are 7 images in the folder
+            #     for index, file in enumerate(file_list):
+            #         if index <= 3: # Only copy the 0th, 1st, 2nd and 3rd images (total 4 images)
+            # # for file in file_list: # For each image in the file list (available inside the current folder)
+            #             metadata['image_counter'] += 1 # Increase the image counter by 1
+                        
+            #             # Part 1: Input image
+            #             shutil.copy2(file, temp_destination_Input_folder_path) # Copy the ground truth image from source folder, then paste it to the Temp_Input folder inside the Input folder, in the destination root folder. # Argument1: Absolute path of the file; Argument2: Absolute path of the folder/destination that will save the file. References: https://expertbeacon.com/python-copy-file-copying-files-to-another-directory/
+            #             Temp_Input_file, = glob.glob(temp_destination_Input_folder_path + "/*") # Match every file and folder from a given folder
+            #             # print("File in Temp_Input_file: ",Temp_Input_file)
+            #             Temp_Input_filename, Temp_Input_file_extension = os.path.splitext(Temp_Input_file) # Get an absolute path of a file and split it into path and file extension respectively. Ref:https://docs.python.org/3/library/os.path.html#os.path.splitext
+            #             new_name_Input_file = str(metadata['image_counter']).zfill(4) + Temp_Input_file_extension # Rename the file with the current image counter and its original file extension. ".zfill(4)" will perform zero-padding for str having length (character numbers) less than 4, else the str will be returned as it is. Ref:https://note.nkmk.me/en/python-zero-padding/
+            #             shutil.move(Temp_Input_file, destination_Input_folder_path + "/" + new_name_Input_file ) # Move the renamed file from Temp_Input folder out to the Input folder, in the destination root folder
+                        
+            #             # Part 2: Ground truth image
+            #             GroundTruth_file, = glob.glob(GroundTruth_src_dir + "/" + folder_name + ".*") # Use sequence unpacking method to get the only element from the list. Ref: https://stackoverflow.com/questions/33161448/getting-only-element-from-a-single-element-list-in-python
+            #             # print(GroundTruth_file)
+            #             shutil.copy2(GroundTruth_file, temp_destination_GroundTruth_folder_path) # Copy the ground truth image from source folder, then paste it to the Temp_GroundTruth folder inside the Ground Truth folder, in the destination root folder
+            #             Temp_GroundTruth_file, = glob.glob(temp_destination_GroundTruth_folder_path + "/" + folder_name + ".*") # Get the absolute path of the file available in the Temp_GroundTruth folder, in the destination root folder
+            #             # print(Temp_GroundTruth_file)
+            #             Temp_GroundTruth_filename, Temp_GroundTruth_file_extension = os.path.splitext(Temp_GroundTruth_file) # Get an absolute path of a file and split it into path and file extension respectively. Ref:https://docs.python.org/3/library/os.path.html#os.path.splitext
+            #             # print(Temp_GroundTruth_file_extension)
+            #             new_name_GroundTruth_file = str(metadata['image_counter']).zfill(4) + Temp_GroundTruth_file_extension # Rename the file with the current image counter and its original file extension
+            #             shutil.move(Temp_GroundTruth_file, destination_GroundTruth_folder_path + "/" + new_name_GroundTruth_file ) # Move the renamed file from Temp_GroundTruth folder out to the GroundTruth folder, in the destination root folder
+                
+
+            #             # Part 3: Update the metadata in the csv file
+            #             with open(csv_result_filepath, 'a', newline='') as csvfile: # Open that csv file at the path of csv_result_filepath with append mode, so that we can append the data of IQA_metrics_data dictionary to that csv file.
+            #                 writer = csv.DictWriter(csvfile, fieldnames=metadata.keys()) # The writer (csv.DictWriter) takes the csvfile object as the csv file to write and IQA_metrics_data.keys() as the elements=keys of the header
+            #                 writer.writerow(metadata) # The writer writes the data (value) of IQA_metrics_data dictionary in sequence as a row on the csv file
+
+            if metadata['files_num_for_the_folder'] <= 6: # Retain the first 2 image and remove the remaining images if there are at most 6 images in the folder
                 for index, file in enumerate(file_list):
-                    if index <= 2: # Only copy the 0th, 1st, and 2nd images  (total 3 images)
+                    if index <= 1: # Only copy the 0th and 1st image  (total 2 images)
             # for file in file_list: # For each image in the file list (available inside the current folder)
                         metadata['image_counter'] += 1 # Increase the image counter by 1
                         
@@ -87,7 +149,38 @@ def reorganize(): # Used to reorganize the original dataset
                             writer = csv.DictWriter(csvfile, fieldnames=metadata.keys()) # The writer (csv.DictWriter) takes the csvfile object as the csv file to write and IQA_metrics_data.keys() as the elements=keys of the header
                             writer.writerow(metadata) # The writer writes the data (value) of IQA_metrics_data dictionary in sequence as a row on the csv file
 
-            if metadata['files_num_for_the_folder'] == 9: # Retain the first 3 images and remove the remaining images if there are 7 images in the folder
+            elif metadata['files_num_for_the_folder'] <= 8: # Retain the first 3 images and remove the remaining images if there are 6<images<=8  in the folder
+                for index, file in enumerate(file_list):
+                    if index <= 2: # Only copy the 0th, 1st and 2nd images (total 3 images)
+            # for file in file_list: # For each image in the file list (available inside the current folder)
+                        metadata['image_counter'] += 1 # Increase the image counter by 1
+                        
+                        # Part 1: Input image
+                        shutil.copy2(file, temp_destination_Input_folder_path) # Copy the ground truth image from source folder, then paste it to the Temp_Input folder inside the Input folder, in the destination root folder. # Argument1: Absolute path of the file; Argument2: Absolute path of the folder/destination that will save the file. References: https://expertbeacon.com/python-copy-file-copying-files-to-another-directory/
+                        Temp_Input_file, = glob.glob(temp_destination_Input_folder_path + "/*") # Match every file and folder from a given folder
+                        # print("File in Temp_Input_file: ",Temp_Input_file)
+                        Temp_Input_filename, Temp_Input_file_extension = os.path.splitext(Temp_Input_file) # Get an absolute path of a file and split it into path and file extension respectively. Ref:https://docs.python.org/3/library/os.path.html#os.path.splitext
+                        new_name_Input_file = str(metadata['image_counter']).zfill(4) + Temp_Input_file_extension # Rename the file with the current image counter and its original file extension. ".zfill(4)" will perform zero-padding for str having length (character numbers) less than 4, else the str will be returned as it is. Ref:https://note.nkmk.me/en/python-zero-padding/
+                        shutil.move(Temp_Input_file, destination_Input_folder_path + "/" + new_name_Input_file ) # Move the renamed file from Temp_Input folder out to the Input folder, in the destination root folder
+                        
+                        # Part 2: Ground truth image
+                        GroundTruth_file, = glob.glob(GroundTruth_src_dir + "/" + folder_name + ".*") # Use sequence unpacking method to get the only element from the list. Ref: https://stackoverflow.com/questions/33161448/getting-only-element-from-a-single-element-list-in-python
+                        # print(GroundTruth_file)
+                        shutil.copy2(GroundTruth_file, temp_destination_GroundTruth_folder_path) # Copy the ground truth image from source folder, then paste it to the Temp_GroundTruth folder inside the Ground Truth folder, in the destination root folder
+                        Temp_GroundTruth_file, = glob.glob(temp_destination_GroundTruth_folder_path + "/" + folder_name + ".*") # Get the absolute path of the file available in the Temp_GroundTruth folder, in the destination root folder
+                        # print(Temp_GroundTruth_file)
+                        Temp_GroundTruth_filename, Temp_GroundTruth_file_extension = os.path.splitext(Temp_GroundTruth_file) # Get an absolute path of a file and split it into path and file extension respectively. Ref:https://docs.python.org/3/library/os.path.html#os.path.splitext
+                        # print(Temp_GroundTruth_file_extension)
+                        new_name_GroundTruth_file = str(metadata['image_counter']).zfill(4) + Temp_GroundTruth_file_extension # Rename the file with the current image counter and its original file extension
+                        shutil.move(Temp_GroundTruth_file, destination_GroundTruth_folder_path + "/" + new_name_GroundTruth_file ) # Move the renamed file from Temp_GroundTruth folder out to the GroundTruth folder, in the destination root folder
+                
+
+                        # Part 3: Update the metadata in the csv file
+                        with open(csv_result_filepath, 'a', newline='') as csvfile: # Open that csv file at the path of csv_result_filepath with append mode, so that we can append the data of IQA_metrics_data dictionary to that csv file.
+                            writer = csv.DictWriter(csvfile, fieldnames=metadata.keys()) # The writer (csv.DictWriter) takes the csvfile object as the csv file to write and IQA_metrics_data.keys() as the elements=keys of the header
+                            writer.writerow(metadata) # The writer writes the data (value) of IQA_metrics_data dictionary in sequence as a row on the csv file
+
+            elif metadata['files_num_for_the_folder'] <= 9: # Retain the first 4 images and remove the remaining images if there are 8<images<=9 images in the folder
                 for index, file in enumerate(file_list):
                     if index <= 3: # Only copy the 0th, 1st, 2nd and 3rd images (total 4 images)
             # for file in file_list: # For each image in the file list (available inside the current folder)
@@ -117,6 +210,7 @@ def reorganize(): # Used to reorganize the original dataset
                         with open(csv_result_filepath, 'a', newline='') as csvfile: # Open that csv file at the path of csv_result_filepath with append mode, so that we can append the data of IQA_metrics_data dictionary to that csv file.
                             writer = csv.DictWriter(csvfile, fieldnames=metadata.keys()) # The writer (csv.DictWriter) takes the csvfile object as the csv file to write and IQA_metrics_data.keys() as the elements=keys of the header
                             writer.writerow(metadata) # The writer writes the data (value) of IQA_metrics_data dictionary in sequence as a row on the csv file
+                            
                 
     shutil.rmtree(temp_destination_Input_folder_path) # Remove the Temp_Input folder, in the destination root folder
     shutil.rmtree(temp_destination_GroundTruth_folder_path) # Remove the Temp_GroundTruth folder, in the destination root folder  
