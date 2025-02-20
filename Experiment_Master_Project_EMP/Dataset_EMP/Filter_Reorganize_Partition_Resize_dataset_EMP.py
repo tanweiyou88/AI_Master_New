@@ -46,7 +46,7 @@ def reorganize(): # Used to reorganize the original dataset
         writer = csv.DictWriter(csvfile, fieldnames=metadata.keys()) # Create a new csv writer. The writer (csv.DictWriter) takes the csvfile object as the csv file to write and IQA_metrics_data.keys() as the elements=keys of the header
         writer.writeheader() # The writer writes the header on the csv file
 
-    for folder_name in tqdm(sorted_folder_list, desc="Reorganizing original dataset"): # For each folder in the sorted folder list. tqdm is used to create the progress bar.
+    for folder_name in tqdm(sorted_folder_list, desc="Filtering & Reorganizing original dataset"): # For each folder in the sorted folder list. tqdm is used to create the progress bar.
         if folder_name != "Label": 
         # if folder_name == "92": 
             file_list = glob.glob(config.src_dir+"/"+folder_name+"/*") # Returns a list of files' absolute path (of any extension) that are inside the specified path (src_dir+"/"+folder_name+"/*")
@@ -195,8 +195,8 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser() # The parser is the ArgumentParser object that holds all the information necessary to read the command-line arguments.
     
-    parser.add_argument('--src_dir', type=str, default= "C:/Master_XMUM_usages/AI_Master_New/Experiment_Master_Project_EMP/Dataset_EMP/dataset_todelete") # The absolute path of the source dataset
-    parser.add_argument('--dst_dir', type=str, default="C:/Master_XMUM_usages/AI_Master_New/Experiment_Master_Project_EMP/Dataset_EMP/Preprocessed_dataset_todelete") # The absolute path of the destination root folder that saves the rearranged dataset
+    parser.add_argument('--src_dir', type=str, default= "C:/Master_XMUM_usages/AI_Master_New/Experiment_Master_Project_EMP/Dataset_EMP/Unprocessed/SICE_Dataset_Part2_EMP/Dataset_Part2") # The absolute path of the source dataset
+    parser.add_argument('--dst_dir', type=str, default="C:/Master_XMUM_usages/AI_Master_New/Experiment_Master_Project_EMP/Dataset_EMP/Preprocessed_SICE_Dataset_Part2_EMP") # The absolute path of the destination root folder that saves the rearranged dataset
     parser.add_argument('--source_dataset_name', type=str, default="SICE_Dataset_Part2") # The name of the source dataset
     parser.add_argument('--Input_folder_basename', type=str, default= "/Input") # Base name for the Input folder for the train and validation datasets
     parser.add_argument('--GroundTruth_folder_basename', type=str, default= "/GroundTruth") # Base name for the GroundTruth folder for the train and validation datasets
